@@ -1,0 +1,397 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>CDH启用sentry | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="CDH集群启用sentry步骤和测试。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CDH启用sentry">
+<meta property="og:url" content="http://wzktravel.github.io/2016/02/25/2016-02-25-Enabling-sentry-in-CDH/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="CDH集群启用sentry步骤和测试。">
+<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CDH启用sentry">
+<meta name="twitter:description" content="CDH集群启用sentry步骤和测试。">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-2016-02-25-Enabling-sentry-in-CDH" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/02/25/2016-02-25-Enabling-sentry-in-CDH/" class="article-date">
+  <time datetime="2016-02-25T06:22:59.000Z" itemprop="datePublished">2016-02-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CDH启用sentry
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>CDH集群启用sentry步骤和测试。<br><a id="more"></a></p>
+<h2 id="CDH启用sentry"><a href="#CDH启用sentry" class="headerlink" title="CDH启用sentry"></a>CDH启用sentry</h2><p>CDH中添加sentry服务后，按照<a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/sg_sentry_service_config.html" target="_blank" rel="external">Configuring the Sentry Service</a>一步步进行来配置sentry服务。</p>
+<h3 id="Before-Enabling-the-Sentry-Service"><a href="#Before-Enabling-the-Sentry-Service" class="headerlink" title="Before Enabling the Sentry Service"></a>Before Enabling the Sentry Service</h3><ol>
+<li>设置<code>hive.metastore.warehouse.dir</code>配置项(默认路径是/user/hive/warehouse)的权限和owner。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ hdfs dfs -chmod -R 771 /user/hive/warehouse</div><div class="line">$ hdfs dfs -chown -R hive:hive /user/hive/warehouse</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>如果已经启用了kerberos，需要<code>kinit -k -t hdfs.keytab hdfs</code>。</p>
+<ol>
+<li>Disable impersonation for HiveServer2<br>配置项: hive – <code>HiveServer2 Enable Impersonation</code></li>
+<li>Enable the Hive user to submit YARN jobs<br>Ensure the Allowed System Users property includes the hive user. If not, add hive.<br>配置项: yarn – <code>allowed.system.users</code></li>
+</ol>
+<blockquote>
+<p>Important: Ensure you have unchecked the <code>Enable Sentry Authorization using Policy Files</code> configuration property for both Hive and Impala under the <code>Policy File Based Sentry</code> category before you proceed.</p>
+</blockquote>
+<h3 id="Enabling-the-Sentry-Service-for-Hive"><a href="#Enabling-the-Sentry-Service-for-Hive" class="headerlink" title="Enabling the Sentry Service for Hive"></a>Enabling the Sentry Service for Hive</h3><ol>
+<li>修改hive配置项<code>Sentry Service</code>，选择”Sentry”</li>
+<li>取消选中<code>hive.server2.enable.impersonation</code></li>
+</ol>
+<h3 id="Enabling-the-Sentry-Service-for-Impala"><a href="#Enabling-the-Sentry-Service-for-Impala" class="headerlink" title="Enabling the Sentry Service for Impala"></a>Enabling the Sentry Service for Impala</h3><p>修改impala配置项<code>Sentry Service</code>，选择”Sentry”</p>
+<h3 id="Enabling-the-Sentry-Service-for-Hue"><a href="#Enabling-the-Sentry-Service-for-Hue" class="headerlink" title="Enabling the Sentry Service for Hue"></a>Enabling the Sentry Service for Hue</h3><p>修改hue配置项<code>Sentry Service</code>，选择”Sentry”</p>
+<blockquote>
+<p>Important:</p>
+<ol>
+<li>When Sentry is enabled, you must use Beeline to execute Hive queries. Hive CLI is not supported with Sentry and must be disabled as described <a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/sg_sentry_overview.html#concept_q3l_5sw_jr_unique_2__hiveclidisable_unique_2" target="_blank" rel="external">here</a>.</li>
+<li>When Sentry is enabled, a user with no privileges on a database will not be allowed to connect to HiveServer2. This is because the use <database> command is now executed as part of the connection to HiveServer2, which is why the connection fails. See HIVE-4256.</database></li>
+</ol>
+</blockquote>
+<h2 id="配置hive-with-sentry"><a href="#配置hive-with-sentry" class="headerlink" title="配置hive with sentry"></a>配置hive with sentry</h2><p><a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/sg_hive_sql.html" target="_blank" rel="external">http://www.cloudera.com/documentation/enterprise/5-4-x/topics/sg_hive_sql.html</a></p>
+<h3 id="如果启用了kerbreos"><a href="#如果启用了kerbreos" class="headerlink" title="如果启用了kerbreos"></a>如果启用了kerbreos</h3><p>启用kerberos后，使用下面命令进入beeline进行设置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ kinit -k -t hive.keytab hive</div><div class="line">$ beeline -u <span class="string">"jdbc:hive2://vlnx107011:10000/default;principal=hive/vlnx107011@HADOOP.COM"</span></div></pre></td></tr></table></figure></p>
+<h3 id="如果未启用kerberos"><a href="#如果未启用kerberos" class="headerlink" title="如果未启用kerberos"></a>如果未启用kerberos</h3><p>在hive配置<code>sentry-site.xml 的 Hive 服务高级配置代码段（安全阀）</code>中添加</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>sentry.hive.testing.mode<span class="tag">&lt;/<span class="name">name</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>可以使用<code>beeline -u &quot;jdbc:hive2://vlnx107011:10000/&quot; -n &lt;admin_user&gt;</code>进行设置，其中admin用户在sentry的<code>sentry.service.admin.group</code>中配置。</p>
+<p><strong> Important: 用户和组使用的是Linux机器上的用户和组，而角色必须自己创建。 </strong></p>
+<h2 id="配置HDFS-with-sentry"><a href="#配置HDFS-with-sentry" class="headerlink" title="配置HDFS with sentry"></a>配置HDFS with sentry</h2><p>参考<a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/sg_hdfs_sentry_sync.html" target="_blank" rel="external">http://www.cloudera.com/documentation/enterprise/5-4-x/topics/sg_hdfs_sentry_sync.html</a></p>
+<p>关于hdfs acl，参考<a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/cdh_sg_hdfs_ext_acls.html" target="_blank" rel="external">http://www.cloudera.com/documentation/enterprise/5-4-x/topics/cdh_sg_hdfs_ext_acls.html</a></p>
+<ol>
+<li>hdfs acl</li>
+<li>启用Sentry同步</li>
+<li>检查HDFS权限，<code>dfs.permissions</code>。</li>
+<li>设置Sentry同步路径前缀, <code>sentry.hdfs.integration.path.prefixes</code>，可以多个。</li>
+</ol>
+<blockquote>
+<p>Sentry-HDFS authorization is focused on Hive warehouse data - that is, any data that is part of a table in Hive or Impala. The real objective of this integration is to expand the same authorization checks to Hive warehouse data being accessed from any other components such as Pig, MapReduce or Spark. At this point, this feature does not replace HDFS ACLs. Tables that are not associated with Sentry will retain their old ACLs.</p>
+</blockquote>
+<p>存在哪些问题:</p>
+<ol>
+<li><code>sentry.hdfs.integration.path.prefixes</code>更改需要重启hdfs</li>
+<li>启用后hdfs acl失效</li>
+<li>hdfs uri不能自动统一成标准格式。<code>/facishare-data/</code>, <code>hdfs:///facishare-data/</code>, <code>hdfs://nameservice1/facishare-data/</code>, <code>hdfs://nameservice1:8020/facishare-data/</code>在sentry的理解中是不同的路径。</li>
+</ol>
+<h2 id="hue中进行sentry配置"><a href="#hue中进行sentry配置" class="headerlink" title="hue中进行sentry配置"></a>hue中进行sentry配置</h2><p><a href="http://gethue.com/apache-sentry-made-easy-with-the-new-hue-security-app/#howto" target="_blank" rel="external">http://gethue.com/apache-sentry-made-easy-with-the-new-hue-security-app/#howto</a><br>在ldap中新建了服务账号，用于在hue中对sentry进行设置</p>
+<ol>
+<li>在所有机器上同步此账号和组</li>
+<li>在sentry中将此账号组加入到管理员组<code>sentry.service.admin.group</code>中</li>
+<li>hue中新建hive组，并将此账号加入到hive组</li>
+</ol>
+<p>附录:</p>
+<h3 id="hive权限"><a href="#hive权限" class="headerlink" title="hive权限"></a>hive权限</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th style="text-align:left">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ALL</td>
+<td style="text-align:left">所有权限</td>
+</tr>
+<tr>
+<td>ALTER</td>
+<td style="text-align:left">允许修改元数据（modify metadata data of  object）—表信息数据</td>
+</tr>
+<tr>
+<td>UPDATE</td>
+<td style="text-align:left">允许修改物理数据（modify physical data of  object）—实际数据</td>
+</tr>
+<tr>
+<td>CREATE</td>
+<td style="text-align:left">允许进行Create操作</td>
+</tr>
+<tr>
+<td>DROP</td>
+<td style="text-align:left">允许进行DROP操作</td>
+</tr>
+<tr>
+<td>INDEX</td>
+<td style="text-align:left">允许建索引（目前还没有实现）</td>
+</tr>
+<tr>
+<td>LOCK</td>
+<td style="text-align:left">当出现并发的使用允许用户进行LOCK和UNLOCK操作</td>
+</tr>
+<tr>
+<td>SELECT</td>
+<td style="text-align:left">允许用户进行SELECT操作</td>
+</tr>
+<tr>
+<td>SHOW_DATABASE</td>
+<td style="text-align:left">允许用户查看可用的数据库</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Hive-SQL-Syntax-for-Use-with-Sentry"><a href="#Hive-SQL-Syntax-for-Use-with-Sentry" class="headerlink" title="Hive SQL Syntax for Use with Sentry"></a>Hive SQL Syntax for Use with Sentry</h3><h4 id="创建和删除角色"><a href="#创建和删除角色" class="headerlink" title="创建和删除角色"></a>创建和删除角色</h4><ol>
+<li>创建角色: <code>create role ROLE_NAME</code></li>
+<li>删除角色: <code>droop role ROLE_NAME</code></li>
+</ol>
+<h4 id="角色的授权和撤销"><a href="#角色的授权和撤销" class="headerlink" title="角色的授权和撤销"></a>角色的授权和撤销</h4><p>角色的授权(GRANT)就是给角色授予创建表、查询表等操作，撤销(REVOKE)反之。语法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">GRANT ROLE role_name [, role_name] TO GROUP &lt;groupName&gt; [,GROUP &lt;groupName&gt;]</div><div class="line">REVOKE ROLE role_name [, role_name] FROM GROUP &lt;groupName&gt; [,GROUP &lt;groupName&gt;]</div><div class="line">``` </div><div class="line"></div><div class="line">#### 权限的授予和撤销</div></pre></td></tr></table></figure>
+<p>GRANT <privilege> [, <privilege> ] ON <object> <object_name> TO ROLE <rolename> [,ROLE <rolename>]<br>REVOKE <privilege> [, <privilege> ] ON <object> <object_name> FROM ROLE <rolename> [,ROLE <rolename>]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#### 查看角色/组权限</div></pre></td></tr></table></figure></rolename></rolename></object_name></object></privilege></privilege></rolename></rolename></object_name></object></privilege></privilege></p>
+<p>SHOW ROLES;<br>SHOW CURRENT ROLES;<br>SHOW ROLE GRANT GROUP <groupname>;<br>SHOW GRANT ROLE <rolename>;<br>SHOW GRANT ROLE <rolename> on OBJECT <objectname>;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">示例：</div><div class="line">* 把role_test1角色授权给test组: `grant role role_test1 to group test`</div><div class="line">* 查看test组被授权的角色: `show role grant group test`</div><div class="line">* 取消test组的role_test1角色: `revoke role role_test1 from group test` </div><div class="line">* Grant privileges to analyst_role:</div><div class="line">```sql</div><div class="line">CREATE ROLE analyst_role;</div><div class="line">GRANT ALL ON DATABASE analyst1 TO ROLE analyst_role;</div><div class="line">GRANT SELECT ON DATABASE jranalyst1 TO ROLE analyst_role;</div><div class="line">GRANT ALL ON URI &apos;hdfs://ha-nn-uri/landing/analyst1&apos; TO ROLE analyst_role;</div></pre></td></tr></table></figure></objectname></rolename></rolename></groupname></p>
+<ul>
+<li><p>Grant privileges to junior_analyst_role:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">CREATE ROLE junior_analyst_role;</div><div class="line">GRANT ALL ON DATABASE jranalyst1 TO ROLE junior_analyst_role;</div><div class="line">GRANT ALL ON URI 'hdfs://ha-nn-uri/landing/jranalyst1' TO ROLE junior_analyst_role;</div><div class="line">grant all on database test to role admin_role with grant option;</div><div class="line">``` </div><div class="line"></div><div class="line">* Grant privileges to admin_role:</div><div class="line">```sql</div><div class="line">CREATE ROLE admin_role</div><div class="line">GRANT ALL ON SERVER server TO ROLE admin_role;</div></pre></td></tr></table></figure>
+</li>
+<li><p>Grant roles to groups:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">GRANT</span> <span class="keyword">ROLE</span> admin_role <span class="keyword">TO</span> <span class="keyword">GROUP</span> <span class="keyword">admin</span>;</div><div class="line"><span class="keyword">GRANT</span> <span class="keyword">ROLE</span> analyst_role <span class="keyword">TO</span> <span class="keyword">GROUP</span> analyst;</div><div class="line"><span class="keyword">GRANT</span> <span class="keyword">ROLE</span> jranalyst_role <span class="keyword">TO</span> <span class="keyword">GROUP</span> jranalyst;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>参考:</p>
+<ol>
+<li>Authorization Privilege Model for Hive and Impala: <a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/cm_sg_sentry_service.html#concept_cx4_sw2_q4_unique_1" target="_blank" rel="external">http://www.cloudera.com/documentation/enterprise/5-4-x/topics/cm_sg_sentry_service.html#concept_cx4_sw2_q4_unique_1</a></li>
+<li>The Sentry Service: <a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/cm_sg_sentry_service.html#" target="_blank" rel="external">http://www.cloudera.com/documentation/enterprise/5-4-x/topics/cm_sg_sentry_service.html</a></li>
+<li>Apache Sentry made easy with the new Hue Security App: <a href="http://gethue.com/apache-sentry-made-easy-with-the-new-hue-security-app/#howto" target="_blank" rel="external">http://gethue.com/apache-sentry-made-easy-with-the-new-hue-security-app/#howto</a></li>
+<li>What is missing in Apache Sentry (incubating)?: <a href="http://getindata.com/blog/post/what-is-missing-in-apache-sentry-incubating/" target="_blank" rel="external">http://getindata.com/blog/post/what-is-missing-in-apache-sentry-incubating/</a></li>
+<li>Apache Sentry Tutorial: <a href="https://cwiki.apache.org/confluence/display/SENTRY/Sentry+Tutorial" target="_blank" rel="external">https://cwiki.apache.org/confluence/display/SENTRY/Sentry+Tutorial</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/02/25/2016-02-25-Enabling-sentry-in-CDH/" data-id="ciqlv6twb001hpo9kxej3nk7r" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/02/25/2016-02-25-Enabling-sentry-in-CDH/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CDH/">CDH</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sentry/">sentry</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/03/01/2016-03-01-how-to-use-kerberos-in-CDH/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          kerberos使用手册
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/01/29/2016-01-29-flume-hdfs-ucs-4/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Flume SpoolDirectorySource遇到emoj截断问题</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/02/25/2016-02-25-Enabling-sentry-in-CDH/" data-title="CDH启用sentry" data-url="http://wzktravel.github.io/2016/02/25/2016-02-25-Enabling-sentry-in-CDH/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/05/24/2016-05-24-upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/2016-05-11-elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/2016-05-10-hadoop-management/">hadoop集群管理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/04/2016-05-04-azkaban-how-to-install-and-use/">azkaban的安装和使用</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/14/2016-04-14-quartz-in-practice/">quartz in practice</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

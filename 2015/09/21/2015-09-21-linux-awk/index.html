@@ -1,0 +1,734 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>linux awk命令 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="相对于sed常常作用于一整行进行处理，awk更倾向与一行当中分成数个“栏位”来处理。平时对日志或者小型文件进行处理时，awk很有用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux awk命令">
+<meta property="og:url" content="http://wzktravel.github.io/2015/09/21/2015-09-21-linux-awk/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="相对于sed常常作用于一整行进行处理，awk更倾向与一行当中分成数个“栏位”来处理。平时对日志或者小型文件进行处理时，awk很有用。">
+<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux awk命令">
+<meta name="twitter:description" content="相对于sed常常作用于一整行进行处理，awk更倾向与一行当中分成数个“栏位”来处理。平时对日志或者小型文件进行处理时，awk很有用。">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-2015-09-21-linux-awk" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/09/21/2015-09-21-linux-awk/" class="article-date">
+  <time datetime="2015-09-20T16:03:13.000Z" itemprop="datePublished">2015-09-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      linux awk命令
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>相对于sed常常作用于一整行进行处理，awk更倾向与一行当中分成数个“栏位”来处理。平时对日志或者小型文件进行处理时，awk很有用。<br><a id="more"></a></p>
+<h2 id="命令行格式"><a href="#命令行格式" class="headerlink" title="命令行格式"></a>命令行格式</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">awk <span class="string">'pattern &#123;action&#125; pattern &#123;action&#125; ...'</span> &#123;filenames&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>pattern表示awk在数据中查找的内容，action是在找到匹配内容时所执行的命令。</li>
+<li>awk默认的分隔符是空格或tab，由分隔符分隔开的每一项称为域。</li>
+<li>awk也可以调用awk脚本执行命令, <code>awk -f awk_script file(s)</code>。</li>
+</ul>
+<h2 id="awk基本用法"><a href="#awk基本用法" class="headerlink" title="awk基本用法"></a>awk基本用法</h2><h3 id="分隔符"><a href="#分隔符" class="headerlink" title="分隔符"></a>分隔符</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">~ head -n 5 /etc/passwd</div><div class="line">root:x:0:0:root:/root:/bin/zsh</div><div class="line">bin:x:1:1:bin:/bin:/sbin/nologin</div><div class="line">daemon:x:2:2:daemon:/sbin:/sbin/nologin</div><div class="line">adm:x:3:4:adm:/var/adm:/sbin/nologin</div><div class="line">lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin</div><div class="line">~</div><div class="line">~ head -n 5 /etc/passwd | awk -F <span class="string">':'</span> <span class="string">'&#123;print $1"\t"$7&#125;'</span></div><div class="line">root	/bin/zsh</div><div class="line">bin	/sbin/nologin</div><div class="line">daemon	/sbin/nologin</div><div class="line">adm	/sbin/nologin</div><div class="line">lp	/sbin/nologin</div></pre></td></tr></table></figure>
+<p>-F指定了分隔符为”:”，然后打印出了第一个域中内容。<br>awk工作流程是这样的：读入有’\n’换行符分割的一条记录，然后将记录按指定的域分隔符划分域，填充域，$0则表示所有域, $1表示第一个域,$n表示第n个域。默认域分隔符是”空白键” 或 “[tab]键”，$1代表的就是用户名，$7代表的是用户登录使用的shell。</p>
+<h3 id="BEGIN-END"><a href="#BEGIN-END" class="headerlink" title="BEGIN/END"></a>BEGIN/END</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">~ head -n 5 /etc/passwd | awk  -F <span class="string">':'</span>  <span class="string">'BEGIN &#123;print "name\tshell"&#125;  &#123;print $1"\t"$7&#125; END &#123;print "blue\t/bin/nosh"&#125;'</span></div><div class="line">name	shell</div><div class="line">root	/bin/zsh</div><div class="line">bin	/sbin/nologin</div><div class="line">daemon	/sbin/nologin</div><div class="line">adm	/sbin/nologin</div><div class="line">lp	/sbin/nologin</div><div class="line">blue	/bin/nosh</div></pre></td></tr></table></figure>
+<p>先执行BEGIN操作，然后读取文件，对每一行进行分割，执行action，所有行执行完毕后，执行END操作。</p>
+<h3 id="使用pattern"><a href="#使用pattern" class="headerlink" title="使用pattern"></a>使用pattern</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">~ head -n 5 /etc/passwd | awk -F <span class="string">":"</span> <span class="string">'/root/'</span></div><div class="line">root:x:0:0:root:/root:/bin/zsh</div><div class="line">~</div><div class="line">~ head -n 5 /etc/passwd | awk -F <span class="string">":"</span> <span class="string">'/root/&#123;print $7&#125;'</span></div><div class="line">/bin/zsh</div></pre></td></tr></table></figure>
+<p>只有匹配到指定pattern的行才会执行action，如果没有action，打印此行内容。</p>
+<h3 id="awk内置变量"><a href="#awk内置变量" class="headerlink" title="awk内置变量"></a>awk内置变量</h3><table>
+<thead>
+<tr>
+<th>变量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ARGC</td>
+<td>命令行参数个数</td>
+</tr>
+<tr>
+<td>ARGV</td>
+<td>命令行参数排列</td>
+</tr>
+<tr>
+<td>ENVIRON</td>
+<td>支持队列中系统环境变量的使用</td>
+</tr>
+<tr>
+<td>FILENAME</td>
+<td>awk浏览的文件名</td>
+</tr>
+<tr>
+<td>FNR</td>
+<td>已读当前文件的记录数</td>
+</tr>
+<tr>
+<td>FS</td>
+<td>设置输入域分隔符，等价于命令行 -F选项</td>
+</tr>
+<tr>
+<td>NF</td>
+<td>浏览记录的域的个数</td>
+</tr>
+<tr>
+<td>NR</td>
+<td>已读的记录数</td>
+</tr>
+<tr>
+<td>OFS</td>
+<td>输出域分隔符</td>
+</tr>
+<tr>
+<td>ORS</td>
+<td>输出记录分隔符</td>
+</tr>
+<tr>
+<td>RS</td>
+<td>控制记录分隔符</td>
+</tr>
+</tbody>
+</table>
+<p>示例：统计/etc/passwd:文件名，每行的行号，每行的列数，对应的完整行内容<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">~  awk -F <span class="string">":"</span> <span class="string">'&#123;printf("file:%10s, line:%s, columns:%s, content:%s\n", FILENAME, NR, NF, $0)&#125;'</span> /etc/passwd | head -n 5</div><div class="line">file:/etc/passwd, line:1, columns:7, content:root:x:0:0:root:/root:/bin/zsh</div><div class="line">file:/etc/passwd, line:2, columns:7, content:bin:x:1:1:bin:/bin:/sbin/nologin</div><div class="line">file:/etc/passwd, line:3, columns:7, content:daemon:x:2:2:daemon:/sbin:/sbin/nologin</div><div class="line">file:/etc/passwd, line:4, columns:7, content:adm:x:3:4:adm:/var/adm:/sbin/nologin</div><div class="line">file:/etc/passwd, line:5, columns:7, content:lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin</div></pre></td></tr></table></figure></p>
+<h2 id="awk流程控制"><a href="#awk流程控制" class="headerlink" title="awk流程控制"></a>awk流程控制</h2><h3 id="条件判断-if"><a href="#条件判断-if" class="headerlink" title="条件判断(if)"></a>条件判断(if)</h3><ul>
+<li>用法：<code>if(表达式) {语句1} else if(表达式) {语句2} else {语句3}</code></li>
+<li>示例：<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">~ awk <span class="string">'BEGIN &#123;</span></div><div class="line">        test=100; </div><div class="line">        if (test &gt; 90) &#123;print "Very good!";&#125;</div><div class="line">        else if (test &gt; 60) &#123;print "good";&#125;</div><div class="line">        else &#123;print "shit";&#125;</div><div class="line">      &#125;' </div><div class="line">Very good!</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="循环-while-for-do"><a href="#循环-while-for-do" class="headerlink" title="循环(while,for,do)"></a>循环(while,for,do)</h3><h4 id="while循环"><a href="#while循环" class="headerlink" title="while循环"></a>while循环</h4><ul>
+<li>用法： <code>while(表达式) {语句}</code> </li>
+<li>示例： <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">~ awk <span class="string">'BEGIN &#123; </span></div><div class="line">        while (i &lt; 10) &#123;i+=1&#125;</div><div class="line">        print i </div><div class="line">      &#125;' </div><div class="line">10</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h4><ul>
+<li>用法1： <code>for(变量 in 数组){语句}</code></li>
+<li>用法2： <code>for(变量;条件;表达式){语句}</code></li>
+<li>示例：<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">~ awk <span class="string">'BEGIN &#123; </span></div><div class="line">        for (a in ENVIRON) &#123;print a"="ENVIRON[a]&#125;</div><div class="line">      &#125;'      </div><div class="line">HBASE_IDENT_STRING=root</div><div class="line">MAIL=/var/spool/mail/root</div><div class="line">LOADEDMODULES=</div><div class="line">NVM_IOJS_ORG_MIRROR=https://iojs.org/dist</div><div class="line">NVM_RC_VERSION=</div><div class="line">ERRDATE=20150921</div><div class="line">....</div><div class="line"></div><div class="line">~ awk <span class="string">'BEGIN &#123;</span></div><div class="line">        for (i = 0; i &lt;= 100; i++) &#123;a+=i&#125;</div><div class="line">        print a</div><div class="line">      &#125;'</div><div class="line">5050</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="do循环"><a href="#do循环" class="headerlink" title="do循环"></a>do循环</h4><ul>
+<li>用法：<code>do{语句}while(条件)</code></li>
+<li>示例：<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">~ awk <span class="string">'BEGIN &#123;</span></div><div class="line">        do &#123;a+=i;i++;&#125; while(i&lt;=100) </div><div class="line">        print a</div><div class="line">      &#125;'</div><div class="line">5050</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="其他控制语句"><a href="#其他控制语句" class="headerlink" title="其他控制语句"></a>其他控制语句</h3><table>
+<thead>
+<tr>
+<th>语句</th>
+<th>说明 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>break</td>
+<td>当 break 语句用于 while 或 for 语句时，导致退出程序循环。</td>
+</tr>
+<tr>
+<td>continue</td>
+<td>当 continue 语句用于 while 或 for 语句时，使程序循环移动到下一个迭代。</td>
+</tr>
+<tr>
+<td>next</td>
+<td>能能够导致读入下一个输入行，并返回到脚本的顶部。这可以避免对当前输入行执行其他的操作过程。</td>
+</tr>
+<tr>
+<td>exit</td>
+<td>语句使主输入循环退出并将控制转移到END,如果END存在的话。如果没有定义END规则，或在END中应用exit语句，则终止脚本的执行。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="内置函数"><a href="#内置函数" class="headerlink" title="内置函数"></a>内置函数</h2><h3 id="算术函数"><a href="#算术函数" class="headerlink" title="算术函数"></a>算术函数</h3><table>
+<thead>
+<tr>
+<th>函数名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>atan2(y, x)</td>
+<td>返回 y/x 的反正切。</td>
+</tr>
+<tr>
+<td>cos(x)</td>
+<td>返回 x 的余弦；x 是弧度。</td>
+</tr>
+<tr>
+<td>sin(x)</td>
+<td>返回 x 的正弦；x 是弧度。</td>
+</tr>
+<tr>
+<td>exp(x)</td>
+<td>返回 x 幂函数。</td>
+</tr>
+<tr>
+<td>log(x)</td>
+<td>返回 x 的自然对数。</td>
+</tr>
+<tr>
+<td>sqrt(x)</td>
+<td>返回 x 平方根。</td>
+</tr>
+<tr>
+<td>int(x)</td>
+<td>返回 x 的截断至整数的值。</td>
+</tr>
+<tr>
+<td>rand()</td>
+<td>返回任意数字 n，其中 0 &lt;= n &lt; 1。</td>
+</tr>
+<tr>
+<td>srand([Expr])</td>
+<td>将 rand 函数的种子值设置为 Expr 参数的值，或如果省略 Expr 参数则使用某天的时间。返回先前的种子值。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="字符串函数"><a href="#字符串函数" class="headerlink" title="字符串函数"></a>字符串函数</h3><table>
+<thead>
+<tr>
+<th>函数名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gsub(Ere, Repl, [In])</td>
+<td>除了正则表达式所有具体值被替代这点，它和 sub 函数完全一样地执行，。</td>
+</tr>
+<tr>
+<td>sub(Ere, Repl, [In])</td>
+<td>用 Repl 参数指定的字符串替换 In 参数指定的字符串中的由 Ere 参数指定的扩展正则表达式的第一个具体值。sub 函数返回替换的数量。出现在 Repl 参数指定的字符串中的 &amp;（和符号）由 In 参数指定的与 Ere 参数的指定的扩展正则表达式匹配的字符串替换。如果未指定 In 参数，缺省值是整个记录（$0 记录变量）。</td>
+</tr>
+<tr>
+<td>index(String1, String2)</td>
+<td>在由 String1 参数指定的字符串（其中有出现 String2 指定的参数）中，返回位置，从 1 开始编号。如果 String2 参数不在 String1 参数中出现，则返回 0（零）。</td>
+</tr>
+<tr>
+<td>length [(String)]</td>
+<td>返回 String 参数指定的字符串的长度（字符形式）。如果未给出 String 参数，则返回整个记录的长度（$0 记录变量）。</td>
+</tr>
+<tr>
+<td>blength [(String)]</td>
+<td>返回 String 参数指定的字符串的长度（以字节为单位）。如果未给出 String 参数，则返回整个记录的长度（$0 记录变量）。</td>
+</tr>
+<tr>
+<td>substr(String, M, [N])</td>
+<td>返回具有 N 参数指定的字符数量子串。子串从 String 参数指定的字符串取得，其字符以 M 参数指定的位置开始。M 参数指定为将 String 参数中的第一个字符作为编号 1。如果未指定 N 参数，则子串的长度将是 M 参数指定的位置到 String 参数的末尾 的长度。</td>
+</tr>
+<tr>
+<td>match(String, Ere)</td>
+<td>在 String 参数指定的字符串（Ere 参数指定的扩展正则表达式出现在其中）中返回位置（字符形式），从 1 开始编号，或如果 Ere 参数不出现，则返回 0（零）。RSTART 特殊变量设置为返回值。RLENGTH 特殊变量设置为匹配的字符串的长度，或如果未找到任何匹配，则设置为 -1（负一）。</td>
+</tr>
+<tr>
+<td>split(String, A, [Ere])</td>
+<td>将 String 参数指定的参数分割为数组元素 A[1], A[2], . . ., A[n]，并返回 n 变量的值。此分隔可以通过 Ere 参数指定的扩展正则表达式进行，或用当前字段分隔符（FS 特殊变量）来进行（如果没有给出 Ere 参数）。除非上下文指明特定的元素还应具有一个数字值，否则 A 数组中的元素用字符串值来创建。</td>
+</tr>
+<tr>
+<td>tolower(String)</td>
+<td>返回 String 参数指定的字符串，字符串中每个大写字符将更改为小写。大写和小写的映射由当前语言环境的 LC_CTYPE 范畴定义。</td>
+</tr>
+<tr>
+<td>toupper(String)</td>
+<td>返回 String 参数指定的字符串，字符串中每个小写字符将更改为大写。大写和小写的映射由当前语言环境的 LC_CTYPE 范畴定义。</td>
+</tr>
+<tr>
+<td>printf(Format, Expr, Expr, …)</td>
+<td>根据 Format 参数指定的 printf 子例程格式字符串来格式化 Expr 参数指定的表达式并返回最后生成的字符串。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="printf格式"><a href="#printf格式" class="headerlink" title="printf格式"></a>printf格式</h4><table>
+<thead>
+<tr>
+<th>格式符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%d</td>
+<td>十进制有符号整数</td>
+</tr>
+<tr>
+<td>%u</td>
+<td>十进制无符号整数</td>
+</tr>
+<tr>
+<td>%f</td>
+<td>浮点数</td>
+</tr>
+<tr>
+<td>%s</td>
+<td>字符串</td>
+</tr>
+<tr>
+<td>%c</td>
+<td>单个字符</td>
+</tr>
+<tr>
+<td>%p</td>
+<td>指针的值</td>
+</tr>
+<tr>
+<td>%e</td>
+<td>指数形式的浮点数</td>
+</tr>
+<tr>
+<td>%x</td>
+<td>%X 无符号以十六进制表示的整数</td>
+</tr>
+<tr>
+<td>%o</td>
+<td>无符号以八进制表示的整数</td>
+</tr>
+<tr>
+<td>%g</td>
+<td>自动选择合适的表示法</td>
+</tr>
+</tbody>
+</table>
+<h3 id="一般函数"><a href="#一般函数" class="headerlink" title="一般函数"></a>一般函数</h3><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>close(Expression)</td>
+<td>用同一个带字符串值的 Expression 参数来关闭由 print 或 printf 语句打开的或调用 getline 函数打开的文件或管道。如果文件或管道成功关闭，则返回 0；其它情况下返回非零值。如果打算写一个文件，并稍后在同一个程序中读取文件，则 close 语句是必需的。</td>
+</tr>
+<tr>
+<td>system(Command)</td>
+<td>执行 Command 参数指定的命令，并返回退出状态。等同于 system 子例程。</td>
+</tr>
+<tr>
+<td>getline[Variable]</td>
+<td>从来自 Expression 参数指定的命令的输出中通过管道传送的流中读取一个输入记录，并将该记录的值指定给 Variable 参数指定的变量。如果当前未打开将 Expression 参数的值作为其命令名称的流，则创建流。创建的流等同于调用 popen 子例程，此时 Command 参数取 Expression 参数的值且 Mode 参数设置为一个是 r 的值。只要流保留打开且 Expression 参数求得同一个字符串，则对 getline 函数的每次后续调用读取另一个记录。如果未指定 Variable 参数，则 $0 记录变量和 NF 特殊变量设置为从流读取的记录。</td>
+</tr>
+<tr>
+<td>getline[Variable] &lt; Expression</td>
+<td>从 Expression 参数指定的文件读取输入的下一个记录，并将 Variable 参数指定的变量设置为该记录的值。只要流保留打开且 Expression 参数对同一个字符串求值，则对 getline 函数的每次后续调用读取另一个记录。如果未指定 Variable 参数，则 $0 记录变量和 NF 特殊变量设置为从流读取的记录。</td>
+</tr>
+<tr>
+<td>getline[Variable]</td>
+<td>将 Variable 参数指定的变量设置为从当前输入文件读取的下一个输入记录。如果未指定 Variable 参数，则 $0 记录变量设置为该记录的值，还将设置 NF、NR 和 FNR 特殊变量。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="时间函数"><a href="#时间函数" class="headerlink" title="时间函数"></a>时间函数</h3><table>
+<thead>
+<tr>
+<th>函数名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mktime( YYYY MM DD HH MM SS[ DST])</td>
+<td>生成时间格式</td>
+</tr>
+<tr>
+<td>strftime([format [, timestamp]])</td>
+<td>格式化时间输出，将时间戳转为时间字符串</td>
+</tr>
+<tr>
+<td>systime()</td>
+<td>得到时间戳,返回从1970年1月1日开始到当前时间(不计闰年)的整秒数</td>
+</tr>
+</tbody>
+</table>
+<h4 id="strftime输出格式"><a href="#strftime输出格式" class="headerlink" title="strftime输出格式"></a>strftime输出格式</h4><table>
+<thead>
+<tr>
+<th>格式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%a</td>
+<td>星期几的缩写(Sun)</td>
+</tr>
+<tr>
+<td>%A</td>
+<td>星期几的完整写法(Sunday)</td>
+</tr>
+<tr>
+<td>%b</td>
+<td>月名的缩写(Oct)</td>
+</tr>
+<tr>
+<td>%B</td>
+<td>月名的完整写法(October)</td>
+</tr>
+<tr>
+<td>%c</td>
+<td>本地日期和时间</td>
+</tr>
+<tr>
+<td>%d</td>
+<td>十进制日期</td>
+</tr>
+<tr>
+<td>%D</td>
+<td>日期 08/20/99</td>
+</tr>
+<tr>
+<td>%e</td>
+<td>日期，如果只有一位会补上一个空格</td>
+</tr>
+<tr>
+<td>%H</td>
+<td>用十进制表示24小时格式的小时</td>
+</tr>
+<tr>
+<td>%I</td>
+<td>用十进制表示12小时格式的小时</td>
+</tr>
+<tr>
+<td>%j</td>
+<td>从1月1日起一年中的第几天</td>
+</tr>
+<tr>
+<td>%m</td>
+<td>十进制表示的月份</td>
+</tr>
+<tr>
+<td>%M</td>
+<td>十进制表示的分钟</td>
+</tr>
+<tr>
+<td>%p</td>
+<td>12小时表示法(AM/PM)</td>
+</tr>
+<tr>
+<td>%S</td>
+<td>十进制表示的秒</td>
+</tr>
+<tr>
+<td>%U</td>
+<td>十进制表示的一年中的第几个星期(星期天作为一个星期的开始)</td>
+</tr>
+<tr>
+<td>%w</td>
+<td>十进制表示的星期几(星期天是0)</td>
+</tr>
+<tr>
+<td>%W</td>
+<td>十进制表示的一年中的第几个星期(星期一作为一个星期的开始)</td>
+</tr>
+<tr>
+<td>%x</td>
+<td>重新设置本地日期(08/20/99)</td>
+</tr>
+<tr>
+<td>%X</td>
+<td>重新设置本地时间(12：00：00)</td>
+</tr>
+<tr>
+<td>%y</td>
+<td>两位数字表示的年(15)</td>
+</tr>
+<tr>
+<td>%Y</td>
+<td>完整表示的年(2015)</td>
+</tr>
+<tr>
+<td>%Z</td>
+<td>时区(PDT)</td>
+</tr>
+<tr>
+<td>%%</td>
+<td>百分号(%)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><ul>
+<li><p>gsub/sub，将连续的数字替换为”!”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">~ awk <span class="string">'BEGIN &#123;a="test2015"; gsub(/[0-9]+/, "!", a); print a&#125;'</span></div><div class="line"><span class="built_in">test</span>!</div></pre></td></tr></table></figure>
+</li>
+<li><p>index，查找字符串中是否存在”t2”子串</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">~ awk <span class="string">'BEGIN &#123;a="test2015"; b = index(a, "t2"); print b ? "found" : "not found";&#125;'</span></div><div class="line">found</div></pre></td></tr></table></figure>
+</li>
+<li><p>match, 正则表达式匹配查找</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">~ awk <span class="string">'BEGIN &#123;a="test2015"; b = match(a, /[0-9]+/); print b ? "found" : "not found"; &#125;'</span>  </div><div class="line">found</div></pre></td></tr></table></figure>
+</li>
+<li><p>substr, 字符串截取，从第2个字符开始截取4个字符</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">~ awk <span class="string">'BEGIN &#123;a="test2015"; print substr(a, 2, 4); &#125;'</span> </div><div class="line">est2</div></pre></td></tr></table></figure>
+</li>
+<li><p>split, 字符串分割</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">~ awk <span class="string">'BEGIN &#123;a="test2015"; split(a, b, "t2"); print length(b); for (i in b) &#123;print b[i]&#125; &#125;'</span>  </div><div class="line">2</div><div class="line">tes</div><div class="line">015</div></pre></td></tr></table></figure>
+</li>
+<li><p>printf, 格式化输出</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">~ awk <span class="string">'BEGIN&#123;n1=124.113; n2=-1.224; n3=1.2345; printf("%.2f, %.2u, %.2g, %X, %o\n",n1,n2,n3,n1,n1);&#125;'</span></div><div class="line">124.11, 18446744073709551615, 1.2, 7C, 174</div></pre></td></tr></table></figure>
+</li>
+<li><p>printf, 十六进制转十进制</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">~ <span class="built_in">echo</span> <span class="string">"1509d314690"</span> | awk <span class="string">'&#123;print strtonum("0x"$0)&#125;'</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>strftime, 格式化时间输出</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">~ gawk <span class="string">'BEGIN&#123;tstamp=mktime("2015 01 01 12 12 12"); print tstamp;  print strftime("%Y-%m-%d", tstamp);&#125;'</span> </div><div class="line">1420085532</div><div class="line">2015-01-01</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="实践出真知"><a href="#实践出真知" class="headerlink" title="实践出真知"></a>实践出真知</h2><ul>
+<li><p>根据文件数据进行统计</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">~ awk -F <span class="string">'\t'</span> <span class="string">'&#123;w[$1]+=1&#125;  END&#123;for (a in w) printf("%u\t%s\n", w[a], a)&#125;'</span></div><div class="line">~ awk -F <span class="string">'\t'</span> <span class="string">'&#123;w[$2]+=$1&#125; END&#123;for (a in w) printf("%u\t%s\n", w[a], a)&#125;'</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>将多个文件内容合并到一个文件中(不改变格式)</p>
+<pre><code class="bash">awk <span class="string">'{v=FILENAME}!a[v]++1'</span> *.sort  &gt; all.sort
+</code></pre>
+</li>
+<li><p>awk使用shell变量，需要加上单引号。<code>&#39;${var}&#39;</code></p>
+</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://www.gnu.org/software/gawk/manual/gawk.html" target="_blank" rel="external">The GNU Awk User’s Guide</a></li>
+<li><a href="http://www.cnblogs.com/chengmo/archive/2013/01/17/2865479.html" target="_blank" rel="external">Awk 命令学习总结</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2015/09/21/2015-09-21-linux-awk/" data-id="ciqlv6tvq000xpo9kfdiohtpz" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2015/09/21/2015-09-21-linux-awk/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/awk/">awk</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell/">shell</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/09/24/2015-09-24-linux-kick-user/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          如何查看Linux中登陆的用户/踢出用户
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/09/19/2015-09-19-linux-sed/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">linux sed命令</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/09/21/2015-09-21-linux-awk/" data-title="linux awk命令" data-url="http://wzktravel.github.io/2015/09/21/2015-09-21-linux-awk/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/05/24/2016-05-24-upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/2016-05-11-elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/2016-05-10-hadoop-management/">hadoop集群管理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/04/2016-05-04-azkaban-how-to-install-and-use/">azkaban的安装和使用</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/14/2016-04-14-quartz-in-practice/">quartz in practice</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

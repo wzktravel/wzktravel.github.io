@@ -1,0 +1,293 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Flume SpoolDirectorySource遇到emoj截断问题 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近在flume上报hdfs过程中遇到一些文件在中间被截断的问题，经过排查发现遇到emoj表情时会出现这种情况，如”上海👃”。下面介绍问题是如何定位并修复的。以下代码都基于org.apache.flume:flume-ng-core:1.6.0。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flume SpoolDirectorySource遇到emoj截断问题">
+<meta property="og:url" content="http://wzktravel.github.io/2016/01/29/2016-01-29-flume-hdfs-ucs-4/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="最近在flume上报hdfs过程中遇到一些文件在中间被截断的问题，经过排查发现遇到emoj表情时会出现这种情况，如”上海👃”。下面介绍问题是如何定位并修复的。以下代码都基于org.apache.flume:flume-ng-core:1.6.0。">
+<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flume SpoolDirectorySource遇到emoj截断问题">
+<meta name="twitter:description" content="最近在flume上报hdfs过程中遇到一些文件在中间被截断的问题，经过排查发现遇到emoj表情时会出现这种情况，如”上海👃”。下面介绍问题是如何定位并修复的。以下代码都基于org.apache.flume:flume-ng-core:1.6.0。">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-2016-01-29-flume-hdfs-ucs-4" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/01/29/2016-01-29-flume-hdfs-ucs-4/" class="article-date">
+  <time datetime="2016-01-29T05:09:59.000Z" itemprop="datePublished">2016-01-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Flume SpoolDirectorySource遇到emoj截断问题
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近在flume上报hdfs过程中遇到一些文件在中间被截断的问题，经过排查发现遇到emoj表情时会出现这种情况，如”上海👃”。下面介绍问题是如何定位并修复的。以下代码都基于<code>org.apache.flume:flume-ng-core:1.6.0</code>。<br><a id="more"></a></p>
+<p>首先看<code>SpoolDirectorySource.java</code>，这是整个<code>Spooling Directory Source</code>的入口。<br><code>SpoolDirectorySource.start</code>片段:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</div><div class="line">  ...</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    reader = <span class="keyword">new</span> ReliableSpoolingFileEventReader.Builder()</div><div class="line">        .spoolDirectory(directory)</div><div class="line">        .completedSuffix(completedSuffix)</div><div class="line">        .ignorePattern(ignorePattern)</div><div class="line">        .trackerDirPath(trackerDirPath)</div><div class="line">        .annotateFileName(fileHeader)</div><div class="line">        .fileNameHeader(fileHeaderKey)</div><div class="line">        .annotateBaseName(basenameHeader)</div><div class="line">        .baseNameHeader(basenameHeaderKey)</div><div class="line">        .deserializerType(deserializerType)</div><div class="line">        .deserializerContext(deserializerContext)</div><div class="line">        .deletePolicy(deletePolicy)</div><div class="line">        .inputCharset(inputCharset)</div><div class="line">        .decodeErrorPolicy(decodeErrorPolicy)</div><div class="line">        .consumeOrder(consumeOrder)</div><div class="line">        .build();</div><div class="line">  &#125; <span class="keyword">catch</span> (IOException ioe) &#123;</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> FlumeException(<span class="string">"Error instantiating spooling event parser"</span>, ioe);</div><div class="line">  &#125;</div><div class="line">  ...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>和<code>SpoolDirectorySource</code>内部类<code>SpoolDirectoryRunnable.run</code>片段<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">  ...</div><div class="line">  <span class="keyword">while</span> (!Thread.interrupted()) &#123;</div><div class="line">    List&lt;Event&gt; events = reader.readEvents(batchSize);</div><div class="line">    <span class="keyword">if</span> (events.isEmpty()) &#123;</div><div class="line">    <span class="keyword">break</span>;</div><div class="line">    &#125;</div><div class="line">    sourceCounter.addToEventReceivedCount(events.size());</div><div class="line">    sourceCounter.incrementAppendBatchReceivedCount();</div><div class="line">    ...</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看到调用了<code>ReliableSpoolingFileEventReader</code>中的<code>readEvents</code>方法读取文件中数据，然后去看这个方法的实现。</p>
+<p><code>ReliableSpoolingFileEventReader.readEvents</code>片段:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> List&lt;Event&gt; <span class="title">readEvents</span><span class="params">(<span class="keyword">int</span> numEvents)</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">  ...</div><div class="line">  <span class="keyword">while</span> (events.isEmpty()) &#123;</div><div class="line">    logger.info(<span class="string">"Last read took us just up to a file boundary. Rolling to the next file, if there is one."</span>);</div><div class="line">    retireCurrentFile();</div><div class="line">    currentFile = getNextFile();</div><div class="line">    <span class="keyword">if</span> (!currentFile.isPresent()) &#123;</div><div class="line">      <span class="keyword">return</span> Collections.emptyList();</div><div class="line">    &#125;</div><div class="line">    events = currentFile.get().getDeserializer().readEvents(numEvents);</div><div class="line">  &#125;</div><div class="line">  ...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>此段代码上下部分主要是对状态和条件的一些判断，获取数据的主要部分在<code>currentFile.get().getDeserializer().readEvents(numEvents);</code>，如此得确定使用的哪一个<code>EventDeserializer</code>。</p>
+<p><code>ReliableSpoolingFileEventReader.openFile</code>片段:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">   * Opens a file for consuming</div><div class="line">   * <span class="doctag">@param</span> file</div><div class="line">   * <span class="doctag">@return</span> &#123;<span class="doctag">@link</span> #FileInfo&#125; for the file to consume or absent option if the</div><div class="line">   * file does not exists or readable.</div><div class="line">   */</div><div class="line">  <span class="function"><span class="keyword">private</span> Optional&lt;FileInfo&gt; <span class="title">openFile</span><span class="params">(File file)</span> </span>&#123;    </div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      <span class="comment">// roll the meta file, if needed</span></div><div class="line">      String nextPath = file.getPath();</div><div class="line">      PositionTracker tracker =</div><div class="line">          DurablePositionTracker.getInstance(metaFile, nextPath);</div><div class="line">      <span class="keyword">if</span> (!tracker.getTarget().equals(nextPath)) &#123;</div><div class="line">        tracker.close();</div><div class="line">        deleteMetaFile();</div><div class="line">        tracker = DurablePositionTracker.getInstance(metaFile, nextPath);</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      <span class="comment">// sanity check</span></div><div class="line">      Preconditions.checkState(tracker.getTarget().equals(nextPath),</div><div class="line">          <span class="string">"Tracker target %s does not equal expected filename %s"</span>,</div><div class="line">          tracker.getTarget(), nextPath);</div><div class="line"></div><div class="line">      ResettableInputStream in =</div><div class="line">          <span class="keyword">new</span> ResettableFileInputStream(file, tracker,</div><div class="line">              ResettableFileInputStream.DEFAULT_BUF_SIZE, inputCharset,</div><div class="line">              decodeErrorPolicy);</div><div class="line">      EventDeserializer deserializer = EventDeserializerFactory.getInstance</div><div class="line">          (deserializerType, deserializerContext, in);</div><div class="line"></div><div class="line">      <span class="keyword">return</span> Optional.of(<span class="keyword">new</span> FileInfo(file, deserializer));</div><div class="line">    &#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</div><div class="line">      <span class="comment">// File could have been deleted in the interim</span></div><div class="line">      logger.warn(<span class="string">"Could not find file: "</span> + file, e);</div><div class="line">      <span class="keyword">return</span> Optional.absent();</div><div class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">      logger.error(<span class="string">"Exception opening file: "</span> + file, e);</div><div class="line">      <span class="keyword">return</span> Optional.absent();</div><div class="line">    &#125;</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
+<p>此方法定义了获取文件数据时使用的<code>EventDeserializer</code>，在<code>SpoolDirectorySourceConfigurationConstants</code>中看到<code>deserializerType</code>的默认值是<code>LINE</code>，<code>EventDeserializerFactory</code>会根据此字段映射到<code>LineDeserializer</code>。</p>
+<p>另外此方法还定义了<code>ResettableInputStream</code>，这个类是后面与文件打交道的，问题也是出来这个类中。注意<code>inputCharset</code>和<code>decodeErrorPolicy</code>两个字段，默认值分别为<code>UTF-8</code>和<code>FAIL</code>。<code>decodeErrorPolicy</code>字段定义了如果遇到解析失败的字符时应该如果处理，默认是<code>FAIL</code>，还可以选择<code>IGNORE</code>和<code>REPLACE</code>。<code>FAIL</code>时会抛出Exception，flume整个进程会阻塞在这，<code>IGNORE</code>会忽略此字符，<code>REPLACE</code>会用另外一个字符替代。</p>
+<p><code>SpoolDirectorySourceConfigurationConstants</code>中片段:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/** Deserializer to use to parse the file data into Flume Events */</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DESERIALIZER = <span class="string">"deserializer"</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_DESERIALIZER = <span class="string">"LINE"</span>;</div><div class="line"></div><div class="line"><span class="comment">/** Character set used when reading the input. */</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String INPUT_CHARSET = <span class="string">"inputCharset"</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_INPUT_CHARSET = <span class="string">"UTF-8"</span>;</div><div class="line"></div><div class="line"><span class="comment">/** What to do when there is a character set decoding error. */</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DECODE_ERROR_POLICY = <span class="string">"decodeErrorPolicy"</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_DECODE_ERROR_POLICY = DecodeErrorPolicy.FAIL.name();</div></pre></td></tr></table></figure></p>
+<p>再回到<code>readEvents</code>方法上，只看默认的<code>LineDeserializer</code>中实现。</p>
+<p><code>LineDeserializer.readEvents</code>和<code>LineDeserializer.readEvent</code>和<code>LineDeserializer.readLine</code>片段<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> List&lt;Event&gt; <span class="title">readEvents</span><span class="params">(<span class="keyword">int</span> numEvents)</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">    ensureOpen();</div><div class="line">    List&lt;Event&gt; events = Lists.newLinkedList();</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numEvents; i++) &#123;</div><div class="line">        Event event = readEvent();</div><div class="line">        <span class="keyword">if</span> (event != <span class="keyword">null</span>) &#123;</div><div class="line">        events.add(event);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> events;</div><div class="line">&#125;</div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> Event <span class="title">readEvent</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">    ensureOpen();</div><div class="line">    String line = readLine();</div><div class="line">    <span class="keyword">if</span> (line == <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">return</span> EventBuilder.withBody(line, outputCharset);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">// <span class="doctag">TODO:</span> consider not returning a final character that is a high surrogate</span></div><div class="line"><span class="comment">// when truncating</span></div><div class="line"><span class="function"><span class="keyword">private</span> String <span class="title">readLine</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">    StringBuilder sb = <span class="keyword">new</span> StringBuilder();</div><div class="line">    <span class="keyword">int</span> c;</div><div class="line">    <span class="keyword">int</span> readChars = <span class="number">0</span>;</div><div class="line">    <span class="keyword">while</span> ((c = in.readChar()) != -<span class="number">1</span>) &#123;</div><div class="line">      readChars++;</div><div class="line"></div><div class="line">      <span class="comment">// <span class="doctag">FIXME:</span> support \r\n</span></div><div class="line">      <span class="keyword">if</span> (c == <span class="string">'\n'</span>) &#123;</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      sb.append((<span class="keyword">char</span>)c);</div><div class="line"></div><div class="line">      <span class="keyword">if</span> (readChars &gt;= maxLineLength) &#123;</div><div class="line">        logger.warn(<span class="string">"Line length exceeds max (&#123;&#125;), truncating line!"</span>,</div><div class="line">            maxLineLength);</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (readChars &gt; <span class="number">0</span>) &#123;</div><div class="line">      <span class="keyword">return</span> sb.toString();</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上面的<code>readEvents</code>和<code>readEvent</code>都比较简单，最终是调用了<code>readLine</code>方法。<code>readline</code>方法中的<code>in</code>对象就是前面说的<code>ResettableInputStream</code>，当<code>in.readChar()</code>返回的是<code>-1</code>或<code>\n</code>就认为此行读取完毕。只能再看<code>ResettableInputStream.readChar</code>方法实现。</p>
+<p><code>ResettableInputStream.readChar</code>片段:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">int</span> <span class="title">readChar</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">    <span class="comment">// The decoder can have issues with multi-byte characters.</span></div><div class="line">    <span class="comment">// This check ensures that there are at least maxCharWidth bytes in the buffer</span></div><div class="line">    <span class="comment">// before reaching EOF.</span></div><div class="line">    <span class="keyword">if</span> (buf.remaining() &lt; maxCharWidth) &#123;</div><div class="line">      buf.clear();</div><div class="line">      buf.flip();</div><div class="line">      refillBuf();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">int</span> start = buf.position();</div><div class="line">    charBuf.clear();</div><div class="line"></div><div class="line">    <span class="keyword">boolean</span> isEndOfInput = <span class="keyword">false</span>;</div><div class="line">    <span class="keyword">if</span> (position &gt;= fileSize) &#123;</div><div class="line">      isEndOfInput = <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    CoderResult res = decoder.decode(buf, charBuf, isEndOfInput);  <span class="comment">// ------- 1</span></div><div class="line">    <span class="keyword">if</span> (res.isMalformed() || res.isUnmappable()) &#123;   <span class="comment">// ------- 2</span></div><div class="line">      res.throwException();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">int</span> delta = buf.position() - start;</div><div class="line"></div><div class="line">    charBuf.flip();    <span class="comment">// ------- 3</span></div><div class="line">    <span class="keyword">if</span> (charBuf.hasRemaining()) &#123;    <span class="comment">// ------- 4</span></div><div class="line">      <span class="keyword">char</span> c = charBuf.get();</div><div class="line">      <span class="comment">// don't increment the persisted location if we are in between a</span></div><div class="line">      <span class="comment">// surrogate pair, otherwise we may never recover if we seek() to this</span></div><div class="line">      <span class="comment">// location!</span></div><div class="line">      incrPosition(delta, !Character.isHighSurrogate(c));</div><div class="line">      <span class="keyword">return</span> c;</div><div class="line"></div><div class="line">    <span class="comment">// there may be a partial character in the decoder buffer</span></div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      incrPosition(delta, <span class="keyword">false</span>);</div><div class="line">      <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">    &#125;</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
+<p>看此方法第一行注释，<code>The decoder can have issues with multi-byte characters.</code>，说明此方法的开发人员也知道这个方法的问题所在。当字符是多个字符宽度时，decoder解析会出问题。<br>前面说的在<code>new ResettableInputStream</code>时会指定<code>inputCharset</code>参数，此参数就决定了使用哪一个<code>decoder</code>，默认是<br><code>UTF_8</code>，此处指的是<code>UTF_8 class</code>。</p>
+<p>先整体说一下，具体的<code>decode</code>过程可以自行研究。<br>假定此行中存在<code>上海👃你好</code>，当读完<code>海</code>读取下一个char时，也就是上面<code>1</code>所在位置时，会发生<code>overflow</code>，即<code>res.isOverflow</code>是<code>true</code>，但在<code>2</code>的位置没有对<code>overflow</code>进行判断，继续往下走，经过<code>3</code>处的<code>flip</code>之后，<code>charBuf</code>变成空，<code>4</code>时走<code>else</code>逻辑，返回<code>-1</code>，上层class会认为此文件已经读取完毕，导致文件后面数据丢失，并且不报Exception。</p>
+<p>其实在flume-1.7.0中此问题就已经解决，可以参考<a href="https://github.com/apache/flume/commit/344e0accae5675fd3d14b8414531528607865aae#diff-2abdc3f807bae84ca2b41578c4e66ca7" target="_blank" rel="external">https://github.com/apache/flume/commit/344e0accae5675fd3d14b8414531528607865aae#diff-2abdc3f807bae84ca2b41578c4e66ca7</a></p>
+<p>主要改进地方：</p>
+<ol>
+<li>修改前的<code>maxCharWidth = (int)Math.ceil(charset.newEncoder().maxBytesPerChar());</code>，charset为”utf8”时值为”3”,修改后会对”UTF-8”,”UTF-16”,”UTF-32”进行不同设置。</li>
+<li><code>charbuf</code>大小也由之前<code>single char</code>改为<code>two chars</code>。</li>
+<li>修改后，不仅对<code>charbuf</code>判断，还会对<code>buf</code>进行判断。当<code>charBuf.hasRemaining</code>为<code>true</code>时，可以断定是个<code>single char</code>，直接返回；当为<code>false</code>时，判断<code>buf.hasRemaining()</code>为<code>true</code>时，将这两个char分别放在<code>highSurrogate</code>和<code>lowSurrogate</code>中，此次返回<code>highSurrogate</code>，并设置<code>hasLowSurrogate</code>为true。当下次调用此方法时，先判断<code>hasLowSurrogat</code>，如果为<code>true</code>，直接返回<code>lowSurrogate</code>，并将<code>hasLowSurrogat</code>恢复为<code>false</code>。如此一来，这两个char全都读取完毕。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/01/29/2016-01-29-flume-hdfs-ucs-4/" data-id="ciqlv6tw9001fpo9k4l3ixh8p" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/01/29/2016-01-29-flume-hdfs-ucs-4/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/flume/">flume</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/02/25/2016-02-25-Enabling-sentry-in-CDH/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          CDH启用sentry
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/01/19/2016-01-19-hdfs-add-nodes-dynamically/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">HFDS修改备份系数和动态增删节点</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/01/29/2016-01-29-flume-hdfs-ucs-4/" data-title="Flume SpoolDirectorySource遇到emoj截断问题" data-url="http://wzktravel.github.io/2016/01/29/2016-01-29-flume-hdfs-ucs-4/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/05/24/2016-05-24-upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/2016-05-11-elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/2016-05-10-hadoop-management/">hadoop集群管理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/04/2016-05-04-azkaban-how-to-install-and-use/">azkaban的安装和使用</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/14/2016-04-14-quartz-in-practice/">quartz in practice</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

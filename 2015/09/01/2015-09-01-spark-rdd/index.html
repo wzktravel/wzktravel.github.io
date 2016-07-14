@@ -1,0 +1,490 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Spark RDD学习 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="RDD(resilient distributed dataset)是spark核心概念之一，spark中数据的处理过程其实是rdd之间的互相转换，在此对rdd的一些东西进行整理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark RDD学习">
+<meta property="og:url" content="http://wzktravel.github.io/2015/09/01/2015-09-01-spark-rdd/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="RDD(resilient distributed dataset)是spark核心概念之一，spark中数据的处理过程其实是rdd之间的互相转换，在此对rdd的一些东西进行整理。">
+<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spark RDD学习">
+<meta name="twitter:description" content="RDD(resilient distributed dataset)是spark核心概念之一，spark中数据的处理过程其实是rdd之间的互相转换，在此对rdd的一些东西进行整理。">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-2015-09-01-spark-rdd" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/09/01/2015-09-01-spark-rdd/" class="article-date">
+  <time datetime="2015-08-31T16:12:43.000Z" itemprop="datePublished">2015-09-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Spark RDD学习
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>RDD(resilient distributed dataset)是spark核心概念之一，spark中数据的处理过程其实是rdd之间的互相转换，在此对rdd的一些东西进行整理。<br><a id="more"></a></p>
+<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>RDD: resilient distributed dataset, 弹性分布式数据集</p>
+<ol>
+<li>A collection of elements partitioned across the nodes of the cluster that can be operated on in parallel. (集合、分布式,并行计算)</li>
+<li>Created by starting with a file in the Hadoop file system (or any other Hadoop-supported file system), or an existing Scala collection in the driver program, and transforming it. (数据可以来自scala集合或外部存储,可以进行transform和action)</li>
+<li>Persist an RDD in memory, allowing it to be reused efficiently across parallel operations. (持久化中间RDD,加速计算)</li>
+<li>RDDs automatically recover from node failures. (失败后基于lineage重建)</li>
+</ol>
+<h1 id="创建RDD"><a href="#创建RDD" class="headerlink" title="创建RDD"></a>创建RDD</h1><h2 id="来自集合"><a href="#来自集合" class="headerlink" title="来自集合"></a>来自集合</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">val data = Array(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</div><div class="line">val distData = sc.parallelize(data)</div><div class="line">val distData2 = sc.parallelize(data, <span class="number">10</span>) <span class="comment">//指定partition数量</span></div></pre></td></tr></table></figure>
+<h2 id="来自外部数据"><a href="#来自外部数据" class="headerlink" title="来自外部数据"></a>来自外部数据</h2><h3 id="Text-File"><a href="#Text-File" class="headerlink" title="Text File"></a>Text File</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">val localFile = sc.textFile(<span class="string">"file://path/data.txt"</span>) </div><div class="line">val hdfsFile = sc.textFile(<span class="string">"hdfs://path/data.txt"</span>)</div></pre></td></tr></table></figure>
+<h3 id="Sequence-File"><a href="#Sequence-File" class="headerlink" title="Sequence File"></a>Sequence File</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sc.sequenceFile[K, V]</div></pre></td></tr></table></figure>
+<h3 id="Hadoop-InputFormat"><a href="#Hadoop-InputFormat" class="headerlink" title="Hadoop InputFormat"></a>Hadoop InputFormat</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sc.hadoopRDD <span class="comment">//old api: org.apache.hadoop.mapred</span></div><div class="line">sc.newAPIHadoopRDD <span class="comment">//new api: org.apache.hadoop.mapreduce</span></div></pre></td></tr></table></figure>
+<h1 id="RDD操作"><a href="#RDD操作" class="headerlink" title="RDD操作"></a>RDD操作</h1><p>RDD包括两种类型的操作: Transformation 和 Action。Transformation从已有的RDD生成新的RDD，lazy执行；Action触发RDD上的计算，返回结果到driver。</p>
+<h2 id="Transformation"><a href="#Transformation" class="headerlink" title="Transformation"></a>Transformation</h2><table>
+<thead>
+<tr>
+<th>Transformation</th>
+<th style="text-align:left">Example      </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>map(func)</td>
+<td style="text-align:left">rdd.map(x =&gt; x*x)</td>
+</tr>
+<tr>
+<td>filter(func)</td>
+<td style="text-align:left">rdd.filter(x =&gt; x/2==0)</td>
+</tr>
+<tr>
+<td>flatMap(func)</td>
+<td style="text-align:left">rdd.flatMap(x =&gt; )</td>
+</tr>
+<tr>
+<td>union(otherRDD)</td>
+<td style="text-align:left">rdd1.union(rdd2)</td>
+</tr>
+<tr>
+<td>distinct([numTasks])</td>
+<td style="text-align:left">rdd.distinct()</td>
+</tr>
+<tr>
+<td>groupByKey([numTasks])</td>
+<td style="text-align:left">rdd.map((_, 1)).groupByKey()</td>
+</tr>
+<tr>
+<td>reduceByKey(func, [numTasks])</td>
+<td style="text-align:left">rdd.map((<em>, 1)).reduceByKey(</em>+_)</td>
+</tr>
+<tr>
+<td>sortByKey([ascending], [numTasks])</td>
+<td style="text-align:left">rdd.sortByKey()</td>
+</tr>
+<tr>
+<td>join(otherDataset, [numTasks])</td>
+<td style="text-align:left">rdd1.join(rdd2)</td>
+</tr>
+<tr>
+<td>cogroup(otherDataset, [numTasks])</td>
+<td style="text-align:left">rdd1.cogroup(rdd2)</td>
+</tr>
+<tr>
+<td>cartesian(otherDataset)</td>
+<td style="text-align:left">rdd1.cartesian(rdd2)</td>
+</tr>
+<tr>
+<td>coalesce(numPartitions)</td>
+<td style="text-align:left">rdd.coalesce(50)</td>
+</tr>
+<tr>
+<td>repartition(numPartitions)</td>
+<td style="text-align:left">rdd.repartition(100)     </td>
+</tr>
+</tbody>
+</table>
+<h2 id="Action"><a href="#Action" class="headerlink" title="Action"></a>Action</h2><table>
+<thead>
+<tr>
+<th>Action</th>
+<th style="text-align:left">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>reduce(func)</td>
+<td style="text-align:left">rdd.reduce(<em>+</em>)</td>
+</tr>
+<tr>
+<td>collect()</td>
+<td style="text-align:left">rdd.collect()</td>
+</tr>
+<tr>
+<td>count()</td>
+<td style="text-align:left">rdd.count()</td>
+</tr>
+<tr>
+<td>first()</td>
+<td style="text-align:left">rdd.first()</td>
+</tr>
+<tr>
+<td>take(n)</td>
+<td style="text-align:left">rdd.take(10)</td>
+</tr>
+<tr>
+<td>saveAsTextFile(path)</td>
+<td style="text-align:left">rdd.saveAsTextFile(“/output”)</td>
+</tr>
+<tr>
+<td>saveAsSequenceFile(path)</td>
+<td style="text-align:left">rdd.saveAsSequenceFile(“/output”)</td>
+</tr>
+<tr>
+<td>saveAsObjectFile(path)</td>
+<td style="text-align:left">rdd.saveAsObjectFile(“/output”)</td>
+</tr>
+<tr>
+<td>countByKey()</td>
+<td style="text-align:left">rdd.countByKey()</td>
+</tr>
+<tr>
+<td>foreach(func)</td>
+<td style="text-align:left">rdd.foreach(func)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="示例-WordCount"><a href="#示例-WordCount" class="headerlink" title="示例 WordCount"></a>示例 WordCount</h2><ul>
+<li>step-1: 数据读入, sc.textFile  <strong>创建RDD</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">val rdd1 = sc.textFile(<span class="string">"README.md"</span>)</div></pre></td></tr></table></figure>
+<ul>
+<li>step-2: map操作, flatMap, map  <strong>Transformation</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">val rdd2 = rdd1.flatMap(x =&gt; x.split(<span class="string">" "</span>)).map(x =&gt; (x, <span class="number">1</span>))</div></pre></td></tr></table></figure>
+<ul>
+<li>step-3: reduce操作，reduceByKey <strong>Transformation(shuffle)</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">val rdd3 = rdd2.reduceByKey(v =&gt; v + v)</div></pre></td></tr></table></figure>
+<ul>
+<li>step-4: 结果输出, collect  <strong>Action</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rdd3.collect()</div></pre></td></tr></table></figure>
+<h1 id="RDD持久化"><a href="#RDD持久化" class="headerlink" title="RDD持久化"></a>RDD持久化</h1><p>使用cache()/persist()对RDD进行持久化,默认内存.</p>
+<h2 id="storage-level"><a href="#storage-level" class="headerlink" title="storage level"></a>storage level</h2><table>
+<thead>
+<tr>
+<th>Storage Level</th>
+<th style="text-align:left">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MEMORY_ONLY</td>
+<td style="text-align:left">Store RDD as deserialized Java objects in the JVM. If the RDD does not fit in memory, some partitions will not be cached and will be recomputed on the fly each time they’re needed. This is the default level.</td>
+</tr>
+<tr>
+<td>MEMORY_AND_DISK</td>
+<td style="text-align:left">Store RDD as deserialized Java objects in the JVM. If the RDD does not fit in memory, store the partitions that don’t fit on disk, and read them from there when they’re needed.</td>
+</tr>
+<tr>
+<td>MEMORY_ONLY_SER</td>
+<td style="text-align:left">Store RDD as serialized Java objects (one byte array per partition). This is generally more space-efficient than deserialized objects, especially when using a fast serializer, but more CPU-intensive to read.</td>
+</tr>
+<tr>
+<td>MEMORY_AND_DISK_SER</td>
+<td style="text-align:left">Similar to MEMORY_ONLY_SER, but spill partitions that don’t fit in memory to disk instead of recomputing them on the fly each time they’re needed.</td>
+</tr>
+<tr>
+<td>DISK_ONLY</td>
+<td style="text-align:left">Store the RDD partitions only on disk.</td>
+</tr>
+<tr>
+<td>MEMORY_ONLY_2, MEMORY_AND_DISK_2, etc.</td>
+<td style="text-align:left">Same as the levels above, but replicate each partition on two cluster nodes.</td>
+</tr>
+<tr>
+<td>OFF_HEAP (experimental)</td>
+<td style="text-align:left">Store RDD in serialized format in Tachyon. Compared to MEMORY_ONLY_SER, OFF_HEAP reduces garbage collection overhead and allows executors to be smaller and to share a pool of memory, making it attractive in environments with large heaps or multiple concurrent applications. Furthermore, as the RDDs reside in Tachyon, the crash of an executor does not lead to losing the in-memory cache. In this mode, the memory in Tachyon is discardable. Thus, Tachyon does not attempt to reconstruct a block that it evicts from memory. If you plan to use Tachyon as the off heap store, Spark is compatible with Tachyon out-of-the-box. Please refer to this page for the suggested version pairings.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="经验"><a href="#经验" class="headerlink" title="经验"></a>经验</h2><ul>
+<li>最好选用MEMORY_ONLY</li>
+<li>若内存不够,尝试MEMORY_ONLY_SER(Kryo serialization效率高于Java serialization)</li>
+<li>除非RDD的计算很复杂或迭代次数很多, 再将其spill到磁盘;否则,其效率与从源端重算差不多。</li>
+<li>若想提高容错, 提升其replicated storage level</li>
+<li>使用Tachyon OFF_HEAP:executor挂掉缓存数据不丢失、减少executor的gc开销、不同executor间共享缓存</li>
+</ul>
+<h1 id="共享变量"><a href="#共享变量" class="headerlink" title="共享变量"></a>共享变量</h1><h2 id="Broadcast-Variables"><a href="#Broadcast-Variables" class="headerlink" title="Broadcast Variables"></a>Broadcast Variables</h2><ul>
+<li>使用sc.broadcase()将变量分发到所有工作节点</li>
+<li>工作节点使用value获取变量值</li>
+<li>一旦被分发，不能更改</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">scala&gt; val broadcastVar = sc.broadcast(Array(1,2,3))</div><div class="line">broadcastVar: org.apache.spark.broadcast.Broadcast[Array[Int]] = Broadcast(0)</div><div class="line"></div><div class="line">scala&gt; broadcastVar.value</div><div class="line">res1: Array[Int] = Array(1, 2, 3)</div></pre></td></tr></table></figure>
+<h2 id="Accumulator"><a href="#Accumulator" class="headerlink" title="Accumulator"></a>Accumulator</h2><ul>
+<li>executor使用 “+=” 操作符增加计数</li>
+<li>driver使用value读取数值</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">scala&gt; val acc = sc.accumulator(0, <span class="string">"test accumulator"</span>)</div><div class="line">acc: org.apache.spark.Accumulator[Int] = 0</div><div class="line"></div><div class="line">scala&gt; sc.parallelize(Array(1,2,3,4)).foreach(x=&gt; acc+=x)</div><div class="line"></div><div class="line">scala&gt; acc.value</div><div class="line">res3: Int = 10</div></pre></td></tr></table></figure>
+<h1 id="RDD依赖关系"><a href="#RDD依赖关系" class="headerlink" title="RDD依赖关系"></a>RDD依赖关系</h1><h2 id="窄依赖-narrow-dependencies"><a href="#窄依赖-narrow-dependencies" class="headerlink" title="窄依赖(narrow dependencies)"></a>窄依赖(narrow dependencies)</h2><ul>
+<li>子RDD的每个分区依赖于常数个父RDD分区（即与数据规模无关）</li>
+<li>输入输出一对一的算子，且结果RDD的分区结构不变，如map、flatMap</li>
+<li>输入输出一对一，但结果RDD的分区结构发生变化，如union、coalesce</li>
+<li>从输入中选择部分元素的算子，如filter、distinct、subtract、sample</li>
+</ul>
+<h2 id="宽依赖-wide-dependencies"><a href="#宽依赖-wide-dependencies" class="headerlink" title="宽依赖(wide dependencies)"></a>宽依赖(wide dependencies)</h2><ul>
+<li>子RDD的每个分区依赖于所有父RDD分区</li>
+<li>对单个RDD基于Key进行重组和Reduce，如groupByKey、reduceByKey</li>
+<li>对两个RDD基于Key进行Join和重组，如join    </li>
+</ul>
+<h1 id="RDD容错"><a href="#RDD容错" class="headerlink" title="RDD容错"></a>RDD容错</h1><p>支持容错通常采用两种方式：数据复制或日志记录。对于以数据为中心的系统而言，这两种方式都非常昂贵，因为它需要跨集群网络拷贝大量数据，毕竟带宽的数据远远低于内存。</p>
+<p>RDD天生是支持容错的。首先，它自身是一个不变的(immutable)数据集，其次，它能够记住构建它的操作图（Graph of Operation），因此当执行任务的Worker失败时，完全可以通过操作图获得之前执行的操作，进行重新计算。由于无需采用replication方式支持容错，很好地降低了跨网络的数据传输成本。</p>
+<p>不过，在某些场景下，Spark也需要利用记录日志的方式来支持容错。例如，在Spark Streaming中，针对数据进行update操作，或者调用Streaming提供的window操作时，就需要恢复执行过程的中间状态。此时，需要通过Spark提供的checkpoint机制，以支持操作能够从checkpoint得到恢复。</p>
+<p>针对RDD的wide dependency，最有效的容错方式同样还是采用checkpoint机制。不过，似乎Spark的最新版本仍然没有引入auto checkpointing机制。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="http://spark.apache.org/docs/latest/programming-guide.html#resilient-distributed-datasets-rdds" target="_blank" rel="external">spark programming guide</a></li>
+<li><a href="http://7xlgd1.com1.z0.glb.clouddn.com/docs/nsdi12-final138.pdf" target="_blank" rel="external">Resilient Distributed Datasets: A Fault-tolerant Abstraction for In-Memory Cluster Computing</a>: Matei Zaharia做的spark论文</li>
+<li><a href="http://7xlgd1.com1.z0.glb.clouddn.com/docs/dev-meetup-dec-2012.pptx" target="_blank" rel="external">Introduction to Spark Internals</a>: Spark作者在2012 Developer Meetup上做的演讲</li>
+<li><a href="http://shiyanjun.cn/archives/744.html" target="_blank" rel="external">RDD：基于内存的集群计算容错抽象</a></li>
+<li><a href="http://www.infoq.com/cn/articles/spark-core-rdd" target="_blank" rel="external">理解Spark核心RDD</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2015/09/01/2015-09-01-spark-rdd/" data-id="ciqlv6tv8000jpo9k9i0umcfr" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2015/09/01/2015-09-01-spark-rdd/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spark/">spark</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/09/10/2015-09-10-log/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          日志追查总结
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/08/16/2015-08-16-spark-learning/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">spark学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/09/01/2015-09-01-spark-rdd/" data-title="Spark RDD学习" data-url="http://wzktravel.github.io/2015/09/01/2015-09-01-spark-rdd/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/05/24/2016-05-24-upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/2016-05-11-elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/2016-05-10-hadoop-management/">hadoop集群管理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/04/2016-05-04-azkaban-how-to-install-and-use/">azkaban的安装和使用</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/14/2016-04-14-quartz-in-practice/">quartz in practice</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>
