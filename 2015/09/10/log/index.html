@@ -1,0 +1,313 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>日志追查总结 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="今天想统计一下无线的resin日志中rtype的数量和比例，然后看一个月以来的趋势，分析resin代码是否有异常。本来只要在统计平台中写hive脚本，很快就可以跑出来，但是hive仓库中resin日志竟然没有入库，更没有进行解析。于是乎，只能手动从hdfs上拉数据然后分析。在这个过程中，遇到一些问题，在这总结一下，也把解决方法贴出来。从日志中总是能发现各种各样的问题，任重而道远，还需要一一进行解决">
+<meta property="og:type" content="article">
+<meta property="og:title" content="日志追查总结">
+<meta property="og:url" content="http://wzktravel.github.io/2015/09/10/log/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="今天想统计一下无线的resin日志中rtype的数量和比例，然后看一个月以来的趋势，分析resin代码是否有异常。本来只要在统计平台中写hive脚本，很快就可以跑出来，但是hive仓库中resin日志竟然没有入库，更没有进行解析。于是乎，只能手动从hdfs上拉数据然后分析。在这个过程中，遇到一些问题，在这总结一下，也把解决方法贴出来。从日志中总是能发现各种各样的问题，任重而道远，还需要一一进行解决">
+<meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/rtype_data.png">
+<meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/rtype_chart.png">
+<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="日志追查总结">
+<meta name="twitter:description" content="今天想统计一下无线的resin日志中rtype的数量和比例，然后看一个月以来的趋势，分析resin代码是否有异常。本来只要在统计平台中写hive脚本，很快就可以跑出来，但是hive仓库中resin日志竟然没有入库，更没有进行解析。于是乎，只能手动从hdfs上拉数据然后分析。在这个过程中，遇到一些问题，在这总结一下，也把解决方法贴出来。从日志中总是能发现各种各样的问题，任重而道远，还需要一一进行解决">
+<meta name="twitter:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/rtype_data.png">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-log" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/09/10/log/" class="article-date">
+  <time datetime="2015-09-10T12:03:00.000Z" itemprop="datePublished">2015-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      日志追查总结
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&#x4ECA;&#x5929;&#x60F3;&#x7EDF;&#x8BA1;&#x4E00;&#x4E0B;&#x65E0;&#x7EBF;&#x7684;resin&#x65E5;&#x5FD7;&#x4E2D;rtype&#x7684;&#x6570;&#x91CF;&#x548C;&#x6BD4;&#x4F8B;&#xFF0C;&#x7136;&#x540E;&#x770B;&#x4E00;&#x4E2A;&#x6708;&#x4EE5;&#x6765;&#x7684;&#x8D8B;&#x52BF;&#xFF0C;&#x5206;&#x6790;resin&#x4EE3;&#x7801;&#x662F;&#x5426;&#x6709;&#x5F02;&#x5E38;&#x3002;&#x672C;&#x6765;&#x53EA;&#x8981;&#x5728;&#x7EDF;&#x8BA1;&#x5E73;&#x53F0;&#x4E2D;&#x5199;hive&#x811A;&#x672C;&#xFF0C;&#x5F88;&#x5FEB;&#x5C31;&#x53EF;&#x4EE5;&#x8DD1;&#x51FA;&#x6765;&#xFF0C;&#x4F46;&#x662F;hive&#x4ED3;&#x5E93;&#x4E2D;resin&#x65E5;&#x5FD7;&#x7ADF;&#x7136;&#x6CA1;&#x6709;&#x5165;&#x5E93;&#xFF0C;&#x66F4;&#x6CA1;&#x6709;&#x8FDB;&#x884C;&#x89E3;&#x6790;&#x3002;&#x4E8E;&#x662F;&#x4E4E;&#xFF0C;&#x53EA;&#x80FD;&#x624B;&#x52A8;&#x4ECE;hdfs&#x4E0A;&#x62C9;&#x6570;&#x636E;&#x7136;&#x540E;&#x5206;&#x6790;&#x3002;<br>&#x5728;&#x8FD9;&#x4E2A;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x9047;&#x5230;&#x4E00;&#x4E9B;&#x95EE;&#x9898;&#xFF0C;&#x5728;&#x8FD9;&#x603B;&#x7ED3;&#x4E00;&#x4E0B;&#xFF0C;&#x4E5F;&#x628A;&#x89E3;&#x51B3;&#x65B9;&#x6CD5;&#x8D34;&#x51FA;&#x6765;&#x3002;<br>&#x4ECE;&#x65E5;&#x5FD7;&#x4E2D;&#x603B;&#x662F;&#x80FD;&#x53D1;&#x73B0;&#x5404;&#x79CD;&#x5404;&#x6837;&#x7684;&#x95EE;&#x9898;&#xFF0C;&#x4EFB;&#x91CD;&#x800C;&#x9053;&#x8FDC;&#xFF0C;&#x8FD8;&#x9700;&#x8981;&#x4E00;&#x4E00;&#x8FDB;&#x884C;&#x89E3;&#x51B3;&#x3002;<br><a id="more"></a></p>
+<p>&#x5148;&#x5927;&#x4F53;&#x5217;&#x4E00;&#x4E0B;&#x7528;&#x5230;&#x7684;&#x77E5;&#x8BC6;&#x70B9;&#xFF1A;</p>
+<ol>
+<li>shell&#x4E2D;&#x5B9E;&#x73B0;trim, <code>echo &quot;   abs  ssa &quot; | sed -e &apos;s/\(^ *\)//&apos; -e &apos;s/\( *$\)//&apos;</code>&#xFF0C;&#x5176;&#x5B9E;&#x5C31;&#x662F;sed&#x7684;&#x66FF;&#x6362;&#x529F;&#x80FD;&#xFF0C;&#x628A;&#x591A;&#x4E2A;&#x7A7A;&#x683C;&#x66FF;&#x6362;&#x4E3A;&#x7A7A;&#x3002;</li>
+<li>nohup&#x65F6;&#xFF0C;&#x4E0A;&#x4E00;&#x4E2A;&#x547D;&#x4EE4;&#x7ED3;&#x675F;&#x540E;&#x6267;&#x884C;&#x4E0B;&#x4E00;&#x4E2A;&#x547D;&#x4EE4;&#xFF0C;&#x4F7F;&#x7528; <code>&amp;&amp;</code>&#xFF0C;&#x4E0D;&#x80FD;&#x7528;<code>;</code>&#x3002;</li>
+<li>awk&#x4F7F;&#x7528;shell&#x53D8;&#x91CF;, <code>&quot;&apos;${var}&apos;&quot;</code>, &#x53CC;&#x5F15;&#x53F7;&#x4E2D;&#x52A0;&#x5355;&#x5F15;&#x53F7;&#xFF0C;&#x56E0;&#x4E3A;awk&#x7528;&#x5355;&#x5F15;&#x53F7;&#x3002; </li>
+<li>uniq, sort</li>
+<li>hive&#x7C7B;&#x578B;&#x8F6C;&#x6362;: <code>cast(pagesize as int)</code></li>
+<li>hive&#x6B63;&#x5219;: <code>regexp_extract(str, regexp, [idx])</code></li>
+<li>sql &#x7AD6;&#x8868;&#x53D8;&#x6A2A;&#x8868;&#xFF0C;&#x6A2A;&#x8868;&#x53D8;&#x7AD6;&#x8868;</li>
+</ol>
+<p><br></p>
+<p>&#x5F00;&#x59CB;&#x5462;&#xFF0C;&#x8FD8;&#x4E0D;&#x77E5;&#x9053;resin&#x65E5;&#x5FD7;&#x6CA1;&#x6709;&#x5165;&#x5E93;&#xFF0C;&#x4E5F;&#x4E0D;&#x77E5;&#x9053;&#x89E3;&#x6790;&#xFF0C;&#x50BB;&#x4E4E;&#x4E4E;&#x7684;&#x5199;&#x4E86;&#x4E00;&#x4E2A;hive&#x811A;&#x672C;&#xFF0C;&#x653E;&#x5728;&#x7EDF;&#x8BA1;&#x5E73;&#x53F0;&#x4E2D;&#x8DD1;&#xFF0C;&#x5B57;&#x6BB5;&#x4E0D;&#x5BF9;&#xFF0C;&#x539F;&#x6765;&#x6CA1;&#x6709;&#x89E3;&#x6790;&#x3002;&#x6CA1;&#x89E3;&#x6790;&#x4E5F;&#x6CA1;&#x5173;&#x7CFB;&#xFF0C;&#x53CD;&#x6B63;&#x6682;&#x65F6;&#x53EA;&#x7528;&#x5230;&#x4E00;&#x4E2A;rtype&#x5B57;&#x6BB5;&#xFF0C;&#x7528;&#x6B63;&#x5219;&#x53D6;&#x5230;rtype&#x7684;&#x503C;&#x8FDB;&#x884C;&#x7EDF;&#x8BA1;&#x5457;&#x3002;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">--&#x4F7F;&#x7528;&#x5230;&#x4E86; regexp_extract(str, regexp, [idx])&#xFF0C;idx&#x662F;&#x6B63;&#x5219;&#x8868;&#x8FBE;&#x5F0F;&#x4E2D;&#x7B2C;&#x51E0;&#x4E2A;&#x53C2;&#x6570;&#xFF0C;idx&#x4E3A;0&#x8868;&#x793A;&#x6574;&#x4E2A;str&#x3002;</span></div><div class="line"><span class="keyword">select</span> regexp_extract(line, <span class="string">&quot;rtype=(\\d),&quot;</span>, <span class="number">1</span>) <span class="keyword">as</span> rtype <span class="keyword">from</span> resinlog <span class="keyword">where</span> ...</div></pre></td></tr></table></figure>
+<p>&#x7136;&#x800C;&#x5E76;&#x6CA1;&#x6709;&#x7ED3;&#x679C;&#x3002;&#x597D;&#x5427;&#xFF0C;&#x53EF;&#x80FD;&#x6B63;&#x5219;&#x5199;&#x7684;&#x4E0D;&#x592A;&#x5BF9;&#xFF0C;&#x4E0D;&#x7528;&#x4E86;&#xFF0C;rtype&#x603B;&#x5171;&#x5C31;&#x90A3;&#x4E48;&#x51E0;&#x79CD;&#xFF0C;&#x4E00;&#x4E2A;&#x4E00;&#x4E2A;like&#x51FA;&#x6765;&#xFF0C;&#x7136;&#x800C;&#x8FD8;&#x662F;&#x6CA1;&#x6709;&#x7ED3;&#x679C;&#xFF01;&#x55EF;&#xFF0C;&#x53D1;&#x73B0;&#x6709;&#x70B9;&#x4E0D;&#x5BF9;&#x5934;&#xFF0C;hql&#x5DF2;&#x7ECF;&#x89E3;&#x6790;&#x6210;&#x529F;&#xFF0C;&#x5C31;&#x7B97;&#x7ED3;&#x679C;&#x4E0D;&#x5BF9;&#xFF0C;&#x600E;&#x4E48;&#x4E5F;&#x4F1A;&#x6709;&#x4E2A;&#x4E1C;&#x897F;&#x51FA;&#x6765;&#x5427;&#x3002;&#x53BB;hive&#x4ED3;&#x5E93;&#x4E00;&#x770B;&#xFF0C;&#x679C;&#x7136;&#xFF0C;&#x672C;&#x6765;&#x5C31;&#x6CA1;&#x6709;&#x6570;&#x636E;&#xFF0C;&#x7ED3;&#x679C;&#x4E2A;&#x6BDB;&#x7EBF;&#x554A;&#x3002;</p>
+<p>&#x90A3;&#x5C31;&#x53EA;&#x80FD;&#x4ECE;hdfs&#x62C9;&#x53D6;&#x6570;&#x636E;&#xFF0C;&#x7528;shell grep&#x5230;&#x8FD9;&#x4E9B;&#x65E5;&#x5FD7;&#xFF0C;&#x7136;&#x540E;awk&#x628A;rtype&#x89E3;&#x51FA;&#x6765;&#xFF0C;&#x7136;&#x540E;&#x8FDB;&#x884C;&#x7EDF;&#x8BA1;&#x3002;&#x5E78;&#x597D;hdfs&#x4E2D;&#x662F;&#x6709;&#x65E5;&#x5FD7;&#x7684;&#xFF0C;&#x81F3;&#x5C11;&#x4E0D;&#x7528;&#x4ECE;&#x4E00;&#x53F0;&#x53F0;&#x670D;&#x52A1;&#x5668;&#x4E0A;&#x624B;&#x52A8;&#x62C9;&#x53D6;&#x6570;&#x636E;&#x3002;<br>&#x53EA;&#x662F;&#x770B;&#x8D8B;&#x52BF;&#xFF0C;&#x6CA1;&#x5FC5;&#x8981;&#x4E00;&#x6574;&#x5929;&#x6570;&#x636E;&#xFF0C;&#x53EA;&#x53D6;&#x4E00;&#x4E2A;&#x5C0F;&#x65F6;&#x7684;&#x5C31;&#x53EF;&#x4EE5;&#x4E86;&#x3002;&#x4E3A;&#x4E86;&#x540E;&#x9762;&#x4E00;&#x4E2A;&#x6708;&#x6570;&#x636E;&#x7684;&#x5206;&#x6790;&#xFF0C;&#x628A;&#x65E5;&#x671F;&#x5B9A;&#x4E49;&#x6210;&#x53D8;&#x91CF;&#x4E86;&#x3002;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">month=201509</div><div class="line">date=<span class="variable">$month</span><span class="string">&quot;10&quot;</span></div><div class="line">time=12</div><div class="line">nohup hadoop fs -text hftp://hdfspath/<span class="variable">$month</span>/<span class="variable">$date</span>/resinlog.<span class="variable">$date</span><span class="variable">$time</span>* | fgrep rtype | awk <span class="string">&apos;{split($0, a, &quot;rtype=&quot;); split(a[2], b, &quot;,&quot;); print b[1] }&apos;</span> &gt; rtype.<span class="variable">$date</span><span class="variable">$time</span>.log &amp;</div></pre></td></tr></table></figure>
+<p>&#x65E5;&#x5FD7;&#x6765;&#x4E86;&#xFF0C;&#x6B64;&#x65F6;rtype.time.log&#x4E2D;&#xFF0C;&#x5168;&#x662F;rtype&#x7684;&#x503C;&#xFF0C;0,10,20,21,30&#x7B49;&#xFF0C;&#x5148;&#x7EDF;&#x8BA1;&#x4E00;&#x4E0B;&#x5404;&#x79CD;rtype&#x7684;&#x6570;&#x91CF;&#x3002;&#x60F3;&#x8981;&#x7528;uniq&#xFF0C;&#x5148;&#x628A;&#x6570;&#x636E;sort&#x4E00;&#x4E0B;&#xFF0C;uniq&#x53EA;&#x80FD;uniq&#x7D27;&#x6328;&#x7740;&#x7684;&#x76F8;&#x540C;&#x7684;&#x6570;&#x636E;&#x3002;sort&#x548C;uniq&#x5F88;&#x6709;&#x7528;&#xFF0C;&#x53EF;&#x4EE5;man&#x4E00;&#x4E0B;&#x7528;&#x6CD5;&#x3002;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat rtype.time.log | sort | uniq -c | sort -k1 -rn &gt; rtype.time.log.sort</div></pre></td></tr></table></figure>
+<p>Ok&#xFF0C;&#x5F88;&#x597D;&#xFF0C;&#x7EDF;&#x8BA1;&#x51FA;&#x6765;&#x4E86;&#xFF0C;&#x524D;&#x9762;&#x662F;&#x6570;&#x91CF;&#xFF0C;&#x540E;&#x9762;&#x662F;rtype&#x7684;&#x503C;&#x3002;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">5340421 0</div><div class="line">  44159 10</div><div class="line">    138 20</div><div class="line">    123 30</div><div class="line">     14 31</div><div class="line">     11 21</div></pre></td></tr></table></figure>
+<p>&#x7ED9;&#x4E00;&#x4E2A;&#x5B8C;&#x6574;&#x7248;&#x7684;shell&#x811A;&#x672C;&#xFF0C;&#x5BF9;&#x4E8E;8&#x6708;&#x4EFD;&#x548C;9&#x6708;&#x4EFD;&#x624B;&#x52A8;&#x6539;&#x4E00;&#x4E0B;&#x5373;&#x53EF;&#x3002;&#x8FD8;&#x5F97;&#x6CE8;&#x610F;<code>seq</code>&#x3002;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">month=201508</div><div class="line">time=12</div><div class="line"><span class="keyword">for</span> day <span class="keyword">in</span> $(seq 10 20); <span class="keyword">do</span></div><div class="line">    date=<span class="variable">$month</span><span class="variable">$day</span></div><div class="line">    nohup hadoop fs -text hftp://hdfspath/<span class="variable">$month</span>/<span class="variable">$date</span>/resinlog.<span class="variable">$date</span><span class="variable">$time</span>* | fgrep rtype | awk <span class="string">&apos;{split($0, a, &quot;rtype=&quot;); split(a[2], b, &quot;,&quot;); print b[1] }&apos;</span> &gt; rtype.<span class="variable">$date</span><span class="variable">$time</span>.log &amp;&amp; cat rtype.<span class="variable">$date</span><span class="variable">$time</span>.log | sort | uniq -c | sort -k1 -rn &gt; rtype.<span class="variable">$date</span><span class="variable">$time</span>.log.sort &amp;</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure>
+<p>&#x8DD1;&#x4E86;&#x4E00;&#x5C0F;&#x4F1A;&#x513F;&#xFF0C;&#x5495;&#x565C;&#x5495;&#x565C;&#x751F;&#x6210;&#x4E86;&#x4E00;&#x5806;&#x6587;&#x4EF6;&#x3002;<br>&#x73B0;&#x5728;&#x5404;&#x5929;&#x7684;&#x6570;&#x636E;&#x5DF2;&#x7ECF;&#x6709;&#x4E86;&#xFF0C;&#x600E;&#x4E48;&#x770B;&#x8D8B;&#x52BF;&#x5462;&#xFF1F;&#x6211;&#x7684;&#x7ECF;&#x9A8C;&#x662F;&#x5728;excel&#x4E2D;&#x751F;&#x6210;&#x56FE;&#x8868;&#x3002;<br>&#x600E;&#x4E48;&#x628A;&#x8FD9;&#x4E48;&#x591A;&#x6587;&#x4EF6;&#x7684;&#x6570;&#x636E;&#x5F04;&#x5230;excel&#x4E2D;&#x5462;&#xFF1F;&#x8FD9;&#x4E9B;&#x6570;&#x636E;&#x8FD8;&#x5F97;&#x5904;&#x7406;&#x4E00;&#x4E0B;&#xFF0C;&#x6700;&#x597D;&#x662F;&#x751F;&#x6210;&#x4E00;&#x5F20;&#x8868;&#xFF0C;&#x8FD9;&#x6837;&#x5728;excel&#x4E2D;&#x751F;&#x6210;&#x7684;&#x56FE;&#x8868;&#x5C31;&#x66F4;&#x5BB9;&#x6613;&#x5BF9;&#x6BD4;&#x3002;<br>&#x8868;&#x7ED3;&#x6784;&#x5982;&#x4E0B;&#xFF1A;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">date       rtype0&#x6570;&#x91CF; rtype1&#x6570;&#x91CF; rtype2&#x6570;&#x91CF; ...</div><div class="line">2015-08-20  10000      10000     10000</div><div class="line">2015-08-21  10000      10000     10000</div><div class="line">2015-08-22  10000      10000     10000</div><div class="line">...</div></pre></td></tr></table></figure>
+<p>&#x90A3;&#x600E;&#x4E48;&#x751F;&#x6210;&#x8FD9;&#x5F20;&#x8868;&#x5462;&#xFF1F;&#x6211;&#x6BD4;&#x8F83;&#x559C;&#x6B22;&#x5728;mysql&#x4E2D;&#x5904;&#x7406;&#x3002;&#x55EF;&#xFF0C;&#x8981;&#x7075;&#x6D3B;&#x8FD0;&#x7528;&#x5404;&#x79CD;&#x5DE5;&#x5177;&#x3002;&#x867D;&#x7136;shell&#x4E5F;&#x80FD;&#x505A;&#x5230;&#xFF0C;&#x4F46;&#x592A;&#x7E41;&#x7410;&#x3002;<br>&#x600E;&#x4E48;&#x5904;&#x7406;&#x8FD9;&#x4E9B;&#x6570;&#x636E;&#x5462;&#xFF1F;&#x628A;&#x5404;&#x4E2A;sort&#x6587;&#x4EF6;&#x4E2D;&#x6BCF;&#x4E00;&#x884C;trim&#x4E00;&#x4E0B;&#xFF0C;&#x6216;&#x8005;&#x6362;&#x4E00;&#x4E0B;&#x683C;&#x5F0F;&#xFF0C;&#x65B9;&#x4FBF;&#x5411;mysql&#x4E2D;&#x63D2;&#x5165;&#x6570;&#x636E;&#x3002;&#x5E76;&#x4E14;&#x8FD8;&#x9700;&#x8981;&#x5728;&#x5404;&#x81EA;&#x6587;&#x4EF6;&#x4E2D;&#x63D2;&#x5165;&#x81EA;&#x5DF1;&#x7684;&#x65F6;&#x95F4;&#x3002;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> day <span class="keyword">in</span> $(seq 10 20); <span class="keyword">do</span></div><div class="line">    cat rtype.201508<span class="variable">${day}</span>12.log.sort | sed <span class="string">&apos;s/ *$//g&apos;</span>|sed <span class="string">&apos;s/^ *//g&apos;</span> | awk <span class="string">&apos;{print &quot;201508&quot;&apos;</span><span class="variable">${day}</span><span class="string">&apos;&quot;\t&quot;$2&quot;\t&quot;$1}&apos;</span>  &gt; 201509<span class="variable">${day}</span>.log</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure>
+<p>ok&#xFF0C;&#x73B0;&#x5728;&#x770B;&#x770B;&#x5904;&#x7406;&#x4E4B;&#x540E;&#x7684;&#x6837;&#x5B50;&#xFF0C;&#x770B;&#x8D77;&#x6765;&#x50CF;&#x4E00;&#x4E2A;&#x6570;&#x636E;&#x5E93;&#x8868;&#x4E86;&#xFF0C;&#x8FD9;&#x5C31;&#x662F;&#x6211;&#x4EEC;&#x8981;&#x7684;&#x7ED3;&#x679C;&#x3002;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">20150910	0	5340421</div><div class="line">20150910	10	44159</div><div class="line">20150910	20	138</div><div class="line">20150910	30	123</div><div class="line">20150910	31	14</div><div class="line">20150910	21	11</div></pre></td></tr></table></figure>
+<p>&#x4EE5;&#x4E0A;&#x6570;&#x636E;&#x5904;&#x7406;&#x90FD;&#x662F;&#x5728;linxu&#x865A;&#x673A;&#x4E2D;&#x505A;&#x7684;&#xFF0C;&#x73B0;&#x5728;&#x6211;&#x8981;&#x628A;&#x6570;&#x636E;&#x62FF;&#x5230;windows&#x5DE5;&#x4F5C;&#x673A;&#x4E0A;&#x5904;&#x7406;&#xFF0C;&#x4E3B;&#x8981;&#x662F;&#x4E3A;&#x4E86;&#x4F7F;&#x7528;navicat&#x3002;<br>&#x628A;&#x4E0A;&#x9762;&#x7684;&#x6240;&#x6709;&#x6587;&#x4EF6;&#x5408;&#x5E76;&#x5230;&#x540C;&#x4E00;&#x4E2A;&#x6587;&#x4EF6;&#x4E2D;&#xFF0C;&#x7136;&#x540E;sz&#x5230;windows&#x672C;&#x5730;&#x3002;&#x5728;mysql&#x4E2D;&#x65B0;&#x5EFA;&#x4E00;&#x4E2A;&#x8868;<code>rtype</code>&#xFF0C;&#x6709;&#x4E09;&#x5217;&#xFF0C;<code>date</code>,<code>rtype</code>,<code>count</code>&#x3002;&#x7136;&#x540E;&#x628A;&#x8FD9;&#x4E2A;&#x6587;&#x4EF6;load&#x5230;msyql&#x4E2D;&#x3002;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span> <span class="keyword">INFILE</span> <span class="string">&apos;rtype.log&apos;</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> rtype <span class="keyword">FIELDS</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">&apos;\t&apos;</span>;</div></pre></td></tr></table></figure>
+<p>&#x73B0;&#x5728;&#x770B;&#x8D77;&#x6765;&#x662F;&#x4E00;&#x4E2A;&#x7AD6;&#x8868;&#xFF0C;&#x6570;&#x636E;&#x6BD4;&#x8F83;&#x5206;&#x6563;&#xFF0C;&#x5728;excel&#x4E2D;&#x4E0D;&#x597D;&#x751F;&#x6210;&#x56FE;&#x8868;&#xFF0C;&#x6240;&#x4EE5;&#x5C06;&#x8FD9;&#x4E2A;&#x8868;&#x53D8;&#x6210;&#x4E0A;&#x9762;&#x6211;&#x4EEC;&#x5B9A;&#x4E49;&#x7684;&#x90A3;&#x6837;&#x3002;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> <span class="built_in">date</span>, </div><div class="line"> <span class="keyword">sum</span>(rtype21) <span class="keyword">as</span> rtype21,</div><div class="line"> <span class="keyword">sum</span>(rtype30) <span class="keyword">as</span> rtype30,</div><div class="line"> <span class="keyword">sum</span>(rtype31) <span class="keyword">as</span> rtype31</div><div class="line"><span class="keyword">from</span></div><div class="line">(</div><div class="line"><span class="keyword">select</span> <span class="built_in">date</span>,  </div><div class="line">    <span class="keyword">case</span> <span class="keyword">when</span> rtype=<span class="number">21</span> <span class="keyword">then</span> <span class="keyword">count</span> <span class="keyword">end</span> <span class="keyword">as</span> rtype21 ,</div><div class="line">    <span class="keyword">case</span> <span class="keyword">when</span> rtype=<span class="number">30</span> <span class="keyword">then</span> <span class="keyword">count</span> <span class="keyword">end</span> <span class="keyword">as</span> rtype30 ,</div><div class="line">    <span class="keyword">case</span> <span class="keyword">when</span> rtype=<span class="number">31</span> <span class="keyword">then</span> <span class="keyword">count</span> <span class="keyword">end</span> <span class="keyword">as</span> rtype31</div><div class="line"><span class="keyword">from</span> rtype</div><div class="line">) a</div><div class="line"><span class="keyword">group</span> <span class="keyword">by</span> <span class="built_in">date</span></div><div class="line">;</div></pre></td></tr></table></figure>
+<p>&#x751F;&#x6210;&#x7684;&#x6570;&#x636E;&#x5927;&#x7EA6;&#x662F;&#x8FD9;&#x4E2A;&#x6837;&#x5B50;&#x7684;&#xFF1A;<br><img src="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/rtype_data.png" alt="rtype&#x6570;&#x636E;"><br>&#x7136;&#x540E;&#x5C06;&#x6570;&#x636E;&#x4ECE;mysql&#x4E2D;&#x5BFC;&#x51FA;&#x5230;excel&#xFF0C;&#x6211;&#x662F;&#x7528;&#x7684;navicat&#x81EA;&#x5E26;&#x529F;&#x80FD;&#x3002;</p>
+<p>excel&#x751F;&#x6210;&#x56FE;&#x8868;&#x53EF;&#x4EE5;&#x4E0A;&#x7F51;&#x67E5;&#x4E00;&#x4E0B;&#xFF0C;&#x5F88;&#x7B80;&#x5355;&#x3002;&#x6700;&#x7EC8;&#x7684;&#x6548;&#x679C;&#x5982;&#x4E0B;&#xFF1A;<br><img src="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/rtype_chart.png" alt="rtype chart"></p>
+<p>&#x54C8;&#x54C8;&#x54C8;&#xFF0C;&#x5927;&#x529F;&#x544A;&#x6210;&#xFF0C;&#x53EF;&#x4EE5;&#x5411;&#x8001;&#x5927;&#x4EA4;&#x4EE3;&#x4E86;&#xFF0C;&#x60F3;&#x60F3;&#x8FD8;&#x662F;&#x6709;&#x70B9;&#x5C0F;&#x6FC0;&#x52A8;&#x5462;&#x3002;</p>
+<p>&#x54ED;&#x3002;&#x6211;&#x4F1A;&#x8BF4;&#x65B9;&#x5411;&#x5B8C;&#x5168;&#x9519;&#x4E86;&#x5417;&#xFF1F;</p>
+<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ul>
+<li><a href="http://blog.jobbole.com/90364/" target="_blank" rel="external">&#x8FD9;&#x7BC7;&#x6587;&#x7AE0;&#x53EF;&#x4EE5;&#x5E2E;&#x4F60;&#x638C;&#x63E1;&#x547D;&#x4EE4;&#x884C;&#x7684;&#x827A;&#x672F;</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2015/09/10/log/" data-id="ciqrrv6lb000g2x9kbmmyihtf" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2015/09/10/log/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/">hive</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/log/">log</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell/">shell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql/">sql</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/09/13/shell-command/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          shell常用命令整理
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/09/01/spark-rdd/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Spark RDD学习</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/09/10/log/" data-title="日志追查总结" data-url="http://wzktravel.github.io/2015/09/10/log/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/squid/">squid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/squid/" style="font-size: 10px;">squid</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/15/proxy-server/">搭建proxy伺服器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/24/upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/hadoop-management/">hadoop集群管理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/04/azkaban-how-to-install-and-use/">azkaban的安装和使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

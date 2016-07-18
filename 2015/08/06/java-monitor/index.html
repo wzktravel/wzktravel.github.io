@@ -1,0 +1,453 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>java监控工具(jps,jstat,jstack,jmap,jvisualvm等) | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="对于线上线下服务，针对服务状态，qps，cost等一般都会有一定的监控措施。如果遇到问题，比如cpu占用率高或者程序特别吃内存，对于java程序来说，会用到一些java监控命令和错误定位命令，能够更好的监控服务运行状态，也能够快速定位问题。整理一下我一般使用的命令，下面的命令都是基于oracle hotspot jvm。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java监控工具(jps,jstat,jstack,jmap,jvisualvm等)">
+<meta property="og:url" content="http://wzktravel.github.io/2015/08/06/java-monitor/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="对于线上线下服务，针对服务状态，qps，cost等一般都会有一定的监控措施。如果遇到问题，比如cpu占用率高或者程序特别吃内存，对于java程序来说，会用到一些java监控命令和错误定位命令，能够更好的监控服务运行状态，也能够快速定位问题。整理一下我一般使用的命令，下面的命令都是基于oracle hotspot jvm。">
+<meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/jmap-dump.png">
+<meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/top-hp.png">
+<meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/jconsole-overview.png">
+<meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/jvisualvm-monitor.png">
+<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java监控工具(jps,jstat,jstack,jmap,jvisualvm等)">
+<meta name="twitter:description" content="对于线上线下服务，针对服务状态，qps，cost等一般都会有一定的监控措施。如果遇到问题，比如cpu占用率高或者程序特别吃内存，对于java程序来说，会用到一些java监控命令和错误定位命令，能够更好的监控服务运行状态，也能够快速定位问题。整理一下我一般使用的命令，下面的命令都是基于oracle hotspot jvm。">
+<meta name="twitter:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/jmap-dump.png">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-java-monitor" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/08/06/java-monitor/" class="article-date">
+  <time datetime="2015-08-06T14:53:11.000Z" itemprop="datePublished">2015-08-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      java监控工具(jps,jstat,jstack,jmap,jvisualvm等)
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&#x5BF9;&#x4E8E;&#x7EBF;&#x4E0A;&#x7EBF;&#x4E0B;&#x670D;&#x52A1;&#xFF0C;&#x9488;&#x5BF9;&#x670D;&#x52A1;&#x72B6;&#x6001;&#xFF0C;qps&#xFF0C;cost&#x7B49;&#x4E00;&#x822C;&#x90FD;&#x4F1A;&#x6709;&#x4E00;&#x5B9A;&#x7684;&#x76D1;&#x63A7;&#x63AA;&#x65BD;&#x3002;&#x5982;&#x679C;&#x9047;&#x5230;&#x95EE;&#x9898;&#xFF0C;&#x6BD4;&#x5982;cpu&#x5360;&#x7528;&#x7387;&#x9AD8;&#x6216;&#x8005;&#x7A0B;&#x5E8F;&#x7279;&#x522B;&#x5403;&#x5185;&#x5B58;&#xFF0C;&#x5BF9;&#x4E8E;java&#x7A0B;&#x5E8F;&#x6765;&#x8BF4;&#xFF0C;&#x4F1A;&#x7528;&#x5230;&#x4E00;&#x4E9B;java&#x76D1;&#x63A7;&#x547D;&#x4EE4;&#x548C;&#x9519;&#x8BEF;&#x5B9A;&#x4F4D;&#x547D;&#x4EE4;&#xFF0C;&#x80FD;&#x591F;&#x66F4;&#x597D;&#x7684;&#x76D1;&#x63A7;&#x670D;&#x52A1;&#x8FD0;&#x884C;&#x72B6;&#x6001;&#xFF0C;&#x4E5F;&#x80FD;&#x591F;&#x5FEB;&#x901F;&#x5B9A;&#x4F4D;&#x95EE;&#x9898;&#x3002;&#x6574;&#x7406;&#x4E00;&#x4E0B;&#x6211;&#x4E00;&#x822C;&#x4F7F;&#x7528;&#x7684;&#x547D;&#x4EE4;&#xFF0C;&#x4E0B;&#x9762;&#x7684;&#x547D;&#x4EE4;&#x90FD;&#x662F;&#x57FA;&#x4E8E;oracle hotspot jvm&#x3002;<br><a id="more"></a></p>
+<h2 id="&#x6982;&#x8FF0;"><a href="#&#x6982;&#x8FF0;" class="headerlink" title="&#x6982;&#x8FF0;"></a>&#x6982;&#x8FF0;</h2><p><strong>Monitoring Tools</strong></p>
+<ul>
+<li>jps: JVM Process Status Tool, &#x5217;&#x51FA;&#x6307;&#x5B9A;&#x673A;&#x5668;&#x7684;jvm pid&#x3002;</li>
+<li>jstat: JVM Statistics Monitoring Tool, jvm&#x7684;&#x7EDF;&#x8BA1;&#x76D1;&#x63A7;&#x5DE5;&#x5177;&#x3002;</li>
+<li>jstatd: JVM jstat Daemon, &#x6CA1;&#x7528;&#x8FC7;&#x3002;</li>
+</ul>
+<p><strong>Troubleshooting Tools</strong></p>
+<ul>
+<li>jinfo: Configuration Info for Java, &#x6253;&#x5370;java&#x914D;&#x7F6E;&#x4FE1;&#x606F;&#x3002;</li>
+<li>jhat: Heap Dump Browser, &#x6839;&#x636E;dump&#x6587;&#x4EF6;&#x8FDB;&#x884C;&#x5206;&#x6790;&#xFF0C;&#x53EF;&#x4EE5;&#x5728;&#x6D4F;&#x89C8;&#x5668;&#x4E2D;&#x67E5;&#x770B;&#x3002;</li>
+<li>jmap: Memory Map for Java, &#x5185;&#x5B58;&#x4F7F;&#x7528;&#x60C5;&#x51B5;&#x3002;</li>
+<li>jsadebugd: Serviceability Agent Debug Daemon for Java, &#x6CA1;&#x7528;&#x8FC7;&#x3002;</li>
+<li>jstack: Stack Trace for Java, &#x6253;&#x5370;&#x6307;&#x5B9A;&#x7EBF;&#x7A0B;&#x7684;&#x6808;&#x4FE1;&#x606F;&#x3002;</li>
+</ul>
+<p><strong>Java Troubleshooting, Profiling, Monitoring and Management Tools</strong></p>
+<ul>
+<li>jcmd: JVM Diagnostic Commands Tool, &#x7ED9;jvm&#x53D1;&#x9001;&#x8BCA;&#x65AD;&#x8BF7;&#x6C42;&#x3002;</li>
+<li>jconsole: A JMX-compliant graphical tool for monitoring a Java virtual machine, jvm&#x6027;&#x80FD;&#x5206;&#x6790;&#xFF0C;&#x56FE;&#x5F62;&#x754C;&#x9762;&#x3002;</li>
+<li>jmc: Java Mission Control, &#x6CA1;&#x7528;&#x8FC7;&#x3002;</li>
+<li>jvisualvm: Java VisualVM, &#x67E5;&#x770B;&#x7A0B;&#x5E8F;&#x7684;&#x8BE6;&#x7EC6;&#x4FE1;&#x606F;&#xFF0C;&#x56FE;&#x5F62;&#x754C;&#x9762;&#x3002;</li>
+</ul>
+<p>&#x8FD8;&#x6709;&#x66F4;&#x591A;&#x7684;&#x4E00;&#x4E9B;&#x5DE5;&#x5177;&#xFF0C;&#x5177;&#x4F53;&#x53EF;&#x4EE5;&#x770B;<a href="http://docs.oracle.com/javase/7/docs/technotes/tools/index.html" target="_blank" rel="external">http://docs.oracle.com/javase/7/docs/technotes/tools/index.html</a><br>&#x4E0B;&#x9762;&#x53EA;&#x6574;&#x7406;&#x4E86;&#x81EA;&#x5DF1;&#x5E73;&#x65F6;&#x7528;&#x5230;&#x7684;&#xFF0C;&#x6CA1;&#x6709;&#x7528;&#x8FC7;&#x7684;&#x6682;&#x65F6;&#x4E0D;&#x63D0;&#xFF0C;&#x7B49;&#x7528;&#x8FC7;&#x4E4B;&#x540E;&#x518D;&#x8865;&#x5145;&#x3002;</p>
+<h2 id="monitoring-tools"><a href="#Monitoring-Tools" class="headerlink" title="Monitoring Tools"></a>Monitoring Tools</h2><h3 id="jps"><a href="#jps" class="headerlink" title="jps"></a>jps</h3><p><code>jps [ options ] [ hostid ]</code><br>&#x4E00;&#x822C;&#x53EA;&#x662F;&#x4E3A;&#x4E86;&#x6253;&#x5370;&#x51FA;&#x7A0B;&#x5E8F;&#x7684;pid, &#x53EF;&#x80FD;&#x4F1A;&#x7528;&#x5230; -m, -l, -v&#x9009;&#x9879;, -m&#x5217;&#x51FA;main&#x65B9;&#x6CD5;&#x7684;&#x53C2;&#x6570;, -l&#x5217;&#x51FA;&#x5B8C;&#x6574;jar&#x5305;, -v&#x5217;&#x51FA;jvm&#x7684;&#x53C2;&#x6570;&#x3002;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">~ jps -m</div><div class="line">27364 Resin --root-directory /usr/<span class="built_in">local</span>/resin -conf /usr/<span class="built_in">local</span>/resin/conf/resin.xml -server web -socketwait 33740 -server web -root-directory /usr/<span class="built_in">local</span>/resin -log-directory /usr/<span class="built_in">local</span>/resin/<span class="built_in">log</span> restart</div><div class="line">21126 Jps -m</div><div class="line">22478 WatchdogManager -Xloggc:<span class="built_in">log</span>/gc.log.2015081910 -server web -root-directory /usr/<span class="built_in">local</span>/resin -conf /usr/<span class="built_in">local</span>/resin/conf/resin.xml -log-directory /usr/<span class="built_in">local</span>/resin/<span class="built_in">log</span> start --log-directory /usr/<span class="built_in">local</span>/resin/<span class="built_in">log</span></div><div class="line"></div><div class="line">~ jps <span class="_">-l</span></div><div class="line">27364 com.caucho.server.resin.Resin</div><div class="line">21147 sun.tools.jps.Jps</div><div class="line">22478 com.caucho.boot.WatchdogManager</div><div class="line"></div><div class="line">~ jps -v </div><div class="line">&#x6D89;&#x53CA;&#x5230;resin&#x5177;&#x4F53;&#x914D;&#x7F6E;&#xFF0C;&#x4E0D;&#x5217;&#x51FA;&#x5177;&#x4F53;&#x5185;&#x5BB9;&#x4E86;&#x3002;</div></pre></td></tr></table></figure>
+<h3 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h3><p><code>jstat [ generalOption | outputOptions vmid [interval[s|ms] [count]] ]</code><br>&#x5148;&#x770B;&#x4E00;&#x4E0B;&#x6709;&#x54EA;&#x4E9B;&#x7EDF;&#x8BA1;&#x9879;&#x53EF;&#x9009;</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th style="text-align:left">Displays</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class</td>
+<td style="text-align:left">Statistics on the behavior of the class loader.</td>
+</tr>
+<tr>
+<td>compiler</td>
+<td style="text-align:left">Statistics of the behavior of the HotSpot Just-in-Time compiler.</td>
+</tr>
+<tr>
+<td>gc</td>
+<td style="text-align:left">Statistics of the behavior of the garbage collected heap.</td>
+</tr>
+<tr>
+<td>gccapacity</td>
+<td style="text-align:left">Statistics of the capacities of the generations and their corresponding spaces.</td>
+</tr>
+<tr>
+<td>gccause</td>
+<td style="text-align:left">Summary of garbage collection statistics (same as -gcutil), with the cause of the last and current (if applicable) garbage collection events.</td>
+</tr>
+<tr>
+<td>gcnew</td>
+<td style="text-align:left">Statistics of the behavior of the new generation.</td>
+</tr>
+<tr>
+<td>gcnewcapacity</td>
+<td style="text-align:left">Statistics of the sizes of the new generations and its corresponding spaces.</td>
+</tr>
+<tr>
+<td>gcold</td>
+<td style="text-align:left">Statistics of the behavior of the old and permanent generations.</td>
+</tr>
+<tr>
+<td>gcoldcapacity</td>
+<td style="text-align:left">Statistics of the sizes of the old generation.</td>
+</tr>
+<tr>
+<td>gcpermcapacity</td>
+<td style="text-align:left">Statistics of the sizes of the permanent generation.</td>
+</tr>
+<tr>
+<td><strong>gcutil</strong></td>
+<td style="text-align:left"><strong>Summary of garbage collection statistics.</strong></td>
+</tr>
+<tr>
+<td>printcompilation</td>
+<td style="text-align:left">HotSpot compilation method statistics.</td>
+</tr>
+</tbody>
+</table>
+<p>&#x6700;&#x5E38;&#x7528;&#x5230;&#x662F;gcutil, <code>jstat -gcutil ${pid} 1000 100</code>, &#x6BCF;1000ms&#x6253;&#x5370;&#x4E00;&#x6B21;gc&#x7EDF;&#x8BA1;&#x60C5;&#x51B5;&#xFF0C;&#x4E00;&#x5171;&#x6253;&#x5370;100&#x6B21;&#x3002; </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">~ jstat -gcutil 29209 1000 100</div><div class="line">S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT</div><div class="line">17.56   0.00  88.08  36.98  97.54  96.04  12166  309.541    12    4.174  313.715</div><div class="line">17.56   0.00  88.08  36.98  97.54  96.04  12166  309.541    12    4.174  313.715</div><div class="line">17.56   0.00  88.53  36.98  97.54  96.04  12166  309.541    12    4.174  313.715</div><div class="line">17.56   0.00  88.53  36.98  97.54  96.04  12166  309.541    12    4.174  313.715</div><div class="line">17.56   0.00  88.54  36.98  97.54  96.04  12166  309.541    12    4.174  313.715</div><div class="line">17.56   0.00  88.55  36.98  97.54  96.04  12166  309.541    12    4.174  313.715</div><div class="line">17.56   0.00  89.35  36.98  97.54  96.04  12166  309.541    12    4.174  313.715</div><div class="line">...</div></pre></td></tr></table></figure>
+<p>&#x5148;&#x770B;&#x4E00;&#x4E0B;&#x6253;&#x5370;&#x51FA;&#x6765;&#x7684;&#x90FD;&#x662F;&#x4EC0;&#x4E48;&#xFF1A; </p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S0</td>
+<td style="text-align:left">Survivor space 0 &#x7684;&#x5229;&#x7528;&#x7387;</td>
+</tr>
+<tr>
+<td>S1</td>
+<td style="text-align:left">Survivor space 1 &#x7684;&#x5229;&#x7528;&#x7387;</td>
+</tr>
+<tr>
+<td>E</td>
+<td style="text-align:left">Eden space &#x7684;&#x5229;&#x7528;&#x7387;</td>
+</tr>
+<tr>
+<td>O</td>
+<td style="text-align:left">Old space &#x7684;&#x5229;&#x7528;&#x7387;</td>
+</tr>
+<tr>
+<td>P</td>
+<td style="text-align:left">Permanent space &#x7684;&#x5229;&#x7528;&#x7387;</td>
+</tr>
+<tr>
+<td>YGC</td>
+<td style="text-align:left">young gc&#x6570;&#x91CF;</td>
+</tr>
+<tr>
+<td>YGCT</td>
+<td style="text-align:left">young gc&#x65F6;&#x95F4;</td>
+</tr>
+<tr>
+<td>FGC</td>
+<td style="text-align:left">Full gc&#x6570;&#x91CF;</td>
+</tr>
+<tr>
+<td>FGCT</td>
+<td style="text-align:left">Full gc&#x65F6;&#x95F4;</td>
+</tr>
+<tr>
+<td>GCT</td>
+<td style="text-align:left">&#x6240;&#x6709;&#x7684;gc&#x65F6;&#x95F4;, (YGCT + FGCT)</td>
+</tr>
+</tbody>
+</table>
+<p>&#x5BF9;java&#x5F00;&#x53D1;&#x5DE5;&#x7A0B;&#x5E08;&#x6765;&#x8BF4;&#xFF0C;&#x8FD9;&#x4E9B;&#x5E94;&#x8BE5;&#x90FD;&#x4E0D;&#x964C;&#x751F;&#x3002;&#x5982;&#x679C;&#x5728;&#x4E0A;&#x7EBF;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x6211;&#x4E00;&#x822C;&#x4F1A;&#x6BD4;&#x8F83;&#x5173;&#x6CE8;YGC&#x548C;FGC, &#x5982;&#x679C;&#x53D1;&#x73B0;gc&#x8FC7;&#x4E8E;&#x9891;&#x7E41;&#xFF0C;&#x4F1A;&#x53BB;&#x67E5;&#x770B;&#x5185;&#x5B58;&#x7684;&#x4F7F;&#x7528;&#x60C5;&#x51B5;&#x3002;<br>jvm&#x5185;&#x5B58;&#x7BA1;&#x7406;&#x53EF;&#x4EE5;&#x770B;&#x4E00;&#x4E0B;<a href="http://www.blogjava.net/chhbjh/archive/2012/01/28/368936.html" target="_blank" rel="external">&#x63A2;&#x79D8;java&#x865A;&#x62DF;&#x673A;&#x2013;&#x5185;&#x5B58;&#x7BA1;&#x7406;&#x4E0E;&#x5783;&#x573E;&#x56DE;&#x6536;</a>&#xFF0C;&#x4E0D;&#x8FC7;&#x662F;&#x57FA;&#x4E8E;jdk1.6&#x7684;&#xFF0C;&#x5BF9;&#x4E8E;java8&#xFF0C;&#x53EF;&#x4EE5;&#x770B;&#x4E00;&#x4E0B;<a href="http://itindex.net/detail/49579-java-%E7%A9%BA%E9%97%B4" target="_blank" rel="external">java8&#x7684;&#x5143;&#x7A7A;&#x95F4;</a>&#x3002;</p>
+<h2 id="troubleshooting-tools"><a href="#Troubleshooting-Tools" class="headerlink" title="Troubleshooting Tools"></a>Troubleshooting Tools</h2><h3 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h3><p><code>jinfo [ option ] pid</code><br>&#x9664;&#x4E86;&#x53EF;&#x4EE5;&#x6839;&#x636E;pid&#x4E4B;&#x5916;&#xFF0C;&#x8FD8;&#x53EF;&#x4EE5;&#x6839;&#x636E;core-file&#x6216;&#x8FDC;&#x7A0B;&#x5730;&#x5740;&#x3002;<br>&#x53EF;&#x4EE5;&#x67E5;&#x770B;jvm&#x7684;&#x914D;&#x7F6E;&#x4FE1;&#x606F;&#xFF0C;&#x7C7B;&#x4F3C;&#x4E8E;java&#x7A0B;&#x5E8F;&#x4E2D;<code>System.getProperties()</code>&#xFF0C;&#x4E00;&#x822C;&#x4F1A;&#x5728;&#x67E5;&#x770B;encoding&#x7684;&#x65F6;&#x5019;&#x4F7F;&#x7528;&#x3002;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">~ jinfo 29209</div><div class="line">Attaching to process ID 29209, please wait...</div><div class="line">Debugger attached successfully.</div><div class="line">Server compiler detected.</div><div class="line">JVM version is 25.45-b02</div><div class="line">Java System Properties:</div><div class="line"></div><div class="line">java.runtime.name = Java(TM) SE Runtime Environment</div><div class="line">java.vm.version = 25.45-b02</div><div class="line">sun.boot.library.path = /usr/lib/jvm/java-1.8.0-oracle-1.8.0.45.x86_64/jre/lib/amd64</div><div class="line">javax.management.builder.initial = com.caucho.jmx.MBeanServerBuilderImpl</div><div class="line">java.vendor.url = http://java.oracle.com/</div><div class="line">java.vm.vendor = Oracle Corporation</div><div class="line">...</div></pre></td></tr></table></figure>
+<h3 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h3><p><code>jmap [ option ] pid</code><br>&#x9664;&#x4E86;&#x53EF;&#x4EE5;&#x6839;&#x636E;pid&#x4E4B;&#x5916;&#xFF0C;&#x8FD8;&#x53EF;&#x4EE5;&#x6839;&#x636E;core-file&#x6216;&#x8FDC;&#x7A0B;&#x5730;&#x5740;&#x3002;</p>
+<ul>
+<li><code>jmap -heap ${pid}</code>&#xFF0C;&#x53EF;&#x4EE5;&#x5217;&#x51FA;&#x5806;&#x7684;&#x914D;&#x7F6E;&#x548C;&#x4F7F;&#x7528;&#x60C5;&#x51B5;&#xFF0C;&#x5982;&#x679C;gc&#x9891;&#x7387;&#x8FC7;&#x9AD8;&#x6216;&#x5185;&#x5B58;&#x5360;&#x7528;&#x592A;&#x9AD8;&#xFF0C;&#x80FD;&#x591F;&#x4ECE;&#x8FD9;&#x4E9B;&#x4FE1;&#x606F;&#x4E2D;&#x627E;&#x5230;&#x662F;&#x54EA;&#x4E00;&#x5757;&#x51FA;&#x4E86;&#x95EE;&#x9898;&#x3002;</li>
+<li><code>jmap -histo[:live] ${pid}</code>&#xFF0C;&#x53EF;&#x4EE5;&#x67E5;&#x770B;&#x5806;&#x5185;&#x5B58;&#x4E2D;&#x7684;&#x5BF9;&#x8C61;&#x6570;&#x76EE;&#x3001;&#x5927;&#x5C0F;&#x7EDF;&#x8BA1;&#x76F4;&#x65B9;&#x56FE;&#xFF0C;&#x5982;&#x679C;&#x5E26;&#x4E0A;live&#x5219;&#x53EA;&#x7EDF;&#x8BA1;&#x6D3B;&#x5BF9;&#x8C61;&#x3002;</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">~ jmap -histo:live 29209 | more </div><div class="line">num     <span class="comment">#instances         #bytes  class name</span></div><div class="line">----------------------------------------------</div><div class="line">1:       3040709      585742624  [C</div><div class="line">2:        110636      379989312  [B</div><div class="line">3:       4797182      115132368  java.util.LinkedList<span class="variable">$Node</span></div><div class="line">4:        121324       81142520  [Ljava.lang.Object;</div><div class="line">5:         19398       78996664  [I</div><div class="line">6:       2689135       64539240  java.lang.String</div><div class="line">7:          1443       47278640  [Lorg.apache.xpath.objects.XObject;</div><div class="line">8:        397818       38190528  org.apache.xpath.axes.AxesWalker</div><div class="line">9:        917760       29368320  com.caucho.env.actor.ValueActorQueue<span class="variable">$ValueItem</span></div><div class="line">10:       708201       22662432  java.util.HashMap<span class="variable">$Node</span></div><div class="line">11:          445       19404664  [J</div><div class="line">12:       363053       11617696  java.util.LinkedList</div><div class="line">15:        82855        9279760  org.apache.xpath.axes.WalkingIterator</div><div class="line">16:        60086        7210320  org.apache.xalan.templates.ElemLiteralResult</div><div class="line">17:        71974        6909504  org.apache.xalan.templates.ElemTextLiteral</div><div class="line">18:        65536        6291456  com.caucho.server.dispatch.Invocation</div><div class="line">19:        12072        5723592  [Ljava.util.HashMap<span class="variable">$Node</span>;</div><div class="line">20:        60593        5332184  org.apache.xalan.templates.ElemValueOf</div><div class="line">21:       190114        4562736  java.util.ArrayList</div><div class="line">...</div></pre></td></tr></table></figure>
+<ul>
+<li><code>jmap -dump:format=b,file=dumpFileName ${pid}</code>&#xFF0C;jmap&#x8FD8;&#x53EF;&#x4EE5;&#x628A;&#x8FDB;&#x7A0B;&#x7684;&#x5185;&#x5B58;&#x4F7F;&#x7528;&#x60C5;&#x51B5;dump&#x5230;&#x6587;&#x4EF6;&#x4E2D;&#xFF0C;&#x7136;&#x540E;&#x7528;jhat&#x6216;jvisualvm&#x5206;&#x6790;&#x3002;<strong>&#x5BF9;&#x4E8E;&#x7EBF;&#x4E0A;&#x73AF;&#x5883;&#x4E0D;&#x8981;&#x8F7B;&#x6613;&#x4F7F;&#x7528;&#xFF01;jmap -dump:live&#x6BCF;&#x6B21;&#x90FD;&#x4F1A;&#x89E6;&#x53D1;&#x4E00;&#x6B21;Full GC</strong></li>
+</ul>
+<h3 id="jhat"><a href="#jhat" class="headerlink" title="jhat"></a>jhat</h3><p><code>jhat [ options ] &lt;heap-dump-file&gt;</code><br>jmap dump&#x51FA;&#x6765;&#x7684;&#x6587;&#x4EF6;&#x4E00;&#x822C;&#x90FD;&#x4F1A;&#x5F88;&#x5927;&#xFF0C;jhat&#x5206;&#x6790;&#x65F6;&#x53EF;&#x80FD;&#x9700;&#x8981;&#x52A0;&#x4E0A;-J-Xmx512m&#x8FD9;&#x79CD;&#x53C2;&#x6570;&#x6765;&#x6307;&#x5B9A;&#x6700;&#x5927;&#x5806;&#x5185;&#x5B58;&#x3002;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">~ jmap -dump:live,format=b,file=jmapdump 2106</div><div class="line">Dumping heap to /tmp/jmapdump ...</div><div class="line">Heap dump file created</div><div class="line">~ jhat -port 9998 jmapdump</div></pre></td></tr></table></figure></p>
+<p>jhat&#x8FDB;&#x884C;&#x5206;&#x6790;&#xFF0C;&#x5E76;&#x542F;&#x52A8;&#x4E00;&#x4E2A;server&#xFF0C;&#x53EF;&#x4EE5;&#x5728;&#x6D4F;&#x89C8;&#x5668;&#x4E2D;&#x67E5;&#x770B;&#x3002;&#x56FE;&#x7247;&#x4E2D;&#x53EA;&#x622A;&#x53D6;&#x4E86;&#x5F88;&#x5C0F;&#x4E00;&#x90E8;&#x5206;&#x3002;<br><img src="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/jmap-dump.png" alt="jmap dump"></p>
+<h3 id="jstack"><a href="#jstack" class="headerlink" title="jstack"></a>jstack</h3><p><code>jstack [ option ] pid</code><br>&#x9664;&#x4E86;&#x53EF;&#x4EE5;&#x6839;&#x636E;pid&#x4E4B;&#x5916;&#xFF0C;&#x8FD8;&#x53EF;&#x4EE5;&#x6839;&#x636E;core-file&#x6216;&#x8FDC;&#x7A0B;&#x5730;&#x5740;&#x3002;<br>jstack&#x53EF;&#x4EE5;&#x5B9A;&#x4F4D;&#x5230;&#x7EBF;&#x7A0B;&#x5806;&#x6808;&#xFF0C;&#x6839;&#x636E;&#x5806;&#x6808;&#x4FE1;&#x606F;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x5B9A;&#x4F4D;&#x5230;&#x5177;&#x4F53;&#x4EE3;&#x7801;&#x3002;&#x5982;&#x679C;java&#x7A0B;&#x5E8F;&#x5D29;&#x6E83;&#x751F;&#x6210;core&#x6587;&#x4EF6;&#xFF0C;jstack&#x5DE5;&#x5177;&#x53EF;&#x4EE5;&#x7528;&#x6765;&#x83B7;&#x5F97;core&#x6587;&#x4EF6;&#x7684;java stack&#x548C;native stack&#x7684;&#x4FE1;&#x606F;&#xFF0C;&#x4ECE;&#x800C;&#x53EF;&#x4EE5;&#x8F7B;&#x677E;&#x5730;&#x77E5;&#x9053;java&#x7A0B;&#x5E8F;&#x662F;&#x5982;&#x4F55;&#x5D29;&#x6E83;&#x548C;&#x5728;&#x7A0B;&#x5E8F;&#x4F55;&#x5904;&#x53D1;&#x751F;&#x95EE;&#x9898;&#x3002;&#x53E6;&#x5916;&#xFF0C;jstack&#x5DE5;&#x5177;&#x8FD8;&#x53EF;&#x4EE5;&#x9644;&#x5C5E;&#x5230;&#x6B63;&#x5728;&#x8FD0;&#x884C;&#x7684;java&#x7A0B;&#x5E8F;&#x4E2D;&#xFF0C;&#x770B;&#x5230;&#x5F53;&#x65F6;&#x8FD0;&#x884C;&#x7684;java&#x7A0B;&#x5E8F;&#x7684;java stack&#x548C;native stack&#x7684;&#x4FE1;&#x606F;, &#x5982;&#x679C;&#x73B0;&#x5728;&#x8FD0;&#x884C;&#x7684;java&#x7A0B;&#x5E8F;&#x5448;&#x73B0;hung&#x7684;&#x72B6;&#x6001;&#xFF0C;jstack&#x662F;&#x975E;&#x5E38;&#x6709;&#x7528;&#x7684;&#x3002;</p>
+<p>&#x5728;&#x5B9E;&#x9645;&#x5E94;&#x7528;&#x4E2D;&#xFF0C;&#x4E00;&#x822C;&#x4F1A;&#x901A;&#x8FC7;ps, printf, top, jstack&#x6765;&#x67E5;&#x627E;&#x51FA;&#x6700;&#x8017;cpu&#x7684;java&#x7EBF;&#x7A0B;&#x5E76;&#x5B9A;&#x4F4D;&#x5230;&#x67D0;&#x4E00;&#x884C;&#x4EE3;&#x7801;&#x3002;<br>&#x4E0B;&#x9762;&#x4E3E;&#x4E2A;&#x5B9E;&#x4F8B;&#xFF1A;</p>
+<ol>
+<li>&#x627E;&#x5230;&#x5BF9;&#x5E94;&#x8FDB;&#x7A0B;id, &#x4F7F;&#x7528;<code>ps -ef | fgrep resin | fgrep -v fgrep</code>&#xFF0C;&#x627E;&#x5230;resin&#x7684;pid&#xFF0C;&#x6216;&#x8005;&#x76F4;&#x63A5;&#x4F7F;&#x7528;<code>jps</code>&#x3002;</li>
+<li>&#x627E;&#x51FA;resin&#x8FDB;&#x7A0B;&#x4E2D;&#x6700;&#x8017;cpu&#x7684;&#x7EBF;&#x7A0B;&#xFF0C;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;<code>ps -Lfp ${pid}</code>&#x6216;<code>top -Hp ${pid}</code>&#x6216;<code>ps -mp ${pid} -o THREAD,tid,time</code>&#xFF0C;&#x6211;&#x4E00;&#x822C;&#x4F7F;&#x7528;<code>top -Hp ${pid}</code>, <code>top</code>&#x547D;&#x4EE4;&#x4E2D;&#x6839;&#x636E;&#x67D0;&#x4E00;&#x884C;&#x6392;&#x5E8F;&#x4F7F;&#x7528;&#x201D;F&#x201D;&#xFF0C;&#x7136;&#x540E;&#x9009;&#x62E9;&#x5BF9;&#x5E94;&#x9879;&#x524D;&#x7684;a-z&#x5373;&#x53EF;&#x3002;<br><img src="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/top-hp.png" alt="top-Hp"></li>
+<li>&#x53EF;&#x4EE5;&#x770B;&#x5230;cpu&#x4F7F;&#x7528;&#x65F6;&#x95F4;&#x6700;&#x9AD8;&#x7684;&#x662F;31255, &#x6211;&#x4EEC;&#x8981;&#x6839;&#x636E;&#x8FD9;&#x4E2A;pid&#x5F97;&#x5230;&#x5176;16&#x8FDB;&#x5236;&#x6570;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;nid</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">~ <span class="built_in">printf</span> <span class="string">&quot;%x\n&quot;</span> 31255</div><div class="line">7a17</div></pre></td></tr></table></figure>
+<ol>
+<li>&#x7136;&#x540E;&#x4F7F;&#x7528;jstack&#x6253;&#x5370;&#x8FDB;&#x7A0B;&#x7684;&#x5806;&#x6808;&#x4FE1;&#x606F;&#xFF0C;&#x518D;&#x6839;&#x636E;nid&#x8FDB;&#x884C;grep&#x3002;</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">~ jstack 29209 | fgrep -A10 7a17</div><div class="line"><span class="string">&quot;vr_cache(Recver3)&quot;</span> <span class="comment">#119 prio=5 os_prio=0 tid=0x00007f6a3007b000 nid=0x7a17 runnable [0x00007f6abc5f6000]</span></div><div class="line">java.lang.Thread.State: RUNNABLE</div><div class="line">    at sun.nio.ch.EPollArrayWrapper.epollWait(Native Method)</div><div class="line">    at sun.nio.ch.EPollArrayWrapper.poll(EPollArrayWrapper.java:269)</div><div class="line">    at sun.nio.ch.EPollSelectorImpl.doSelect(EPollSelectorImpl.java:79)</div><div class="line">    at sun.nio.ch.SelectorImpl.lockAndDoSelect(SelectorImpl.java:86)</div><div class="line">    - locked &lt;0x00000006d70100c8&gt; (a sun.nio.ch.Util<span class="variable">$2</span>)</div><div class="line">    - locked &lt;0x00000006d70100b0&gt; (a java.util.Collections<span class="variable">$UnmodifiableSet</span>)</div><div class="line">    - locked &lt;0x00000006d7009958&gt; (a sun.nio.ch.EPollSelectorImpl)</div><div class="line">    at sun.nio.ch.SelectorImpl.select(SelectorImpl.java:97)</div><div class="line">    at common.connectionpool.async.Receiver.run(Receiver.java:379)</div></pre></td></tr></table></figure>
+<p>&#x53EF;&#x4EE5;&#x770B;&#x5230;CPU&#x6D88;&#x8017;&#x90FD;&#x82B1;&#x5728;&#x4E86;epollWait&#x4E0A;&#xFF0C;&#x518D;&#x6DF1;&#x7A76;&#x4E0B;&#x53BB;&#xFF0C;&#x662F;&#x81EA;&#x5DF1;&#x5B9E;&#x73B0;&#x7684;&#x4EE3;&#x7801;&#x4E2D;Receiver&#x7C7B;&#x4E2D;&#x7B2C;379&#x884C;&#x5F15;&#x8D77;&#x7684;&#xFF0C;&#x6211;&#x4EEC;&#x770B;&#x4E00;&#x4E0B;&#x4EE3;&#x7801;&#xFF1A;</p>
+<pre><code>int num = this.selector.select(pool.robinTime);
+</code></pre><p>&#x8FD9;&#x4E00;&#x884C;&#x6B63;&#x662F;selector&#x8FDB;&#x884C;&#x7B49;&#x5F85;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x5BF9;&#x5E94;&#x4E8E;epoll&#x6765;&#x8BF4;&#x5C31;&#x662F;epoll_wait&#x51FD;&#x6570;&#x3002;&#x5B9A;&#x4F4D;&#x5230;&#x95EE;&#x9898;&#xFF0C;&#x53EF;&#x4EE5;&#x53BB;&#x627E;&#x5BF9;&#x5E94;&#x65B9;&#x6848;&#x4E86;&#x3002;<br>&#x5982;&#x679C;&#x5BF9;IO&#x591A;&#x8DEF;&#x590D;&#x7528;&#x673A;&#x5236;&#x7684;&#x53EF;&#x4EE5;&#x770B;&#x4E00;&#x4E0B;&#x76F8;&#x5173;&#x6587;&#x7AE0;&#xFF0C;&#x4E3B;&#x8981;&#x6709;select, poll, epoll&#x3002;</p>
+<h2 id="java&#x56FE;&#x5F62;&#x5316;&#x754C;&#x9762;&#x76D1;&#x63A7;&#x5DE5;&#x5177;"><a href="#java&#x56FE;&#x5F62;&#x5316;&#x754C;&#x9762;&#x76D1;&#x63A7;&#x5DE5;&#x5177;" class="headerlink" title="java&#x56FE;&#x5F62;&#x5316;&#x754C;&#x9762;&#x76D1;&#x63A7;&#x5DE5;&#x5177;"></a>java&#x56FE;&#x5F62;&#x5316;&#x754C;&#x9762;&#x76D1;&#x63A7;&#x5DE5;&#x5177;</h2><p>jconsole&#x548C;jvisualvm&#x90FD;&#x9700;&#x8981;&#x56FE;&#x5F62;&#x5316;&#x754C;&#x9762;&#xFF0C;&#x90FD;&#x53EF;&#x4EE5;&#x8FDE;&#x63A5;&#x8FDC;&#x7A0B;server&#x67E5;&#x770B;&#x3002;<br>&#x56FE;&#x5F62;&#x5316;&#x754C;&#x9762;&#x770B;&#x8D77;&#x6765;&#x90FD;&#x6BD4;&#x8F83;&#x5BB9;&#x6613;&#xFF0C;&#x5728;&#x8FD9;&#x4E0D;&#x505A;&#x8D58;&#x8FF0;&#x4E86;&#x3002;</p>
+<h3 id="jconsole"><a href="#jconsole" class="headerlink" title="jconsole"></a>jconsole</h3><p><img src="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/jconsole-overview.png" alt="jconsole overview"></p>
+<h3 id="jvisualvm"><a href="#jvisualvm" class="headerlink" title="jvisualvm"></a>jvisualvm</h3><p><img src="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/jvisualvm-monitor.png" alt="jvisualvm monitor"></p>
+<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ul>
+<li><a href="http://docs.oracle.com/javase/8/" target="_blank" rel="external">oracle&#x5B98;&#x65B9;&#x6587;&#x6863;</a></li>
+<li><a href="http://docs.oracle.com/javase/7/docs/technotes/tools/index.html" target="_blank" rel="external">jdk tools and utilities</a></li>
+<li><a href="http://www.blogjava.net/chhbjh/archive/2012/01/28/368936.html" target="_blank" rel="external">&#x63A2;&#x79D8;java&#x865A;&#x62DF;&#x673A;&#x2013;&#x5185;&#x5B58;&#x7BA1;&#x7406;&#x4E0E;&#x5783;&#x573E;&#x56DE;&#x6536;</a></li>
+<li><a href="http://blog.csdn.net/mshootingstar/article/details/44783227" target="_blank" rel="external">JVM&#x7684;&#x76F8;&#x5173;&#x77E5;&#x8BC6;&#x6574;&#x7406;&#x548C;&#x5B66;&#x4E60;</a></li>
+<li><a href="http://itindex.net/detail/49579-java-%E7%A9%BA%E9%97%B4" target="_blank" rel="external">java8&#x7684;&#x5143;&#x7A7A;&#x95F4;</a></li>
+<li><a href="http://www.cnblogs.com/Anker/p/3265058.html" target="_blank" rel="external">select&#x3001;poll&#x3001;epoll&#x4E4B;&#x95F4;&#x7684;&#x533A;&#x522B;&#x603B;&#x7ED3;(&#x6574;&#x7406;)</a></li>
+<li><a href="http://langzi-xl.iteye.com/blog/798905" target="_blank" rel="external">jmap -dump:live&#x4E3A;&#x5565;&#x4F1A;&#x89E6;&#x53D1;Full GC</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2015/08/06/java-monitor/" data-id="ciqrrv6kr00072x9k3vnz90p1" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2015/08/06/java-monitor/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell/">shell</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/08/08/learning-scala/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          scala学习笔记
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/06/29/vim-shortcut/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">vim快捷键</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/08/06/java-monitor/" data-title="java监控工具(jps,jstat,jstack,jmap,jvisualvm等)" data-url="http://wzktravel.github.io/2015/08/06/java-monitor/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/squid/">squid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/squid/" style="font-size: 10px;">squid</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/15/proxy-server/">搭建proxy伺服器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/24/upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/hadoop-management/">hadoop集群管理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/04/azkaban-how-to-install-and-use/">azkaban的安装和使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

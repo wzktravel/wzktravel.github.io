@@ -1,0 +1,397 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>CDH启用sentry | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="CDH集群启用sentry步骤和测试。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CDH启用sentry">
+<meta property="og:url" content="http://wzktravel.github.io/2016/02/25/Enabling-sentry-in-CDH/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="CDH集群启用sentry步骤和测试。">
+<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CDH启用sentry">
+<meta name="twitter:description" content="CDH集群启用sentry步骤和测试。">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-Enabling-sentry-in-CDH" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/02/25/Enabling-sentry-in-CDH/" class="article-date">
+  <time datetime="2016-02-25T06:22:59.000Z" itemprop="datePublished">2016-02-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CDH启用sentry
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>CDH&#x96C6;&#x7FA4;&#x542F;&#x7528;sentry&#x6B65;&#x9AA4;&#x548C;&#x6D4B;&#x8BD5;&#x3002;<br><a id="more"></a></p>
+<h2 id="cdh&#x542F;&#x7528;sentry"><a href="#CDH&#x542F;&#x7528;sentry" class="headerlink" title="CDH&#x542F;&#x7528;sentry"></a>CDH&#x542F;&#x7528;sentry</h2><p>CDH&#x4E2D;&#x6DFB;&#x52A0;sentry&#x670D;&#x52A1;&#x540E;&#xFF0C;&#x6309;&#x7167;<a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/sg_sentry_service_config.html" target="_blank" rel="external">Configuring the Sentry Service</a>&#x4E00;&#x6B65;&#x6B65;&#x8FDB;&#x884C;&#x6765;&#x914D;&#x7F6E;sentry&#x670D;&#x52A1;&#x3002;</p>
+<h3 id="before-enabling-the-sentry-service"><a href="#Before-Enabling-the-Sentry-Service" class="headerlink" title="Before Enabling the Sentry Service"></a>Before Enabling the Sentry Service</h3><ol>
+<li>&#x8BBE;&#x7F6E;<code>hive.metastore.warehouse.dir</code>&#x914D;&#x7F6E;&#x9879;(&#x9ED8;&#x8BA4;&#x8DEF;&#x5F84;&#x662F;/user/hive/warehouse)&#x7684;&#x6743;&#x9650;&#x548C;owner&#x3002;<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ hdfs dfs -chmod -R <span class="number">771</span> <span class="regexp">/user/</span>hive/warehouse</div><div class="line">$ hdfs dfs -chown -R <span class="string">hive:</span>hive <span class="regexp">/user/</span>hive/warehouse</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>&#x5982;&#x679C;&#x5DF2;&#x7ECF;&#x542F;&#x7528;&#x4E86;kerberos&#xFF0C;&#x9700;&#x8981;<code>kinit -k -t hdfs.keytab hdfs</code>&#x3002;</p>
+<ol>
+<li>Disable impersonation for HiveServer2<br>&#x914D;&#x7F6E;&#x9879;: hive &#x2013; <code>HiveServer2 Enable Impersonation</code></li>
+<li>Enable the Hive user to submit YARN jobs<br>Ensure the Allowed System Users property includes the hive user. If not, add hive.<br>&#x914D;&#x7F6E;&#x9879;: yarn &#x2013; <code>allowed.system.users</code></li>
+</ol>
+<blockquote>
+<p>Important: Ensure you have unchecked the <code>Enable Sentry Authorization using Policy Files</code> configuration property for both Hive and Impala under the <code>Policy File Based Sentry</code> category before you proceed.</p>
+</blockquote>
+<h3 id="enabling-the-sentry-service-for-hive"><a href="#Enabling-the-Sentry-Service-for-Hive" class="headerlink" title="Enabling the Sentry Service for Hive"></a>Enabling the Sentry Service for Hive</h3><ol>
+<li>&#x4FEE;&#x6539;hive&#x914D;&#x7F6E;&#x9879;<code>Sentry Service</code>&#xFF0C;&#x9009;&#x62E9;&#x201D;Sentry&#x201D;</li>
+<li>&#x53D6;&#x6D88;&#x9009;&#x4E2D;<code>hive.server2.enable.impersonation</code></li>
+</ol>
+<h3 id="enabling-the-sentry-service-for-impala"><a href="#Enabling-the-Sentry-Service-for-Impala" class="headerlink" title="Enabling the Sentry Service for Impala"></a>Enabling the Sentry Service for Impala</h3><p>&#x4FEE;&#x6539;impala&#x914D;&#x7F6E;&#x9879;<code>Sentry Service</code>&#xFF0C;&#x9009;&#x62E9;&#x201D;Sentry&#x201D;</p>
+<h3 id="enabling-the-sentry-service-for-hue"><a href="#Enabling-the-Sentry-Service-for-Hue" class="headerlink" title="Enabling the Sentry Service for Hue"></a>Enabling the Sentry Service for Hue</h3><p>&#x4FEE;&#x6539;hue&#x914D;&#x7F6E;&#x9879;<code>Sentry Service</code>&#xFF0C;&#x9009;&#x62E9;&#x201D;Sentry&#x201D;</p>
+<blockquote>
+<p>Important:</p>
+<ol>
+<li>When Sentry is enabled, you must use Beeline to execute Hive queries. Hive CLI is not supported with Sentry and must be disabled as described <a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/sg_sentry_overview.html#concept_q3l_5sw_jr_unique_2__hiveclidisable_unique_2" target="_blank" rel="external">here</a>.</li>
+<li>When Sentry is enabled, a user with no privileges on a database will not be allowed to connect to HiveServer2. This is because the use <database> command is now executed as part of the connection to HiveServer2, which is why the connection fails. See HIVE-4256.</database></li>
+</ol>
+</blockquote>
+<h2 id="&#x914D;&#x7F6E;hive-with-sentry"><a href="#&#x914D;&#x7F6E;hive-with-sentry" class="headerlink" title="&#x914D;&#x7F6E;hive with sentry"></a>&#x914D;&#x7F6E;hive with sentry</h2><p><a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/sg_hive_sql.html" target="_blank" rel="external">http://www.cloudera.com/documentation/enterprise/5-4-x/topics/sg_hive_sql.html</a></p>
+<h3 id="&#x5982;&#x679C;&#x542F;&#x7528;&#x4E86;kerbreos"><a href="#&#x5982;&#x679C;&#x542F;&#x7528;&#x4E86;kerbreos" class="headerlink" title="&#x5982;&#x679C;&#x542F;&#x7528;&#x4E86;kerbreos"></a>&#x5982;&#x679C;&#x542F;&#x7528;&#x4E86;kerbreos</h3><p>&#x542F;&#x7528;kerberos&#x540E;&#xFF0C;&#x4F7F;&#x7528;&#x4E0B;&#x9762;&#x547D;&#x4EE4;&#x8FDB;&#x5165;beeline&#x8FDB;&#x884C;&#x8BBE;&#x7F6E;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ kinit -k -t hive.keytab hive</div><div class="line">$ beeline -u <span class="string">&quot;jdbc:hive2://vlnx107011:10000/default;principal=hive/vlnx107011@HADOOP.COM&quot;</span></div></pre></td></tr></table></figure></p>
+<h3 id="&#x5982;&#x679C;&#x672A;&#x542F;&#x7528;kerberos"><a href="#&#x5982;&#x679C;&#x672A;&#x542F;&#x7528;kerberos" class="headerlink" title="&#x5982;&#x679C;&#x672A;&#x542F;&#x7528;kerberos"></a>&#x5982;&#x679C;&#x672A;&#x542F;&#x7528;kerberos</h3><p>&#x5728;hive&#x914D;&#x7F6E;<code>sentry-site.xml &#x7684; Hive &#x670D;&#x52A1;&#x9AD8;&#x7EA7;&#x914D;&#x7F6E;&#x4EE3;&#x7801;&#x6BB5;&#xFF08;&#x5B89;&#x5168;&#x9600;&#xFF09;</code>&#x4E2D;&#x6DFB;&#x52A0;</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>sentry.hive.testing.mode<span class="tag">&lt;/<span class="name">name</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>&#x53EF;&#x4EE5;&#x4F7F;&#x7528;<code>beeline -u &quot;jdbc:hive2://vlnx107011:10000/&quot; -n &lt;admin_user&gt;</code>&#x8FDB;&#x884C;&#x8BBE;&#x7F6E;&#xFF0C;&#x5176;&#x4E2D;admin&#x7528;&#x6237;&#x5728;sentry&#x7684;<code>sentry.service.admin.group</code>&#x4E2D;&#x914D;&#x7F6E;&#x3002;</p>
+<p><strong> Important: &#x7528;&#x6237;&#x548C;&#x7EC4;&#x4F7F;&#x7528;&#x7684;&#x662F;Linux&#x673A;&#x5668;&#x4E0A;&#x7684;&#x7528;&#x6237;&#x548C;&#x7EC4;&#xFF0C;&#x800C;&#x89D2;&#x8272;&#x5FC5;&#x987B;&#x81EA;&#x5DF1;&#x521B;&#x5EFA;&#x3002; </strong></p>
+<h2 id="&#x914D;&#x7F6E;hdfs-with-sentry"><a href="#&#x914D;&#x7F6E;HDFS-with-sentry" class="headerlink" title="&#x914D;&#x7F6E;HDFS with sentry"></a>&#x914D;&#x7F6E;HDFS with sentry</h2><p>&#x53C2;&#x8003;<a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/sg_hdfs_sentry_sync.html" target="_blank" rel="external">http://www.cloudera.com/documentation/enterprise/5-4-x/topics/sg_hdfs_sentry_sync.html</a></p>
+<p>&#x5173;&#x4E8E;hdfs acl&#xFF0C;&#x53C2;&#x8003;<a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/cdh_sg_hdfs_ext_acls.html" target="_blank" rel="external">http://www.cloudera.com/documentation/enterprise/5-4-x/topics/cdh_sg_hdfs_ext_acls.html</a></p>
+<ol>
+<li>hdfs acl</li>
+<li>&#x542F;&#x7528;Sentry&#x540C;&#x6B65;</li>
+<li>&#x68C0;&#x67E5;HDFS&#x6743;&#x9650;&#xFF0C;<code>dfs.permissions</code>&#x3002;</li>
+<li>&#x8BBE;&#x7F6E;Sentry&#x540C;&#x6B65;&#x8DEF;&#x5F84;&#x524D;&#x7F00;, <code>sentry.hdfs.integration.path.prefixes</code>&#xFF0C;&#x53EF;&#x4EE5;&#x591A;&#x4E2A;&#x3002;</li>
+</ol>
+<blockquote>
+<p>Sentry-HDFS authorization is focused on Hive warehouse data - that is, any data that is part of a table in Hive or Impala. The real objective of this integration is to expand the same authorization checks to Hive warehouse data being accessed from any other components such as Pig, MapReduce or Spark. At this point, this feature does not replace HDFS ACLs. Tables that are not associated with Sentry will retain their old ACLs.</p>
+</blockquote>
+<p>&#x5B58;&#x5728;&#x54EA;&#x4E9B;&#x95EE;&#x9898;:</p>
+<ol>
+<li><code>sentry.hdfs.integration.path.prefixes</code>&#x66F4;&#x6539;&#x9700;&#x8981;&#x91CD;&#x542F;hdfs</li>
+<li>&#x542F;&#x7528;&#x540E;hdfs acl&#x5931;&#x6548;</li>
+<li>hdfs uri&#x4E0D;&#x80FD;&#x81EA;&#x52A8;&#x7EDF;&#x4E00;&#x6210;&#x6807;&#x51C6;&#x683C;&#x5F0F;&#x3002;<code>/facishare-data/</code>, <code>hdfs:///facishare-data/</code>, <code>hdfs://nameservice1/facishare-data/</code>, <code>hdfs://nameservice1:8020/facishare-data/</code>&#x5728;sentry&#x7684;&#x7406;&#x89E3;&#x4E2D;&#x662F;&#x4E0D;&#x540C;&#x7684;&#x8DEF;&#x5F84;&#x3002;</li>
+</ol>
+<h2 id="hue&#x4E2D;&#x8FDB;&#x884C;sentry&#x914D;&#x7F6E;"><a href="#hue&#x4E2D;&#x8FDB;&#x884C;sentry&#x914D;&#x7F6E;" class="headerlink" title="hue&#x4E2D;&#x8FDB;&#x884C;sentry&#x914D;&#x7F6E;"></a>hue&#x4E2D;&#x8FDB;&#x884C;sentry&#x914D;&#x7F6E;</h2><p><a href="http://gethue.com/apache-sentry-made-easy-with-the-new-hue-security-app/#howto" target="_blank" rel="external">http://gethue.com/apache-sentry-made-easy-with-the-new-hue-security-app/#howto</a><br>&#x5728;ldap&#x4E2D;&#x65B0;&#x5EFA;&#x4E86;&#x670D;&#x52A1;&#x8D26;&#x53F7;&#xFF0C;&#x7528;&#x4E8E;&#x5728;hue&#x4E2D;&#x5BF9;sentry&#x8FDB;&#x884C;&#x8BBE;&#x7F6E;</p>
+<ol>
+<li>&#x5728;&#x6240;&#x6709;&#x673A;&#x5668;&#x4E0A;&#x540C;&#x6B65;&#x6B64;&#x8D26;&#x53F7;&#x548C;&#x7EC4;</li>
+<li>&#x5728;sentry&#x4E2D;&#x5C06;&#x6B64;&#x8D26;&#x53F7;&#x7EC4;&#x52A0;&#x5165;&#x5230;&#x7BA1;&#x7406;&#x5458;&#x7EC4;<code>sentry.service.admin.group</code>&#x4E2D;</li>
+<li>hue&#x4E2D;&#x65B0;&#x5EFA;hive&#x7EC4;&#xFF0C;&#x5E76;&#x5C06;&#x6B64;&#x8D26;&#x53F7;&#x52A0;&#x5165;&#x5230;hive&#x7EC4;</li>
+</ol>
+<p>&#x9644;&#x5F55;:</p>
+<h3 id="hive&#x6743;&#x9650;"><a href="#hive&#x6743;&#x9650;" class="headerlink" title="hive&#x6743;&#x9650;"></a>hive&#x6743;&#x9650;</h3><table>
+<thead>
+<tr>
+<th>&#x64CD;&#x4F5C;</th>
+<th style="text-align:left">&#x89E3;&#x91CA;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ALL</td>
+<td style="text-align:left">&#x6240;&#x6709;&#x6743;&#x9650;</td>
+</tr>
+<tr>
+<td>ALTER</td>
+<td style="text-align:left">&#x5141;&#x8BB8;&#x4FEE;&#x6539;&#x5143;&#x6570;&#x636E;&#xFF08;modify metadata data of  object&#xFF09;&#x2014;&#x8868;&#x4FE1;&#x606F;&#x6570;&#x636E;</td>
+</tr>
+<tr>
+<td>UPDATE</td>
+<td style="text-align:left">&#x5141;&#x8BB8;&#x4FEE;&#x6539;&#x7269;&#x7406;&#x6570;&#x636E;&#xFF08;modify physical data of  object&#xFF09;&#x2014;&#x5B9E;&#x9645;&#x6570;&#x636E;</td>
+</tr>
+<tr>
+<td>CREATE</td>
+<td style="text-align:left">&#x5141;&#x8BB8;&#x8FDB;&#x884C;Create&#x64CD;&#x4F5C;</td>
+</tr>
+<tr>
+<td>DROP</td>
+<td style="text-align:left">&#x5141;&#x8BB8;&#x8FDB;&#x884C;DROP&#x64CD;&#x4F5C;</td>
+</tr>
+<tr>
+<td>INDEX</td>
+<td style="text-align:left">&#x5141;&#x8BB8;&#x5EFA;&#x7D22;&#x5F15;&#xFF08;&#x76EE;&#x524D;&#x8FD8;&#x6CA1;&#x6709;&#x5B9E;&#x73B0;&#xFF09;</td>
+</tr>
+<tr>
+<td>LOCK</td>
+<td style="text-align:left">&#x5F53;&#x51FA;&#x73B0;&#x5E76;&#x53D1;&#x7684;&#x4F7F;&#x7528;&#x5141;&#x8BB8;&#x7528;&#x6237;&#x8FDB;&#x884C;LOCK&#x548C;UNLOCK&#x64CD;&#x4F5C;</td>
+</tr>
+<tr>
+<td>SELECT</td>
+<td style="text-align:left">&#x5141;&#x8BB8;&#x7528;&#x6237;&#x8FDB;&#x884C;SELECT&#x64CD;&#x4F5C;</td>
+</tr>
+<tr>
+<td>SHOW_DATABASE</td>
+<td style="text-align:left">&#x5141;&#x8BB8;&#x7528;&#x6237;&#x67E5;&#x770B;&#x53EF;&#x7528;&#x7684;&#x6570;&#x636E;&#x5E93;</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hive-sql-syntax-for-use-with-sentry"><a href="#Hive-SQL-Syntax-for-Use-with-Sentry" class="headerlink" title="Hive SQL Syntax for Use with Sentry"></a>Hive SQL Syntax for Use with Sentry</h3><h4 id="&#x521B;&#x5EFA;&#x548C;&#x5220;&#x9664;&#x89D2;&#x8272;"><a href="#&#x521B;&#x5EFA;&#x548C;&#x5220;&#x9664;&#x89D2;&#x8272;" class="headerlink" title="&#x521B;&#x5EFA;&#x548C;&#x5220;&#x9664;&#x89D2;&#x8272;"></a>&#x521B;&#x5EFA;&#x548C;&#x5220;&#x9664;&#x89D2;&#x8272;</h4><ol>
+<li>&#x521B;&#x5EFA;&#x89D2;&#x8272;: <code>create role ROLE_NAME</code></li>
+<li>&#x5220;&#x9664;&#x89D2;&#x8272;: <code>droop role ROLE_NAME</code></li>
+</ol>
+<h4 id="&#x89D2;&#x8272;&#x7684;&#x6388;&#x6743;&#x548C;&#x64A4;&#x9500;"><a href="#&#x89D2;&#x8272;&#x7684;&#x6388;&#x6743;&#x548C;&#x64A4;&#x9500;" class="headerlink" title="&#x89D2;&#x8272;&#x7684;&#x6388;&#x6743;&#x548C;&#x64A4;&#x9500;"></a>&#x89D2;&#x8272;&#x7684;&#x6388;&#x6743;&#x548C;&#x64A4;&#x9500;</h4><p>&#x89D2;&#x8272;&#x7684;&#x6388;&#x6743;(GRANT)&#x5C31;&#x662F;&#x7ED9;&#x89D2;&#x8272;&#x6388;&#x4E88;&#x521B;&#x5EFA;&#x8868;&#x3001;&#x67E5;&#x8BE2;&#x8868;&#x7B49;&#x64CD;&#x4F5C;&#xFF0C;&#x64A4;&#x9500;(REVOKE)&#x53CD;&#x4E4B;&#x3002;&#x8BED;&#x6CD5;&#x5982;&#x4E0B;&#xFF1A;</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">GRANT <span class="keyword">ROLE</span> <span class="title">role_name</span> [, role_name] TO <span class="keyword">GROUP</span> <span class="title">&lt;groupName</span>&gt; [,<span class="keyword">GROUP</span> <span class="title">&lt;groupName</span>&gt;]</div><div class="line">REVOKE <span class="keyword">ROLE</span> <span class="title">role_name</span> [, role_name] FROM <span class="keyword">GROUP</span> <span class="title">&lt;groupName</span>&gt; [,<span class="keyword">GROUP</span> <span class="title">&lt;groupName</span>&gt;]</div><div class="line">``` </div><div class="line"></div><div class="line"><span class="comment">#### &#x6743;&#x9650;&#x7684;&#x6388;&#x4E88;&#x548C;&#x64A4;&#x9500;</span></div></pre></td></tr></table></figure>
+<p>GRANT <privilege> [, <privilege> ] ON <object> <object_name> TO ROLE <rolename> [,ROLE <rolename>]<br>REVOKE <privilege> [, <privilege> ] ON <object> <object_name> FROM ROLE <rolename> [,ROLE <rolename>]<br><figure class="highlight vala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="meta">#### &#x67E5;&#x770B;&#x89D2;&#x8272;/&#x7EC4;&#x6743;&#x9650;</span></div></pre></td></tr></table></figure></rolename></rolename></object_name></object></privilege></privilege></rolename></rolename></object_name></object></privilege></privilege></p>
+<p>SHOW ROLES;<br>SHOW CURRENT ROLES;<br>SHOW ROLE GRANT GROUP <groupname>;<br>SHOW GRANT ROLE <rolename>;<br>SHOW GRANT ROLE <rolename> on OBJECT <objectname>;<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&#x793A;&#x4F8B;&#xFF1A;</div><div class="line">* &#x628A;role_test1&#x89D2;&#x8272;&#x6388;&#x6743;&#x7ED9;test&#x7EC4;: `grant <span class="keyword">role</span> <span class="title">role_test1</span> to <span class="keyword">group</span> <span class="title">test</span>`</div><div class="line">* &#x67E5;&#x770B;test&#x7EC4;&#x88AB;&#x6388;&#x6743;&#x7684;&#x89D2;&#x8272;: `show <span class="keyword">role</span> <span class="title">grant</span> <span class="keyword">group</span> <span class="title">test</span>`</div><div class="line">* &#x53D6;&#x6D88;test&#x7EC4;&#x7684;role_test1&#x89D2;&#x8272;: `revoke <span class="keyword">role</span> <span class="title">role_test1</span> from <span class="keyword">group</span> <span class="title">test</span>` </div><div class="line">* Grant privileges to analyst_role:</div><div class="line">```sql</div><div class="line">CREATE <span class="keyword">ROLE</span> <span class="title">analyst_role</span>;</div><div class="line">GRANT ALL ON DATABASE analyst1 TO <span class="keyword">ROLE</span> <span class="title">analyst_role</span>;</div><div class="line">GRANT SELECT ON DATABASE jranalyst1 TO <span class="keyword">ROLE</span> <span class="title">analyst_role</span>;</div><div class="line">GRANT ALL ON URI &apos;hdfs://ha-nn-uri/landing/analyst1&apos; TO <span class="keyword">ROLE</span> <span class="title">analyst_role</span>;</div></pre></td></tr></table></figure></objectname></rolename></rolename></groupname></p>
+<ul>
+<li><p>Grant privileges to junior_analyst_role:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">CREATE ROLE junior_analyst_role;</div><div class="line">GRANT ALL ON DATABASE jranalyst1 TO ROLE junior_analyst_role;</div><div class="line">GRANT ALL ON URI &apos;hdfs://ha-nn-uri/landing/jranalyst1&apos; TO ROLE junior_analyst_role;</div><div class="line">grant all on database test to role admin_role with grant option;</div><div class="line">``` </div><div class="line"></div><div class="line">* Grant privileges to admin_role:</div><div class="line">```sql</div><div class="line">CREATE ROLE admin_role</div><div class="line">GRANT ALL ON SERVER server TO ROLE admin_role;</div></pre></td></tr></table></figure>
+</li>
+<li><p>Grant roles to groups:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">GRANT</span> <span class="keyword">ROLE</span> admin_role <span class="keyword">TO</span> <span class="keyword">GROUP</span> <span class="keyword">admin</span>;</div><div class="line"><span class="keyword">GRANT</span> <span class="keyword">ROLE</span> analyst_role <span class="keyword">TO</span> <span class="keyword">GROUP</span> analyst;</div><div class="line"><span class="keyword">GRANT</span> <span class="keyword">ROLE</span> jranalyst_role <span class="keyword">TO</span> <span class="keyword">GROUP</span> jranalyst;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&#x53C2;&#x8003;:</p>
+<ol>
+<li>Authorization Privilege Model for Hive and Impala: <a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/cm_sg_sentry_service.html#concept_cx4_sw2_q4_unique_1" target="_blank" rel="external">http://www.cloudera.com/documentation/enterprise/5-4-x/topics/cm_sg_sentry_service.html#concept_cx4_sw2_q4_unique_1</a></li>
+<li>The Sentry Service: <a href="http://www.cloudera.com/documentation/enterprise/5-4-x/topics/cm_sg_sentry_service.html#" target="_blank" rel="external">http://www.cloudera.com/documentation/enterprise/5-4-x/topics/cm_sg_sentry_service.html</a></li>
+<li>Apache Sentry made easy with the new Hue Security App: <a href="http://gethue.com/apache-sentry-made-easy-with-the-new-hue-security-app/#howto" target="_blank" rel="external">http://gethue.com/apache-sentry-made-easy-with-the-new-hue-security-app/#howto</a></li>
+<li>What is missing in Apache Sentry (incubating)?: <a href="http://getindata.com/blog/post/what-is-missing-in-apache-sentry-incubating/" target="_blank" rel="external">http://getindata.com/blog/post/what-is-missing-in-apache-sentry-incubating/</a></li>
+<li>Apache Sentry Tutorial: <a href="https://cwiki.apache.org/confluence/display/SENTRY/Sentry+Tutorial" target="_blank" rel="external">https://cwiki.apache.org/confluence/display/SENTRY/Sentry+Tutorial</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/02/25/Enabling-sentry-in-CDH/" data-id="ciqrrv6mi00182x9kb3cweun7" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/02/25/Enabling-sentry-in-CDH/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CDH/">CDH</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sentry/">sentry</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/03/01/how-to-use-kerberos-in-CDH/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          kerberos使用手册
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/01/29/flume-hdfs-ucs-4/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Flume SpoolDirectorySource遇到emoj截断问题</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/02/25/Enabling-sentry-in-CDH/" data-title="CDH启用sentry" data-url="http://wzktravel.github.io/2016/02/25/Enabling-sentry-in-CDH/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/squid/">squid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/squid/" style="font-size: 10px;">squid</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/15/proxy-server/">搭建proxy伺服器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/24/upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/hadoop-management/">hadoop集群管理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/04/azkaban-how-to-install-and-use/">azkaban的安装和使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

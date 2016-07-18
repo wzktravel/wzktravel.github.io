@@ -4,21 +4,14 @@
 <head>
   <meta charset="utf-8">
   
-  <title>查看修复HDFS中丢失的块 | wzktravel</title>
+  <title>Tag: squid | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="&amp;#x68C0;&amp;#x6D4B;&amp;#x7F3A;&amp;#x5931;&amp;#x5757;12hdfs fsck -list-corruptfileblockshdfs fsck / | egrep -v &amp;apos;^\.+$&amp;apos; | grep -v eplica
-&amp;#x67E5;&amp;#x770B;&amp;#x4E0A;&amp;#x9762;&amp;#x67D0;&amp;#x4E00;&amp;#x4E2A;&amp;#x6587;&amp;#">
-<meta property="og:type" content="article">
-<meta property="og:title" content="查看修复HDFS中丢失的块">
-<meta property="og:url" content="http://wzktravel.github.io/2016/03/31/Fix-Corrupt-Blocks-on-HDFS/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="wzktravel">
+<meta property="og:url" content="http://wzktravel.github.io/tags/squid/index.html">
 <meta property="og:site_name" content="wzktravel">
-<meta property="og:description" content="&amp;#x68C0;&amp;#x6D4B;&amp;#x7F3A;&amp;#x5931;&amp;#x5757;12hdfs fsck -list-corruptfileblockshdfs fsck / | egrep -v &amp;apos;^\.+$&amp;apos; | grep -v eplica
-&amp;#x67E5;&amp;#x770B;&amp;#x4E0A;&amp;#x9762;&amp;#x67D0;&amp;#x4E00;&amp;#x4E2A;&amp;#x6587;&amp;#">
-<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="查看修复HDFS中丢失的块">
-<meta name="twitter:description" content="&amp;#x68C0;&amp;#x6D4B;&amp;#x7F3A;&amp;#x5931;&amp;#x5757;12hdfs fsck -list-corruptfileblockshdfs fsck / | egrep -v &amp;apos;^\.+$&amp;apos; | grep -v eplica
-&amp;#x67E5;&amp;#x770B;&amp;#x4E0A;&amp;#x9762;&amp;#x67D0;&amp;#x4E00;&amp;#x4E2A;&amp;#x6587;&amp;#">
+<meta name="twitter:title" content="wzktravel">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -71,84 +64,39 @@
   </div>
 </header>
     <div class="outer">
-      <section id="main"><article id="post-Fix-Corrupt-Blocks-on-HDFS" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/03/31/Fix-Corrupt-Blocks-on-HDFS/" class="article-date">
-  <time datetime="2016-03-31T05:53:20.000Z" itemprop="datePublished">2016-03-31</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+      <section id="main">
   
-    <h1 class="article-title" itemprop="name">
-      查看修复HDFS中丢失的块
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2016" class="archive-year">2016</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2016/07/15/proxy-server/" class="archive-article-date">
+  <time datetime="2016-07-15T10:08:23.000Z" itemprop="datePublished">7月 15</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2016/07/15/proxy-server/">搭建proxy伺服器</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <a id="more"></a>
-<h3 id="&#x68C0;&#x6D4B;&#x7F3A;&#x5931;&#x5757;"><a href="#&#x68C0;&#x6D4B;&#x7F3A;&#x5931;&#x5757;" class="headerlink" title="&#x68C0;&#x6D4B;&#x7F3A;&#x5931;&#x5757;"></a>&#x68C0;&#x6D4B;&#x7F3A;&#x5931;&#x5757;</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">hdfs fsck -list-corruptfileblocks</div><div class="line">hdfs fsck / | egrep -v <span class="string">&apos;^\.+$&apos;</span> | grep -v eplica</div></pre></td></tr></table></figure>
-<p>&#x67E5;&#x770B;&#x4E0A;&#x9762;&#x67D0;&#x4E00;&#x4E2A;&#x6587;&#x4EF6;&#x7684;&#x60C5;&#x51B5;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hdfs fsck /path/to/corrupt/file -locations -blocks -files</div></pre></td></tr></table></figure></p>
-<h3 id="&#x89E3;&#x51B3;&#x65B9;&#x6CD5;"><a href="#&#x89E3;&#x51B3;&#x65B9;&#x6CD5;" class="headerlink" title="&#x89E3;&#x51B3;&#x65B9;&#x6CD5;"></a>&#x89E3;&#x51B3;&#x65B9;&#x6CD5;</h3><ol>
-<li>&#x5982;&#x679C;&#x6587;&#x4EF6;&#x4E0D;&#x91CD;&#x8981;&#xFF0C;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x5220;&#x9664;&#x6B64;&#x6587;&#x4EF6;&#xFF1B;&#x6216;&#x5220;&#x9664;&#x540E;&#x91CD;&#x65B0;&#x590D;&#x5236;&#x4E00;&#x4EFD;&#x5230;&#x96C6;&#x7FA4;&#x4E2D;</li>
-<li>&#x5982;&#x679C;&#x4E0D;&#x80FD;&#x5220;&#x9664;&#xFF0C;&#x9700;&#x8981;&#x4ECE;&#x4E0A;&#x9762;&#x547D;&#x4EE4;&#x4E2D;&#x627E;&#x5230;&#x53D1;&#x751F;&#x5728;&#x54EA;&#x53F0;&#x673A;&#x5668;&#x4E0A;&#xFF0C;&#x7136;&#x540E;&#x5230;&#x6B64;&#x673A;&#x5668;&#x4E0A;&#x67E5;&#x770B;&#x65E5;&#x5FD7;&#x3002;</li>
-</ol>
-<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ul>
-<li><a href="http://centoshowtos.org/hadoop/fix-corrupt-blocks-on-hdfs/" target="_blank" rel="external">http://centoshowtos.org/hadoop/fix-corrupt-blocks-on-hdfs/</a></li>
-<li><a href="http://stackoverflow.com/questions/19205057/how-to-fix-corrupt-hadoop-hdfs" target="_blank" rel="external">http://stackoverflow.com/questions/19205057/how-to-fix-corrupt-hadoop-hdfs</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/03/31/Fix-Corrupt-Blocks-on-HDFS/" data-id="ciqrrv6mq001g2x9k4epvg8bv" class="article-share-link">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/03/31/Fix-Corrupt-Blocks-on-HDFS/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hdfs/">hdfs</a></li></ul>
-
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2016/04/14/quartz-in-practice/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">
-        
-          quartz in practice
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2016/03/05/Disable-kerberos-in-CDH/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">CDH禁用kerberos</div>
-    </a>
-  
-</nav>
-
-  
 </article>
-
-
-  <section id="comments">
-    <div id="ds-thread" class="ds-thread" data-thread-key="2016/03/31/Fix-Corrupt-Blocks-on-HDFS/" data-title="查看修复HDFS中丢失的块" data-url="http://wzktravel.github.io/2016/03/31/Fix-Corrupt-Blocks-on-HDFS/"></div>
-  </section>
+  
+  
+    </div></section>
+  
 </section>
       
       <aside id="sidebar">

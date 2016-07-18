@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>hadoop集群管理 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="hadoop集群管理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hadoop集群管理">
+<meta property="og:url" content="http://wzktravel.github.io/2016/05/10/hadoop-management/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="hadoop集群管理">
+<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="hadoop集群管理">
+<meta name="twitter:description" content="hadoop集群管理">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-hadoop-management" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/05/10/hadoop-management/" class="article-date">
+  <time datetime="2016-05-10T01:33:37.000Z" itemprop="datePublished">2016-05-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      hadoop集群管理
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>hadoop&#x96C6;&#x7FA4;&#x7BA1;&#x7406;<br><a id="more"></a></p>
+<h3 id="yarn&#x65E5;&#x5FD7;&#x548C;&#x4E2D;&#x95F4;&#x7ED3;&#x679C;&#x5730;&#x5740;&#x8BBE;&#x7F6E;"><a href="#yarn&#x65E5;&#x5FD7;&#x548C;&#x4E2D;&#x95F4;&#x7ED3;&#x679C;&#x5730;&#x5740;&#x8BBE;&#x7F6E;" class="headerlink" title="yarn&#x65E5;&#x5FD7;&#x548C;&#x4E2D;&#x95F4;&#x7ED3;&#x679C;&#x5730;&#x5740;&#x8BBE;&#x7F6E;"></a>yarn&#x65E5;&#x5FD7;&#x548C;&#x4E2D;&#x95F4;&#x7ED3;&#x679C;&#x5730;&#x5740;&#x8BBE;&#x7F6E;</h3><p>&#x6700;&#x8FD1;&#x9047;&#x5230;&#x8DD1;&#x4EFB;&#x52A1;&#x65F6;&#x5C06;&#x7CFB;&#x7EDF;&#x78C1;&#x76D8;&#x6253;&#x6EE1;&#x7684;&#x60C5;&#x51B5;&#xFF0C;&#x5B9A;&#x4F4D;&#x53D1;&#x73B0;&#x662F;<code>yarn.nodemanager.log-dirs</code>&#x4F7F;&#x7528;&#x9ED8;&#x8BA4;&#x914D;&#x7F6E;&#xFF0C;&#x5BFC;&#x81F4;&#x8FD0;&#x884C;&#x4EFB;&#x52A1;&#x7684;&#x65E5;&#x5FD7;&#x8FC7;&#x591A;&#x9020;&#x6210;&#x7684;&#x3002;</p>
+<ul>
+<li><code>yarn.nodemanager.local-dirs</code><br><p> &#x53C2;&#x6570;&#x89E3;&#x91CA;&#xFF1A;&#x4E2D;&#x95F4;&#x7ED3;&#x679C;&#x5B58;&#x653E;&#x4F4D;&#x7F6E;&#xFF0C;&#x7C7B;&#x4F3C;&#x4E8E;1.0&#x4E2D;&#x7684;<code>mapred.local.dir</code>&#x3002;&#x6CE8;&#x610F;&#xFF0C;&#x8FD9;&#x4E2A;&#x53C2;&#x6570;&#x901A;&#x5E38;&#x4F1A;&#x914D;&#x7F6E;&#x591A;&#x4E2A;&#x76EE;&#x5F55;&#xFF0C;&#x4EE5;&#x5206;&#x644A;&#x78C1;&#x76D8;IO&#x8D1F;&#x8F7D;&#x3002;<br></p><p> &#x9ED8;&#x8BA4;&#x503C;&#xFF1A;<code>${hadoop.tmp.dir}/nm-local-dir</code></p></li>
+<li><code>yarn.nodemanager.log-dirs</code><br><p> &#x53C2;&#x6570;&#x89E3;&#x91CA;&#xFF1A;&#x65E5;&#x5FD7;&#x5B58;&#x653E;&#x5730;&#x5740;&#xFF08;&#x53EF;&#x914D;&#x7F6E;&#x591A;&#x4E2A;&#x76EE;&#x5F55;&#xFF09;&#x3002;<br></p><p> &#x9ED8;&#x8BA4;&#x503C;&#xFF1A;<code>${yarn.log.dir}/userlogs</code></p></li>
+</ul>
+<p>&#x8FD9;&#x4E24;&#x4E2A;&#x53C2;&#x6570;&#x5728;yarn-site.xml&#x4E2D;&#xFF0C;&#x5C3D;&#x91CF;&#x8FDB;&#x884C;&#x5355;&#x72EC;&#x914D;&#x7F6E;&#xFF0C;&#x5C06;&#x5176;&#x653E;&#x7F6E;&#x5230;&#x6570;&#x636E;&#x78C1;&#x76D8;&#x4E0A;&#x3002;</p>
+<p>ResouceManager&#x548C;NodeManager&#x7684;&#x4E00;&#x4E9B;&#x53C2;&#x6570;&#x8BF4;&#x660E;&#x53EF;&#x4EE5;&#x53C2;&#x8003;<a href="http://dongxicheng.org/mapreduce-nextgen/hadoop-yarn-configurations-resourcemanager-nodemanager/" target="_blank" rel="external">http://dongxicheng.org/mapreduce-nextgen/hadoop-yarn-configurations-resourcemanager-nodemanager/</a></p>
+<h3 id="hdfs&#x5F00;&#x542F;acl"><a href="#hdfs&#x5F00;&#x542F;ACL" class="headerlink" title="hdfs&#x5F00;&#x542F;ACL"></a>hdfs&#x5F00;&#x542F;ACL</h3><p>HDFS&#x672C;&#x8EAB;&#x6CA1;&#x6709;&#x63D0;&#x4F9B;&#x7528;&#x6237;&#x540D;&#x3001;&#x7528;&#x6237;&#x7EC4;&#x7684;&#x521B;&#x5EFA;&#xFF0C;&#x5728;&#x5BA2;&#x6237;&#x7AEF;&#x8C03;&#x7528;hadoop &#x7684;&#x6587;&#x4EF6;&#x64CD;&#x4F5C;&#x547D;&#x4EE4;&#x65F6;&#xFF0C;hadoop &#x8BC6;&#x522B;&#x51FA;&#x6267;&#x884C;&#x547D;&#x4EE4;&#x6240;&#x5728;&#x8FDB;&#x7A0B;&#x7684;&#x7528;&#x6237;&#x540D;&#x548C;&#x7528;&#x6237;&#x7EC4;&#xFF0C;&#x7136;&#x540E;&#x4F7F;&#x7528;&#x8FD9;&#x4E2A;&#x7528;&#x6237;&#x540D;&#x548C;&#x7EC4;&#x6765;&#x68C0;&#x67E5;&#x6587;&#x4EF6;&#x6743;&#x9650;&#x3002; </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.permissions.enabled<span class="tag">&lt;/<span class="name">name</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.namenode.acls.enabled<span class="tag">&lt;/<span class="name">name</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>For HDFS, the mapping of users to groups is performed on the NameNode. Thus, the host system configuration of the NameNode determines the group mappings for the users.</p>
+</blockquote>
+<p>&#x53C2;&#x8003;:</p>
+<ol>
+<li><a href="http://debugo.com/hdfs-acl/?utm_source=tuicool&amp;utm_medium=referral" target="_blank" rel="external">http://debugo.com/hdfs-acl/?utm_source=tuicool&amp;utm_medium=referral</a></li>
+<li>&#x57FA;&#x4E8E;Hadoop SLA&#x8BA4;&#x8BC1;&#x673A;&#x5236;&#x5B9E;&#x73B0;&#x6743;&#x9650;&#x63A7;&#x5236;: <a href="http://shiyanjun.cn/archives/994.html" target="_blank" rel="external">http://shiyanjun.cn/archives/994.html</a></li>
+</ol>
+<h3 id="hive&#x67E5;&#x8BE2;&#x51FA;&#x9519;-&#x6216;-yarn&#x6267;&#x884C;&#x62A5;&#x9519;"><a href="#hive&#x67E5;&#x8BE2;&#x51FA;&#x9519;-&#x6216;-yarn&#x6267;&#x884C;&#x62A5;&#x9519;" class="headerlink" title="hive&#x67E5;&#x8BE2;&#x51FA;&#x9519; &#x6216; yarn&#x6267;&#x884C;&#x62A5;&#x9519;"></a>hive&#x67E5;&#x8BE2;&#x51FA;&#x9519; &#x6216; yarn&#x6267;&#x884C;&#x62A5;&#x9519;</h3><p>&#x5728;hue&#x4E2D;&#x4F7F;&#x7528;hive&#x67E5;&#x8BE2;&#x65F6;&#x6709;&#x65F6;&#x4F1A;&#x62A5;&#x9519;: <code>Return Code 2 from org.apache.hadoop.hive.ql.exec.MapRedTask</code>&#xFF0C;&#x663E;&#x7136;&#x5177;&#x4F53;&#x539F;&#x56E0;&#x8FD8;&#x5F97;&#x53BB;yarn&#x4E2D;&#x67E5;&#x770B;&#xFF0C;&#x5177;&#x4F53;&#x539F;&#x56E0;&#x662F;<code>Diagnostics: Rename cannot overwrite non empty destination directory /data/yarn/nm/usercache/xxxx/filecache/100</code>&#x3002;</p>
+<p>&#x539F;&#x56E0;: </p>
+<blockquote>
+<p>This is a bug in Hadoop 2.6.0. It&#x2019;s been marked as fixed but it still happens occasionally (see: <a href="https://issues.apache.org/jira/browse/YARN-2624" target="_blank" rel="external">https://issues.apache.org/jira/browse/YARN-2624</a>).</p>
+</blockquote>
+<p>&#x89E3;&#x51B3;:</p>
+<p></p><p> &#x624B;&#x52A8;&#x5C06;&#x6240;&#x6709;NodeManager&#x4E0A;&#x76EE;&#x5F55;<code>/data/yarn/nm/usercache/</code>&#x4E0B;&#x5185;&#x5BB9;&#x5220;&#x9664;&#x3002;</p>
+<p>&#x53C2;&#x8003;:</p>
+<ol>
+<li><a href="http://stackoverflow.com/questions/30857413/hadoop-complains-about-attempting-to-overwrite-nonempty-destination-directory" target="_blank" rel="external">http://stackoverflow.com/questions/30857413/hadoop-complains-about-attempting-to-overwrite-nonempty-destination-directory</a></li>
+</ol>
+<h3 id="yarn-unhealthy-nodes"><a href="#yarn-unhealthy-nodes" class="headerlink" title="yarn unhealthy nodes"></a>yarn unhealthy nodes</h3><p>&#x5728;yarn resourcemanager web ui&#x754C;&#x9762;&#x4E2D;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#x6709;&#x4E00;&#x9879;&#x662F;<code>Unhealthy Nodes</code>&#xFF0C;&#x70B9;&#x8FDB;&#x53BB;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#x5177;&#x4F53;&#x4FE1;&#x606F;&#xFF0C;<code>health-report</code>&#x663E;&#x793A;&#x5177;&#x4F53;&#x539F;&#x56E0;&#x3002;</p>
+<p>&#x67E5;&#x770B;&#x6B64;node manager&#x4E0A;&#x78C1;&#x76D8;&#x5DF2;&#x7ECF;&#x5230;90%&#xFF0C;&#x8003;&#x8651;&#x5230;&#x78C1;&#x76D8;&#x5269;&#x4F59;&#x7A7A;&#x95F4;&#x8FD8;&#x5F88;&#x5145;&#x8DB3;&#xFF0C;&#x51B3;&#x5B9A;&#x8C03;&#x8282;yarn&#x53C2;&#x6570;&#x3002;</p>
+<ol>
+<li><code>yarn.nodemanager.disk-health-checker.min-healthy-disks</code>: &#x5F53;&#x78C1;&#x76D8;&#x5269;&#x4F59;&#x7A7A;&#x95F4;&#x5C0F;&#x4E8E;&#x6B64;&#x9600;&#x503C;&#x65F6;&#xFF0C;yarn&#x4E0D;&#x4F1A;&#x521B;&#x5EFA;&#x65B0;&#x7684;container&#xFF0C;&#x9ED8;&#x8BA4;&#x662F;0.25&#x3002;</li>
+<li><code>yarn.nodemanager.disk-health-checker.max-disk-utilization-per-disk-percentage</code>: &#x5F53;&#x78C1;&#x76D8;&#x5360;&#x7528;&#x7A7A;&#x95F4;&#x5C0F;&#x4E8E;&#x6B64;&#x9600;&#x503C;&#x65F6;&#xFF0C;yarn&#x4F1A;&#x89C6;&#x4E3A;&#x6B64;&#x8282;&#x70B9;&#x4E3A;unhealthy&#x7684;&#xFF0C;&#x9ED8;&#x8BA4;&#x662F;90.0&#x3002;</li>
+</ol>
+<p>&#x589E;&#x52A0;&#x8FD9;&#x4E24;&#x4E2A;&#x53C2;&#x6570;&#x5982;&#x4E0B;:<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.nodemanager.disk-health-checker.min-healthy-disks<span class="tag">&lt;/<span class="name">name</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>0.05<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.nodemanager.disk-health-checker.max-disk-utilization-per-disk-percentage<span class="tag">&lt;/<span class="name">name</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>95.0<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>&#x4FEE;&#x6539;&#x5B8C;&#x6210;&#x540E;&#xFF0C;&#x9700;&#x8981;&#x5148;&#x5C06;nodemanager&#x91CD;&#x542F;&#xFF0C;&#x7136;&#x540E;&#x518D;&#x91CD;&#x542F;resourcemanager&#xFF0C;&#x5426;&#x5219;&#x4F1A;&#x5BFC;&#x81F4;&#x4FEE;&#x6539;&#x7684;&#x8282;&#x70B9;&#x72B6;&#x6001;&#x9519;&#x4E71;&#x3002;</p>
+<p>&#x53C2;&#x8003;:</p>
+<ol>
+<li><a href="http://stackoverflow.com/questions/29010039/yarn-unhealthy-nodes" target="_blank" rel="external">YARN UNHEALTHY nodes</a></li>
+<li><a href="https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-common/yarn-default.xml" target="_blank" rel="external">yarn&#x9ED8;&#x8BA4;&#x914D;&#x7F6E;(yarn-default.xml)</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/05/10/hadoop-management/" data-id="ciqrrv6n1001s2x9kk3614syg" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/05/10/hadoop-management/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hdfs/">hdfs</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/yarn/">yarn</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/05/11/elasticsearch-reindex/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          elasticsearch修改mapping重建索引
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/05/04/azkaban-how-to-install-and-use/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">azkaban的安装和使用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/05/10/hadoop-management/" data-title="hadoop集群管理" data-url="http://wzktravel.github.io/2016/05/10/hadoop-management/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/squid/">squid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/squid/" style="font-size: 10px;">squid</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/15/proxy-server/">搭建proxy伺服器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/24/upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/hadoop-management/">hadoop集群管理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/04/azkaban-how-to-install-and-use/">azkaban的安装和使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

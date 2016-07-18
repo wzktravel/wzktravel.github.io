@@ -1,0 +1,490 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Spark RDD学习 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="RDD(resilient distributed dataset)是spark核心概念之一，spark中数据的处理过程其实是rdd之间的互相转换，在此对rdd的一些东西进行整理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark RDD学习">
+<meta property="og:url" content="http://wzktravel.github.io/2015/09/01/spark-rdd/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="RDD(resilient distributed dataset)是spark核心概念之一，spark中数据的处理过程其实是rdd之间的互相转换，在此对rdd的一些东西进行整理。">
+<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spark RDD学习">
+<meta name="twitter:description" content="RDD(resilient distributed dataset)是spark核心概念之一，spark中数据的处理过程其实是rdd之间的互相转换，在此对rdd的一些东西进行整理。">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-spark-rdd" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/09/01/spark-rdd/" class="article-date">
+  <time datetime="2015-08-31T16:12:43.000Z" itemprop="datePublished">2015-09-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Spark RDD学习
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>RDD(resilient distributed dataset)&#x662F;spark&#x6838;&#x5FC3;&#x6982;&#x5FF5;&#x4E4B;&#x4E00;&#xFF0C;spark&#x4E2D;&#x6570;&#x636E;&#x7684;&#x5904;&#x7406;&#x8FC7;&#x7A0B;&#x5176;&#x5B9E;&#x662F;rdd&#x4E4B;&#x95F4;&#x7684;&#x4E92;&#x76F8;&#x8F6C;&#x6362;&#xFF0C;&#x5728;&#x6B64;&#x5BF9;rdd&#x7684;&#x4E00;&#x4E9B;&#x4E1C;&#x897F;&#x8FDB;&#x884C;&#x6574;&#x7406;&#x3002;<br><a id="more"></a></p>
+<h1 id="&#x6982;&#x5FF5;"><a href="#&#x6982;&#x5FF5;" class="headerlink" title="&#x6982;&#x5FF5;"></a>&#x6982;&#x5FF5;</h1><p>RDD: resilient distributed dataset, &#x5F39;&#x6027;&#x5206;&#x5E03;&#x5F0F;&#x6570;&#x636E;&#x96C6;</p>
+<ol>
+<li>A collection of elements partitioned across the nodes of the cluster that can be operated on in parallel. (&#x96C6;&#x5408;&#x3001;&#x5206;&#x5E03;&#x5F0F;,&#x5E76;&#x884C;&#x8BA1;&#x7B97;)</li>
+<li>Created by starting with a file in the Hadoop file system (or any other Hadoop-supported file system), or an existing Scala collection in the driver program, and transforming it. (&#x6570;&#x636E;&#x53EF;&#x4EE5;&#x6765;&#x81EA;scala&#x96C6;&#x5408;&#x6216;&#x5916;&#x90E8;&#x5B58;&#x50A8;,&#x53EF;&#x4EE5;&#x8FDB;&#x884C;transform&#x548C;action)</li>
+<li>Persist an RDD in memory, allowing it to be reused efficiently across parallel operations. (&#x6301;&#x4E45;&#x5316;&#x4E2D;&#x95F4;RDD,&#x52A0;&#x901F;&#x8BA1;&#x7B97;)</li>
+<li>RDDs automatically recover from node failures. (&#x5931;&#x8D25;&#x540E;&#x57FA;&#x4E8E;lineage&#x91CD;&#x5EFA;)</li>
+</ol>
+<h1 id="&#x521B;&#x5EFA;rdd"><a href="#&#x521B;&#x5EFA;RDD" class="headerlink" title="&#x521B;&#x5EFA;RDD"></a>&#x521B;&#x5EFA;RDD</h1><h2 id="&#x6765;&#x81EA;&#x96C6;&#x5408;"><a href="#&#x6765;&#x81EA;&#x96C6;&#x5408;" class="headerlink" title="&#x6765;&#x81EA;&#x96C6;&#x5408;"></a>&#x6765;&#x81EA;&#x96C6;&#x5408;</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">val data = Array(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</div><div class="line">val distData = sc.parallelize(data)</div><div class="line">val distData2 = sc.parallelize(data, <span class="number">10</span>) <span class="comment">//&#x6307;&#x5B9A;partition&#x6570;&#x91CF;</span></div></pre></td></tr></table></figure>
+<h2 id="&#x6765;&#x81EA;&#x5916;&#x90E8;&#x6570;&#x636E;"><a href="#&#x6765;&#x81EA;&#x5916;&#x90E8;&#x6570;&#x636E;" class="headerlink" title="&#x6765;&#x81EA;&#x5916;&#x90E8;&#x6570;&#x636E;"></a>&#x6765;&#x81EA;&#x5916;&#x90E8;&#x6570;&#x636E;</h2><h3 id="text-file"><a href="#Text-File" class="headerlink" title="Text File"></a>Text File</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">val localFile = sc.textFile(<span class="string">&quot;file://path/data.txt&quot;</span>) </div><div class="line">val hdfsFile = sc.textFile(<span class="string">&quot;hdfs://path/data.txt&quot;</span>)</div></pre></td></tr></table></figure>
+<h3 id="sequence-file"><a href="#Sequence-File" class="headerlink" title="Sequence File"></a>Sequence File</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sc.sequenceFile[K, V]</div></pre></td></tr></table></figure>
+<h3 id="hadoop-inputformat"><a href="#Hadoop-InputFormat" class="headerlink" title="Hadoop InputFormat"></a>Hadoop InputFormat</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sc.hadoopRDD <span class="comment">//old api: org.apache.hadoop.mapred</span></div><div class="line">sc.newAPIHadoopRDD <span class="comment">//new api: org.apache.hadoop.mapreduce</span></div></pre></td></tr></table></figure>
+<h1 id="rdd&#x64CD;&#x4F5C;"><a href="#RDD&#x64CD;&#x4F5C;" class="headerlink" title="RDD&#x64CD;&#x4F5C;"></a>RDD&#x64CD;&#x4F5C;</h1><p>RDD&#x5305;&#x62EC;&#x4E24;&#x79CD;&#x7C7B;&#x578B;&#x7684;&#x64CD;&#x4F5C;: Transformation &#x548C; Action&#x3002;Transformation&#x4ECE;&#x5DF2;&#x6709;&#x7684;RDD&#x751F;&#x6210;&#x65B0;&#x7684;RDD&#xFF0C;lazy&#x6267;&#x884C;&#xFF1B;Action&#x89E6;&#x53D1;RDD&#x4E0A;&#x7684;&#x8BA1;&#x7B97;&#xFF0C;&#x8FD4;&#x56DE;&#x7ED3;&#x679C;&#x5230;driver&#x3002;</p>
+<h2 id="transformation"><a href="#Transformation" class="headerlink" title="Transformation"></a>Transformation</h2><table>
+<thead>
+<tr>
+<th>Transformation</th>
+<th style="text-align:left">Example      </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>map(func)</td>
+<td style="text-align:left">rdd.map(x =&gt; x*x)</td>
+</tr>
+<tr>
+<td>filter(func)</td>
+<td style="text-align:left">rdd.filter(x =&gt; x/2==0)</td>
+</tr>
+<tr>
+<td>flatMap(func)</td>
+<td style="text-align:left">rdd.flatMap(x =&gt; )</td>
+</tr>
+<tr>
+<td>union(otherRDD)</td>
+<td style="text-align:left">rdd1.union(rdd2)</td>
+</tr>
+<tr>
+<td>distinct([numTasks])</td>
+<td style="text-align:left">rdd.distinct()</td>
+</tr>
+<tr>
+<td>groupByKey([numTasks])</td>
+<td style="text-align:left">rdd.map((_, 1)).groupByKey()</td>
+</tr>
+<tr>
+<td>reduceByKey(func, [numTasks])</td>
+<td style="text-align:left">rdd.map((<em>, 1)).reduceByKey(</em>+_)</td>
+</tr>
+<tr>
+<td>sortByKey([ascending], [numTasks])</td>
+<td style="text-align:left">rdd.sortByKey()</td>
+</tr>
+<tr>
+<td>join(otherDataset, [numTasks])</td>
+<td style="text-align:left">rdd1.join(rdd2)</td>
+</tr>
+<tr>
+<td>cogroup(otherDataset, [numTasks])</td>
+<td style="text-align:left">rdd1.cogroup(rdd2)</td>
+</tr>
+<tr>
+<td>cartesian(otherDataset)</td>
+<td style="text-align:left">rdd1.cartesian(rdd2)</td>
+</tr>
+<tr>
+<td>coalesce(numPartitions)</td>
+<td style="text-align:left">rdd.coalesce(50)</td>
+</tr>
+<tr>
+<td>repartition(numPartitions)</td>
+<td style="text-align:left">rdd.repartition(100)     </td>
+</tr>
+</tbody>
+</table>
+<h2 id="action"><a href="#Action" class="headerlink" title="Action"></a>Action</h2><table>
+<thead>
+<tr>
+<th>Action</th>
+<th style="text-align:left">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>reduce(func)</td>
+<td style="text-align:left">rdd.reduce(<em>+</em>)</td>
+</tr>
+<tr>
+<td>collect()</td>
+<td style="text-align:left">rdd.collect()</td>
+</tr>
+<tr>
+<td>count()</td>
+<td style="text-align:left">rdd.count()</td>
+</tr>
+<tr>
+<td>first()</td>
+<td style="text-align:left">rdd.first()</td>
+</tr>
+<tr>
+<td>take(n)</td>
+<td style="text-align:left">rdd.take(10)</td>
+</tr>
+<tr>
+<td>saveAsTextFile(path)</td>
+<td style="text-align:left">rdd.saveAsTextFile(&#x201C;/output&#x201D;)</td>
+</tr>
+<tr>
+<td>saveAsSequenceFile(path)</td>
+<td style="text-align:left">rdd.saveAsSequenceFile(&#x201C;/output&#x201D;)</td>
+</tr>
+<tr>
+<td>saveAsObjectFile(path)</td>
+<td style="text-align:left">rdd.saveAsObjectFile(&#x201C;/output&#x201D;)</td>
+</tr>
+<tr>
+<td>countByKey()</td>
+<td style="text-align:left">rdd.countByKey()</td>
+</tr>
+<tr>
+<td>foreach(func)</td>
+<td style="text-align:left">rdd.foreach(func)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="&#x793A;&#x4F8B;-wordcount"><a href="#&#x793A;&#x4F8B;-WordCount" class="headerlink" title="&#x793A;&#x4F8B; WordCount"></a>&#x793A;&#x4F8B; WordCount</h2><ul>
+<li>step-1: &#x6570;&#x636E;&#x8BFB;&#x5165;, sc.textFile  <strong>&#x521B;&#x5EFA;RDD</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">val rdd1 = sc.textFile(<span class="string">&quot;README.md&quot;</span>)</div></pre></td></tr></table></figure>
+<ul>
+<li>step-2: map&#x64CD;&#x4F5C;, flatMap, map  <strong>Transformation</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">val rdd2 = rdd1.flatMap(x =&gt; x.split(<span class="string">&quot; &quot;</span>)).map(x =&gt; (x, <span class="number">1</span>))</div></pre></td></tr></table></figure>
+<ul>
+<li>step-3: reduce&#x64CD;&#x4F5C;&#xFF0C;reduceByKey <strong>Transformation(shuffle)</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">val rdd3 = rdd2.reduceByKey(v =&gt; v + v)</div></pre></td></tr></table></figure>
+<ul>
+<li>step-4: &#x7ED3;&#x679C;&#x8F93;&#x51FA;, collect  <strong>Action</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rdd3.collect()</div></pre></td></tr></table></figure>
+<h1 id="rdd&#x6301;&#x4E45;&#x5316;"><a href="#RDD&#x6301;&#x4E45;&#x5316;" class="headerlink" title="RDD&#x6301;&#x4E45;&#x5316;"></a>RDD&#x6301;&#x4E45;&#x5316;</h1><p>&#x4F7F;&#x7528;cache()/persist()&#x5BF9;RDD&#x8FDB;&#x884C;&#x6301;&#x4E45;&#x5316;,&#x9ED8;&#x8BA4;&#x5185;&#x5B58;.</p>
+<h2 id="storage-level"><a href="#storage-level" class="headerlink" title="storage level"></a>storage level</h2><table>
+<thead>
+<tr>
+<th>Storage Level</th>
+<th style="text-align:left">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MEMORY_ONLY</td>
+<td style="text-align:left">Store RDD as deserialized Java objects in the JVM. If the RDD does not fit in memory, some partitions will not be cached and will be recomputed on the fly each time they&#x2019;re needed. This is the default level.</td>
+</tr>
+<tr>
+<td>MEMORY_AND_DISK</td>
+<td style="text-align:left">Store RDD as deserialized Java objects in the JVM. If the RDD does not fit in memory, store the partitions that don&#x2019;t fit on disk, and read them from there when they&#x2019;re needed.</td>
+</tr>
+<tr>
+<td>MEMORY_ONLY_SER</td>
+<td style="text-align:left">Store RDD as serialized Java objects (one byte array per partition). This is generally more space-efficient than deserialized objects, especially when using a fast serializer, but more CPU-intensive to read.</td>
+</tr>
+<tr>
+<td>MEMORY_AND_DISK_SER</td>
+<td style="text-align:left">Similar to MEMORY_ONLY_SER, but spill partitions that don&#x2019;t fit in memory to disk instead of recomputing them on the fly each time they&#x2019;re needed.</td>
+</tr>
+<tr>
+<td>DISK_ONLY</td>
+<td style="text-align:left">Store the RDD partitions only on disk.</td>
+</tr>
+<tr>
+<td>MEMORY_ONLY_2, MEMORY_AND_DISK_2, etc.</td>
+<td style="text-align:left">Same as the levels above, but replicate each partition on two cluster nodes.</td>
+</tr>
+<tr>
+<td>OFF_HEAP (experimental)</td>
+<td style="text-align:left">Store RDD in serialized format in Tachyon. Compared to MEMORY_ONLY_SER, OFF_HEAP reduces garbage collection overhead and allows executors to be smaller and to share a pool of memory, making it attractive in environments with large heaps or multiple concurrent applications. Furthermore, as the RDDs reside in Tachyon, the crash of an executor does not lead to losing the in-memory cache. In this mode, the memory in Tachyon is discardable. Thus, Tachyon does not attempt to reconstruct a block that it evicts from memory. If you plan to use Tachyon as the off heap store, Spark is compatible with Tachyon out-of-the-box. Please refer to this page for the suggested version pairings.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="&#x7ECF;&#x9A8C;"><a href="#&#x7ECF;&#x9A8C;" class="headerlink" title="&#x7ECF;&#x9A8C;"></a>&#x7ECF;&#x9A8C;</h2><ul>
+<li>&#x6700;&#x597D;&#x9009;&#x7528;MEMORY_ONLY</li>
+<li>&#x82E5;&#x5185;&#x5B58;&#x4E0D;&#x591F;,&#x5C1D;&#x8BD5;MEMORY_ONLY_SER(Kryo serialization&#x6548;&#x7387;&#x9AD8;&#x4E8E;Java serialization)</li>
+<li>&#x9664;&#x975E;RDD&#x7684;&#x8BA1;&#x7B97;&#x5F88;&#x590D;&#x6742;&#x6216;&#x8FED;&#x4EE3;&#x6B21;&#x6570;&#x5F88;&#x591A;, &#x518D;&#x5C06;&#x5176;spill&#x5230;&#x78C1;&#x76D8;;&#x5426;&#x5219;,&#x5176;&#x6548;&#x7387;&#x4E0E;&#x4ECE;&#x6E90;&#x7AEF;&#x91CD;&#x7B97;&#x5DEE;&#x4E0D;&#x591A;&#x3002;</li>
+<li>&#x82E5;&#x60F3;&#x63D0;&#x9AD8;&#x5BB9;&#x9519;, &#x63D0;&#x5347;&#x5176;replicated storage level</li>
+<li>&#x4F7F;&#x7528;Tachyon OFF_HEAP:executor&#x6302;&#x6389;&#x7F13;&#x5B58;&#x6570;&#x636E;&#x4E0D;&#x4E22;&#x5931;&#x3001;&#x51CF;&#x5C11;executor&#x7684;gc&#x5F00;&#x9500;&#x3001;&#x4E0D;&#x540C;executor&#x95F4;&#x5171;&#x4EAB;&#x7F13;&#x5B58;</li>
+</ul>
+<h1 id="&#x5171;&#x4EAB;&#x53D8;&#x91CF;"><a href="#&#x5171;&#x4EAB;&#x53D8;&#x91CF;" class="headerlink" title="&#x5171;&#x4EAB;&#x53D8;&#x91CF;"></a>&#x5171;&#x4EAB;&#x53D8;&#x91CF;</h1><h2 id="broadcast-variables"><a href="#Broadcast-Variables" class="headerlink" title="Broadcast Variables"></a>Broadcast Variables</h2><ul>
+<li>&#x4F7F;&#x7528;sc.broadcase()&#x5C06;&#x53D8;&#x91CF;&#x5206;&#x53D1;&#x5230;&#x6240;&#x6709;&#x5DE5;&#x4F5C;&#x8282;&#x70B9;</li>
+<li>&#x5DE5;&#x4F5C;&#x8282;&#x70B9;&#x4F7F;&#x7528;value&#x83B7;&#x53D6;&#x53D8;&#x91CF;&#x503C;</li>
+<li>&#x4E00;&#x65E6;&#x88AB;&#x5206;&#x53D1;&#xFF0C;&#x4E0D;&#x80FD;&#x66F4;&#x6539;</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">scala&gt; val broadcastVar = sc.broadcast(Array(1,2,3))</div><div class="line">broadcastVar: org.apache.spark.broadcast.Broadcast[Array[Int]] = Broadcast(0)</div><div class="line"></div><div class="line">scala&gt; broadcastVar.value</div><div class="line">res1: Array[Int] = Array(1, 2, 3)</div></pre></td></tr></table></figure>
+<h2 id="accumulator"><a href="#Accumulator" class="headerlink" title="Accumulator"></a>Accumulator</h2><ul>
+<li>executor&#x4F7F;&#x7528; &#x201C;+=&#x201D; &#x64CD;&#x4F5C;&#x7B26;&#x589E;&#x52A0;&#x8BA1;&#x6570;</li>
+<li>driver&#x4F7F;&#x7528;value&#x8BFB;&#x53D6;&#x6570;&#x503C;</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">scala&gt; val acc = sc.accumulator(0, <span class="string">&quot;test accumulator&quot;</span>)</div><div class="line">acc: org.apache.spark.Accumulator[Int] = 0</div><div class="line"></div><div class="line">scala&gt; sc.parallelize(Array(1,2,3,4)).foreach(x=&gt; acc+=x)</div><div class="line"></div><div class="line">scala&gt; acc.value</div><div class="line">res3: Int = 10</div></pre></td></tr></table></figure>
+<h1 id="rdd&#x4F9D;&#x8D56;&#x5173;&#x7CFB;"><a href="#RDD&#x4F9D;&#x8D56;&#x5173;&#x7CFB;" class="headerlink" title="RDD&#x4F9D;&#x8D56;&#x5173;&#x7CFB;"></a>RDD&#x4F9D;&#x8D56;&#x5173;&#x7CFB;</h1><h2 id="&#x7A84;&#x4F9D;&#x8D56;narrow-dependencies"><a href="#&#x7A84;&#x4F9D;&#x8D56;-narrow-dependencies" class="headerlink" title="&#x7A84;&#x4F9D;&#x8D56;(narrow dependencies)"></a>&#x7A84;&#x4F9D;&#x8D56;(narrow dependencies)</h2><ul>
+<li>&#x5B50;RDD&#x7684;&#x6BCF;&#x4E2A;&#x5206;&#x533A;&#x4F9D;&#x8D56;&#x4E8E;&#x5E38;&#x6570;&#x4E2A;&#x7236;RDD&#x5206;&#x533A;&#xFF08;&#x5373;&#x4E0E;&#x6570;&#x636E;&#x89C4;&#x6A21;&#x65E0;&#x5173;&#xFF09;</li>
+<li>&#x8F93;&#x5165;&#x8F93;&#x51FA;&#x4E00;&#x5BF9;&#x4E00;&#x7684;&#x7B97;&#x5B50;&#xFF0C;&#x4E14;&#x7ED3;&#x679C;RDD&#x7684;&#x5206;&#x533A;&#x7ED3;&#x6784;&#x4E0D;&#x53D8;&#xFF0C;&#x5982;map&#x3001;flatMap</li>
+<li>&#x8F93;&#x5165;&#x8F93;&#x51FA;&#x4E00;&#x5BF9;&#x4E00;&#xFF0C;&#x4F46;&#x7ED3;&#x679C;RDD&#x7684;&#x5206;&#x533A;&#x7ED3;&#x6784;&#x53D1;&#x751F;&#x53D8;&#x5316;&#xFF0C;&#x5982;union&#x3001;coalesce</li>
+<li>&#x4ECE;&#x8F93;&#x5165;&#x4E2D;&#x9009;&#x62E9;&#x90E8;&#x5206;&#x5143;&#x7D20;&#x7684;&#x7B97;&#x5B50;&#xFF0C;&#x5982;filter&#x3001;distinct&#x3001;subtract&#x3001;sample</li>
+</ul>
+<h2 id="&#x5BBD;&#x4F9D;&#x8D56;wide-dependencies"><a href="#&#x5BBD;&#x4F9D;&#x8D56;-wide-dependencies" class="headerlink" title="&#x5BBD;&#x4F9D;&#x8D56;(wide dependencies)"></a>&#x5BBD;&#x4F9D;&#x8D56;(wide dependencies)</h2><ul>
+<li>&#x5B50;RDD&#x7684;&#x6BCF;&#x4E2A;&#x5206;&#x533A;&#x4F9D;&#x8D56;&#x4E8E;&#x6240;&#x6709;&#x7236;RDD&#x5206;&#x533A;</li>
+<li>&#x5BF9;&#x5355;&#x4E2A;RDD&#x57FA;&#x4E8E;Key&#x8FDB;&#x884C;&#x91CD;&#x7EC4;&#x548C;Reduce&#xFF0C;&#x5982;groupByKey&#x3001;reduceByKey</li>
+<li>&#x5BF9;&#x4E24;&#x4E2A;RDD&#x57FA;&#x4E8E;Key&#x8FDB;&#x884C;Join&#x548C;&#x91CD;&#x7EC4;&#xFF0C;&#x5982;join    </li>
+</ul>
+<h1 id="rdd&#x5BB9;&#x9519;"><a href="#RDD&#x5BB9;&#x9519;" class="headerlink" title="RDD&#x5BB9;&#x9519;"></a>RDD&#x5BB9;&#x9519;</h1><p>&#x652F;&#x6301;&#x5BB9;&#x9519;&#x901A;&#x5E38;&#x91C7;&#x7528;&#x4E24;&#x79CD;&#x65B9;&#x5F0F;&#xFF1A;&#x6570;&#x636E;&#x590D;&#x5236;&#x6216;&#x65E5;&#x5FD7;&#x8BB0;&#x5F55;&#x3002;&#x5BF9;&#x4E8E;&#x4EE5;&#x6570;&#x636E;&#x4E3A;&#x4E2D;&#x5FC3;&#x7684;&#x7CFB;&#x7EDF;&#x800C;&#x8A00;&#xFF0C;&#x8FD9;&#x4E24;&#x79CD;&#x65B9;&#x5F0F;&#x90FD;&#x975E;&#x5E38;&#x6602;&#x8D35;&#xFF0C;&#x56E0;&#x4E3A;&#x5B83;&#x9700;&#x8981;&#x8DE8;&#x96C6;&#x7FA4;&#x7F51;&#x7EDC;&#x62F7;&#x8D1D;&#x5927;&#x91CF;&#x6570;&#x636E;&#xFF0C;&#x6BD5;&#x7ADF;&#x5E26;&#x5BBD;&#x7684;&#x6570;&#x636E;&#x8FDC;&#x8FDC;&#x4F4E;&#x4E8E;&#x5185;&#x5B58;&#x3002;</p>
+<p>RDD&#x5929;&#x751F;&#x662F;&#x652F;&#x6301;&#x5BB9;&#x9519;&#x7684;&#x3002;&#x9996;&#x5148;&#xFF0C;&#x5B83;&#x81EA;&#x8EAB;&#x662F;&#x4E00;&#x4E2A;&#x4E0D;&#x53D8;&#x7684;(immutable)&#x6570;&#x636E;&#x96C6;&#xFF0C;&#x5176;&#x6B21;&#xFF0C;&#x5B83;&#x80FD;&#x591F;&#x8BB0;&#x4F4F;&#x6784;&#x5EFA;&#x5B83;&#x7684;&#x64CD;&#x4F5C;&#x56FE;&#xFF08;Graph of Operation&#xFF09;&#xFF0C;&#x56E0;&#x6B64;&#x5F53;&#x6267;&#x884C;&#x4EFB;&#x52A1;&#x7684;Worker&#x5931;&#x8D25;&#x65F6;&#xFF0C;&#x5B8C;&#x5168;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x64CD;&#x4F5C;&#x56FE;&#x83B7;&#x5F97;&#x4E4B;&#x524D;&#x6267;&#x884C;&#x7684;&#x64CD;&#x4F5C;&#xFF0C;&#x8FDB;&#x884C;&#x91CD;&#x65B0;&#x8BA1;&#x7B97;&#x3002;&#x7531;&#x4E8E;&#x65E0;&#x9700;&#x91C7;&#x7528;replication&#x65B9;&#x5F0F;&#x652F;&#x6301;&#x5BB9;&#x9519;&#xFF0C;&#x5F88;&#x597D;&#x5730;&#x964D;&#x4F4E;&#x4E86;&#x8DE8;&#x7F51;&#x7EDC;&#x7684;&#x6570;&#x636E;&#x4F20;&#x8F93;&#x6210;&#x672C;&#x3002;</p>
+<p>&#x4E0D;&#x8FC7;&#xFF0C;&#x5728;&#x67D0;&#x4E9B;&#x573A;&#x666F;&#x4E0B;&#xFF0C;Spark&#x4E5F;&#x9700;&#x8981;&#x5229;&#x7528;&#x8BB0;&#x5F55;&#x65E5;&#x5FD7;&#x7684;&#x65B9;&#x5F0F;&#x6765;&#x652F;&#x6301;&#x5BB9;&#x9519;&#x3002;&#x4F8B;&#x5982;&#xFF0C;&#x5728;Spark Streaming&#x4E2D;&#xFF0C;&#x9488;&#x5BF9;&#x6570;&#x636E;&#x8FDB;&#x884C;update&#x64CD;&#x4F5C;&#xFF0C;&#x6216;&#x8005;&#x8C03;&#x7528;Streaming&#x63D0;&#x4F9B;&#x7684;window&#x64CD;&#x4F5C;&#x65F6;&#xFF0C;&#x5C31;&#x9700;&#x8981;&#x6062;&#x590D;&#x6267;&#x884C;&#x8FC7;&#x7A0B;&#x7684;&#x4E2D;&#x95F4;&#x72B6;&#x6001;&#x3002;&#x6B64;&#x65F6;&#xFF0C;&#x9700;&#x8981;&#x901A;&#x8FC7;Spark&#x63D0;&#x4F9B;&#x7684;checkpoint&#x673A;&#x5236;&#xFF0C;&#x4EE5;&#x652F;&#x6301;&#x64CD;&#x4F5C;&#x80FD;&#x591F;&#x4ECE;checkpoint&#x5F97;&#x5230;&#x6062;&#x590D;&#x3002;</p>
+<p>&#x9488;&#x5BF9;RDD&#x7684;wide dependency&#xFF0C;&#x6700;&#x6709;&#x6548;&#x7684;&#x5BB9;&#x9519;&#x65B9;&#x5F0F;&#x540C;&#x6837;&#x8FD8;&#x662F;&#x91C7;&#x7528;checkpoint&#x673A;&#x5236;&#x3002;&#x4E0D;&#x8FC7;&#xFF0C;&#x4F3C;&#x4E4E;Spark&#x7684;&#x6700;&#x65B0;&#x7248;&#x672C;&#x4ECD;&#x7136;&#x6CA1;&#x6709;&#x5F15;&#x5165;auto checkpointing&#x673A;&#x5236;&#x3002;</p>
+<h1 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h1><ul>
+<li><a href="http://spark.apache.org/docs/latest/programming-guide.html#resilient-distributed-datasets-rdds" target="_blank" rel="external">spark programming guide</a></li>
+<li><a href="http://7xlgd1.com1.z0.glb.clouddn.com/docs/nsdi12-final138.pdf" target="_blank" rel="external">Resilient Distributed Datasets: A Fault-tolerant Abstraction for In-Memory Cluster Computing</a>: Matei Zaharia&#x505A;&#x7684;spark&#x8BBA;&#x6587;</li>
+<li><a href="http://7xlgd1.com1.z0.glb.clouddn.com/docs/dev-meetup-dec-2012.pptx" target="_blank" rel="external">Introduction to Spark Internals</a>: Spark&#x4F5C;&#x8005;&#x5728;2012 Developer Meetup&#x4E0A;&#x505A;&#x7684;&#x6F14;&#x8BB2;</li>
+<li><a href="http://shiyanjun.cn/archives/744.html" target="_blank" rel="external">RDD&#xFF1A;&#x57FA;&#x4E8E;&#x5185;&#x5B58;&#x7684;&#x96C6;&#x7FA4;&#x8BA1;&#x7B97;&#x5BB9;&#x9519;&#x62BD;&#x8C61;</a></li>
+<li><a href="http://www.infoq.com/cn/articles/spark-core-rdd" target="_blank" rel="external">&#x7406;&#x89E3;Spark&#x6838;&#x5FC3;RDD</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2015/09/01/spark-rdd/" data-id="ciqrrv6ld000i2x9katxizfcc" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2015/09/01/spark-rdd/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spark/">spark</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/09/10/log/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          日志追查总结
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/08/16/spark-learning/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">spark学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/09/01/spark-rdd/" data-title="Spark RDD学习" data-url="http://wzktravel.github.io/2015/09/01/spark-rdd/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/squid/">squid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/squid/" style="font-size: 10px;">squid</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/15/proxy-server/">搭建proxy伺服器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/24/upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/hadoop-management/">hadoop集群管理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/04/azkaban-how-to-install-and-use/">azkaban的安装和使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

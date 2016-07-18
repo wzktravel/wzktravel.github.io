@@ -1,0 +1,313 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>flume-ng配置以及使用lzo | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="flume-ng配置以及使用过程中遇到的问题和解决办法。重点说一下hdfs.codeC使用lzo的问题。以下都基于flume ng 1.6.0版本，最后附上flume上报到hdfs的配置。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="flume-ng配置以及使用lzo">
+<meta property="og:url" content="http://wzktravel.github.io/2015/12/11/flume-ng/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="flume-ng配置以及使用过程中遇到的问题和解决办法。重点说一下hdfs.codeC使用lzo的问题。以下都基于flume ng 1.6.0版本，最后附上flume上报到hdfs的配置。">
+<meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/flume_getCodec.png">
+<meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/CompressionCodecFactory_getCodecClasses.png">
+<meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/IO_COMPRESSION_CODECS_KEY.png">
+<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="flume-ng配置以及使用lzo">
+<meta name="twitter:description" content="flume-ng配置以及使用过程中遇到的问题和解决办法。重点说一下hdfs.codeC使用lzo的问题。以下都基于flume ng 1.6.0版本，最后附上flume上报到hdfs的配置。">
+<meta name="twitter:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/flume_getCodec.png">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-flume-ng" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/12/11/flume-ng/" class="article-date">
+  <time datetime="2015-12-11T08:11:55.000Z" itemprop="datePublished">2015-12-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      flume-ng配置以及使用lzo
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>flume-ng&#x914D;&#x7F6E;&#x4EE5;&#x53CA;&#x4F7F;&#x7528;&#x8FC7;&#x7A0B;&#x4E2D;&#x9047;&#x5230;&#x7684;&#x95EE;&#x9898;&#x548C;&#x89E3;&#x51B3;&#x529E;&#x6CD5;&#x3002;&#x91CD;&#x70B9;&#x8BF4;&#x4E00;&#x4E0B;hdfs.codeC&#x4F7F;&#x7528;lzo&#x7684;&#x95EE;&#x9898;&#x3002;<br>&#x4EE5;&#x4E0B;&#x90FD;&#x57FA;&#x4E8E;flume ng 1.6.0&#x7248;&#x672C;&#xFF0C;&#x6700;&#x540E;&#x9644;&#x4E0A;flume&#x4E0A;&#x62A5;&#x5230;hdfs&#x7684;&#x914D;&#x7F6E;&#x3002;<br><a id="more"></a></p>
+<h2 id="&#x5F15;&#x7528;&#x7B2C;&#x4E09;&#x65B9;jar&#x5305;"><a href="#&#x5F15;&#x7528;&#x7B2C;&#x4E09;&#x65B9;jar&#x5305;" class="headerlink" title="&#x5F15;&#x7528;&#x7B2C;&#x4E09;&#x65B9;jar&#x5305;"></a>&#x5F15;&#x7528;&#x7B2C;&#x4E09;&#x65B9;jar&#x5305;</h2><p>&#x4E0D;&#x5FC5;&#x653E;&#x5728;flume&#x7684;lib&#x76EE;&#x5F55;&#x4E0B;&#xFF0C;&#x53C2;&#x8003;<a href="http://flume.apache.org/FlumeUserGuide.html#installing-third-party-plugins" target="_blank" rel="external">http://flume.apache.org/FlumeUserGuide.html#installing-third-party-plugins</a><br>&#x5728;flume&#x76EE;&#x5F55;&#x4E0B;&#x65B0;&#x5EFA;<code>plugins.d</code>&#x76EE;&#x5F55;&#xFF0C;&#x6B64;&#x76EE;&#x5F55;&#x4E0B;&#x6BCF;&#x4E2A;&#x63D2;&#x4EF6;&#x5355;&#x72EC;&#x4E00;&#x4E2A;&#x76EE;&#x5F55;&#xFF0C;&#x6BCF;&#x4E2A;&#x63D2;&#x4EF6;&#x76EE;&#x5F55;&#x4E0B;&#x53EF;&#x4EE5;&#x6709;lib,libext,native&#x3002;</p>
+<ul>
+<li>lib: &#x653E;&#x7F6E;&#x63D2;&#x4EF6;jar&#x5305;</li>
+<li>libext: &#x653E;&#x7F6E;&#x63D2;&#x4EF6;&#x5F15;&#x7528;&#x7684;jar&#x5305;</li>
+<li>native: &#x653E;&#x7F6E;&#x6240;&#x9700;&#x7684;native&#x5E93;, &#x6BD4;&#x5982;<code>.so</code>&#x6587;&#x4EF6;</li>
+</ul>
+<p>&#x5982;&#x6211;&#x6709;hdfs&#x63D2;&#x4EF6;&#x548C;&#x81EA;&#x5DF1;&#x5B9E;&#x73B0;&#x7684;flume interceptor/source&#x4EE5;&#x53CA;lzo&#xFF0C;&#x76EE;&#x5F55;&#x683C;&#x5F0F;&#x5982;&#x4E0B;&#xFF1A;<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">plugins.d/</div><div class="line">plugins.d/custom/</div><div class="line">plugins.d/custom/<span class="class"><span class="keyword">lib</span>/<span class="title">flume</span>-<span class="title">agent</span>-1.0-<span class="title">SNAPSHOT</span>.<span class="title">jar</span></span></div><div class="line">plugins.d/hadoop/</div><div class="line">plugins.d/hadoop/<span class="class"><span class="keyword">lib</span>/<span class="title">commons</span>-<span class="title">configuration</span>-1.6.<span class="title">jar</span></span></div><div class="line">plugins.d/hadoop/<span class="class"><span class="keyword">lib</span>/<span class="title">hadoop</span>-<span class="title">auth</span>-2.6.0-<span class="title">cdh5</span>.4.8.<span class="title">jar</span></span></div><div class="line">plugins.d/hadoop/<span class="class"><span class="keyword">lib</span>/<span class="title">hadoop</span>-<span class="title">common</span>-2.6.0-<span class="title">cdh5</span>.4.8.<span class="title">jar</span></span></div><div class="line">plugins.d/hadoop/<span class="class"><span class="keyword">lib</span>/<span class="title">hadoop</span>-<span class="title">hdfs</span>-2.6.0-<span class="title">cdh5</span>.4.8.<span class="title">jar</span></span></div><div class="line">plugins.d/hadoop/<span class="class"><span class="keyword">lib</span>/<span class="title">hadoop</span>-<span class="title">nfs</span>-2.6.0-<span class="title">cdh5</span>.4.8.<span class="title">jar</span></span></div><div class="line">plugins.d/hadoop/<span class="class"><span class="keyword">lib</span>/<span class="title">htrace</span>-<span class="title">core</span>-3.0.4.<span class="title">jar</span></span></div><div class="line">plugins.d/hadoop-lzo/</div><div class="line">plugins.d/hadoop-lzo/<span class="class"><span class="keyword">lib</span>/<span class="title">hadoop</span>-<span class="title">lzo</span>-<span class="title">cdh4</span>-0.4.15-<span class="title">gplextras</span>.<span class="title">jar</span></span></div><div class="line">plugins.d/hadoop-lzo/native/libgplcompression.a</div><div class="line">plugins.d/hadoop-lzo/native/libgplcompression.la</div><div class="line">plugins.d/hadoop-lzo/native/libgplcompression.so</div><div class="line">plugins.d/hadoop-lzo/native/libgplcompression.so.<span class="number">0</span></div><div class="line">plugins.d/hadoop-lzo/native/libgplcompression.so.<span class="number">0.0</span>.<span class="number">0</span></div></pre></td></tr></table></figure></p>
+<h2 id="hdfs-sink"><a href="#hdfs-sink" class="headerlink" title="hdfs-sink"></a>hdfs-sink</h2><p>&#x5BF9;&#x4E8E;flume&#x548C;hadoop&#x5728;&#x540C;&#x4E00;&#x53F0;&#x673A;&#x5668;&#x4E0A;&#x7684;&#xFF0C;&#x914D;&#x7F6E;&#x5F88;&#x7B80;&#x5355;&#xFF0C;&#x76F4;&#x63A5;&#x6309;&#x7167;flume&#x5B98;&#x7F51;&#x914D;&#x7F6E;&#x5373;&#x53EF;&#xFF0C;&#x4F46;&#x5982;&#x679C;&#x5728;&#x6CA1;&#x6709;hadoop&#x7684;&#x673A;&#x5668;&#x4E0A;&#x4F7F;&#x7528;hdfs-sink&#xFF0C;&#x9700;&#x8981;&#x4E00;&#x4E9B;&#x989D;&#x5916;&#x7684;jar&#x5305;&#xFF0C;&#x4E0D;&#x50CF;kafka-sink&#x4E00;&#x6837;&#xFF0C;flume/lib&#x4E0B;&#x5DF2;&#x7ECF;&#x6709;kafka&#x76F8;&#x5173;&#x7684;jar&#x5305;&#x4E86;&#x3002;</p>
+<h3 id="hdfs-sink&#x6240;&#x9700;jar&#x5305;"><a href="#hdfs-sink&#x6240;&#x9700;jar&#x5305;" class="headerlink" title="hdfs-sink&#x6240;&#x9700;jar&#x5305;"></a>hdfs-sink&#x6240;&#x9700;jar&#x5305;</h3><p>&#x6700;&#x5C11;&#x9700;&#x8981;&#x8FD9;&#x51E0;&#x4E2A;jar&#x5305;&#xFF0C;&#x5982;&#x679C;&#x60F3;&#x4F7F;&#x7528;lzo&#x538B;&#x7F29;&#xFF0C;&#x8FD8;&#x9700;&#x5176;&#x4ED6;&#x8BBE;&#x7F6E;&#xFF0C;&#x770B;&#x4E0B;&#x6587;&#x3002;<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">plugins.d/hadoop/<span class="class"><span class="keyword">lib</span>/<span class="title">commons</span>-<span class="title">configuration</span>-1.6.<span class="title">jar</span></span></div><div class="line">plugins.d/hadoop/<span class="class"><span class="keyword">lib</span>/<span class="title">hadoop</span>-<span class="title">auth</span>-2.6.0-<span class="title">cdh5</span>.4.8.<span class="title">jar</span></span></div><div class="line">plugins.d/hadoop/<span class="class"><span class="keyword">lib</span>/<span class="title">hadoop</span>-<span class="title">common</span>-2.6.0-<span class="title">cdh5</span>.4.8.<span class="title">jar</span></span></div><div class="line">plugins.d/hadoop/<span class="class"><span class="keyword">lib</span>/<span class="title">hadoop</span>-<span class="title">hdfs</span>-2.6.0-<span class="title">cdh5</span>.4.8.<span class="title">jar</span></span></div><div class="line">plugins.d/hadoop/<span class="class"><span class="keyword">lib</span>/<span class="title">hadoop</span>-<span class="title">nfs</span>-2.6.0-<span class="title">cdh5</span>.4.8.<span class="title">jar</span></span></div><div class="line">plugins.d/hadoop/<span class="class"><span class="keyword">lib</span>/<span class="title">htrace</span>-<span class="title">core</span>-3.0.4.<span class="title">jar</span></span></div></pre></td></tr></table></figure></p>
+<h3 id="hdfscodec&#x4F7F;&#x7528;lzo"><a href="#hdfs-codeC&#x4F7F;&#x7528;lzo" class="headerlink" title="hdfs.codeC&#x4F7F;&#x7528;lzo"></a>hdfs.codeC&#x4F7F;&#x7528;lzo</h3><p>&#x5148;&#x5047;&#x5B9A;&#x4F60;&#x7684;&#x96C6;&#x7FA4;&#x5DF2;&#x7ECF;&#x652F;&#x6301;lzo&#x4E86;&#xFF0C;&#x5982;&#x679C;&#x4E0D;&#x652F;&#x6301;&#xFF0C;&#x53EF;&#x4EE5;&#x53C2;&#x8003;Cloudera&#x4E2D;&#x914D;&#x7F6E;hadoop_lzo:<br><a href="http://wzktravel.github.io/2015/12/10/hadoop-lzo/">http://wzktravel.github.io/2015/12/10/hadoop-lzo/</a>&#xFF0C;</p>
+<p>&#x7F51;&#x4E0A;&#x7684;&#x8D44;&#x6599;&#x4E00;&#x822C;&#x90FD;&#x662F;flume&#x548C;hadoop&#x5728;&#x540C;&#x4E00;&#x53F0;&#x673A;&#x5668;&#x4E0A;&#x7684;&#xFF0C;&#x8FD9;&#x65F6;&#x5019;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x5C06;<code>hdfs.codeC</code>&#x8BBE;&#x7F6E;&#x4E3A;<code>lzo</code>&#xFF0C;&#x56E0;&#x4E3A;&#x80FD;&#x627E;&#x5230;&#x5BF9;&#x5E94;&#x7684;jar&#x5305;&#x548C;&#x914D;&#x7F6E;&#x3002;<br>&#x5728;&#x7EAF;&#x51C0;&#x7684;&#x673A;&#x5668;&#x4E0A;&#xFF0C;&#x9700;&#x8981;&#x4E0B;&#x9762;&#x51E0;&#x4E2A;&#x914D;&#x7F6E;&#xFF1A;</p>
+<ol>
+<li>&#x624B;&#x5DE5;&#x7F16;&#x8BD1;lzo&#x548C;hadoop-lzo&#x7684;&#xFF0C;&#x76F4;&#x63A5;&#x5C06;jar&#x5305;&#x653E;&#x5728;plugins.d&#x4E0B;&#x5373;&#x53EF;&#x3002;&#x4F7F;&#x7528;Cloudera&#x5B89;&#x88C5;hadoop-lzo parcel&#x7684;&#xFF0C;&#x8981;&#x5C06;jar&#x5305;&#x548C;native&#x4E0B;&#x94FE;&#x63A5;&#x90FD;&#x653E;&#x5728;plugins.d&#x4E0B;&#x3002;&#x4E3A;&#x4F55;&#x8FD9;&#x6837;&#x53EF;&#x4EE5;&#x53C2;&#x8003; hadoop-lzo.jar&#x548C;hadoop-gpl-compression.jar&#x533A;&#x522B;&#xFF1A;<a href="http://guoyunsky.iteye.com/blog/1289475" target="_blank" rel="external">http://guoyunsky.iteye.com/blog/1289475</a></li>
+<li><p>&#x4ECE;hadoop&#x96C6;&#x7FA4;&#x4E0A;&#x62C9;&#x53D6;core-site.xml&#x653E;&#x5728;flume/conf&#x4E0B;&#xFF0C;&#x5176;&#x5B9E;&#x4E3B;&#x8981;&#x4F7F;&#x7528;</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;property&gt;</div><div class="line">  &lt;name&gt;io<span class="selector-class">.compression</span><span class="selector-class">.codecs</span>&lt;/name&gt;</div><div class="line">  &lt;value&gt;org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.io</span><span class="selector-class">.compress</span><span class="selector-class">.DefaultCodec</span>,org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.io</span><span class="selector-class">.compress</span><span class="selector-class">.GzipCodec</span>,org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.io</span><span class="selector-class">.compress</span><span class="selector-class">.BZip2Codec</span>,org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.io</span><span class="selector-class">.compress</span><span class="selector-class">.DeflateCodec</span>,org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.io</span><span class="selector-class">.compress</span><span class="selector-class">.SnappyCodec</span>,org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.io</span><span class="selector-class">.compress</span><span class="selector-class">.Lz4Codec</span>,com<span class="selector-class">.hadoop</span><span class="selector-class">.compression</span><span class="selector-class">.lzo</span><span class="selector-class">.LzoCodec</span>,com<span class="selector-class">.hadoop</span><span class="selector-class">.compression</span><span class="selector-class">.lzo</span><span class="selector-class">.LzopCodec</span>&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>&#x5728;flume&#x914D;&#x7F6E;</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">a1<span class="selector-class">.sinks</span><span class="selector-class">.hdfs-sink</span><span class="selector-class">.hdfs</span><span class="selector-class">.fileType</span> = CompressedStream</div><div class="line">a1<span class="selector-class">.sinks</span><span class="selector-class">.hdfs-sink</span><span class="selector-class">.hdfs</span><span class="selector-class">.codeC</span> = com<span class="selector-class">.hadoop</span><span class="selector-class">.compression</span><span class="selector-class">.lzo</span><span class="selector-class">.LzopCodec</span></div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>&#x8FD9;&#x91CC;&#x8981;&#x8BF4;&#x660E;&#x4E00;&#x4E0B;&#xFF0C;&#x4E3A;&#x4EC0;&#x4E48;&#x53EA;&#x653E;&#x7F6E;jar&#x5305;&#x4E0D;&#x884C;&#x5462;&#xFF1F;<br>&#x56E0;&#x4E3A;&#x5728;flume&#x6E90;&#x7801;<code>flume/flume-ng-sinks/flume-hdfs-sink/src/main/java/org/apache/flume/sink/hdfs/HDFSEventSink.java getCodec()</code>&#x65B9;&#x6CD5;&#x4E2D;&#x4F7F;&#x7528;hadoop&#x4E86;&#x7684;<code>CompressionCodecFactory.getCodecClasses(conf)</code>&#x3002;</p>
+<p><img src="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/flume_getCodec.png" alt="HDFSEventSink.getCodec"></p>
+<p>&#x518D;&#x53BB;hadoop&#x6E90;&#x7801;&#x4E2D;&#x770B;<code>CompressionCodecFactory.getCodecClasses(conf)</code>&#x65F6;&#x53D1;&#x73B0; </p>
+<p><img src="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/CompressionCodecFactory_getCodecClasses.png" alt="CompressionCodecFactory.getCodecClasses"></p>
+<p>&#x800C;<code>IO_COMPRESSION_CODECS_KEY</code>&#x5C31;&#x662F;<code>io.compression.codecs</code>&#x3002;</p>
+<p><img src="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/IO_COMPRESSION_CODECS_KEY.png" alt="IO_COMPRESSION_CODECS_KEY"></p>
+<p>&#x6240;&#x4EE5;&#x9700;&#x8981;core-site.xml&#x6765;&#x6307;&#x5B9A;<code>io.compression.codecs</code>&#x3002;</p>
+<h3 id="hahigh-availability"><a href="#HA-High-Availability" class="headerlink" title="HA(High Availability)"></a>HA(High Availability)</h3><p>&#x7531;&#x4E8E;HDFS&#x96C6;&#x7FA4;&#x7684;HA&#x673A;&#x5236;&#xFF0C;&#x5728;flume&#x4E0A;&#x4F20;&#x65F6;&#x6307;&#x5B9A;namenode&#x7684;&#x505A;&#x6CD5;&#x5C31;&#x4E0D;&#x592A;&#x597D;&#x4E86;&#xFF0C;&#x5F53;hdfs&#x96C6;&#x7FA4;&#x7684;namenode&#x72B6;&#x6001;&#x53D1;&#x751F;&#x53D8;&#x5316;&#x65F6;&#xFF0C;flume&#x4E0A;&#x62A5;&#x65F6;&#x4F1A;&#x62A5;&#x51FA;Exception, <code>Operation category READ(WRITE) is not supported in state standby</code>&#xFF0C;&#x56E0;&#x4E3A;standby namenode&#x662F;&#x4E0D;&#x5BF9;&#x63D0;&#x4F9B;&#x670D;&#x52A1;&#x7684;&#x3002;&#x90A3;&#x4E48;&#x6B64;&#x65F6;flume&#x5C31;&#x5904;&#x4E8E;&#x4E0D;&#x53EF;&#x7528;&#x72B6;&#x6001;&#xFF0C;&#x5FC5;&#x987B;&#x624B;&#x5DE5;&#x4FEE;&#x6539;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x7136;&#x540E;&#x91CD;&#x542F;flume&#x624D;&#x80FD;&#x89E3;&#x51B3;&#x3002;&#x5F53;&#x8981;&#x6536;&#x96C6;&#x65E5;&#x5FD7;&#x7684;&#x670D;&#x52A1;&#x5668;&#x5F88;&#x591A;&#x65F6;&#xFF0C;&#x4F1A;&#x589E;&#x52A0;&#x5F88;&#x591A;&#x4EBA;&#x529B;&#x6210;&#x672C;&#xFF1B;&#x53E6;&#x5916;&#xFF0C;&#x65E5;&#x5FD7;&#x4E0A;&#x62A5;&#x72B6;&#x6001;&#x76D1;&#x63A7;&#x6CA1;&#x6709;&#x505A;&#x597D;&#x7684;&#x8BDD;&#xFF0C;&#x4E5F;&#x8BB8;&#x7528;&#x5230;&#x8FD9;&#x4E2A;&#x65E5;&#x5FD7;&#x7684;&#x65F6;&#x5019;&#x624D;&#x4F1A;&#x53D1;&#x73B0;flume&#x51FA;&#x73B0;&#x95EE;&#x9898;&#x3002;</p>
+<p>&#x89E3;&#x51B3;&#x8FD9;&#x4E2A;&#x95EE;&#x9898;&#x4E5F;&#x6BD4;&#x8F83;&#x7B80;&#x5355;&#xFF0C;&#x5C31;&#x662F;&#x5C06;&#x96C6;&#x7FA4;&#x4E2D;<code>hdfs-site.xml</code>&#x590D;&#x5236;&#x4E00;&#x4EFD;&#x5230;flume conf&#x76EE;&#x5F55;&#x4E0B;&#x5373;&#x53EF;&#xFF0C;&#x5F53;namenode&#x72B6;&#x6001;&#x5207;&#x6362;&#x65F6;&#xFF0C;flume&#x4E5F;&#x80FD;&#x6B63;&#x786E;&#x5C06;&#x65E5;&#x5FD7;&#x4E0A;&#x62A5;&#x5230;hdfs&#x4E2D;&#x3002;<br>&#x6B64;&#x65F6;&#xFF0C;hdfs.path&#x914D;&#x7F6E;&#x4E5F;&#x53EF;&#x4EE5;&#x7701;&#x7565;&#x57DF;&#x540D;&#x3002;<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">## &#x4FEE;&#x6539;&#x524D;</span></div><div class="line"><span class="comment"># a1.sinks.hdfs-sink.hdfs.path = hdfs://{active namenode ip}/facishare-data/app/center/web/%{year}/%{month}/%{day}/</span></div><div class="line"><span class="comment">## &#x4FEE;&#x6539;&#x540E;</span></div><div class="line">a1.sinks.hdfs-sink.hdfs.path = <span class="regexp">/facishare-data/app</span><span class="regexp">/center/web</span><span class="regexp">/%{year}/</span><span class="string">%{month}</span>/<span class="string">%{day}</span>/</div></pre></td></tr></table></figure></p>
+<h2 id="&#x5B9A;&#x5236;"><a href="#&#x5B9A;&#x5236;" class="headerlink" title="&#x5B9A;&#x5236;"></a>&#x5B9A;&#x5236;</h2><p>&#x53C2;&#x8003;<a href="http://flume.apache.org/FlumeDeveloperGuide.html" target="_blank" rel="external">http://flume.apache.org/FlumeDeveloperGuide.html</a></p>
+<p>&#x5BF9;source,interceptor&#xFF0C;&#x53C2;&#x8003;flume&#x4E2D;&#x7684;&#x6E90;&#x7801;&#x5199;&#x5373;&#x53EF;&#x3002;<br>&#x9700;&#x8981;&#x5F15;&#x7528;jar&#x5305;<code>flume-ng-core</code>:<br><figure class="highlight dust"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="xml"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.flume<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>flume-ng-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$<span class="template-variable">{flume.version}</span><span class="xml"><span class="tag">&lt;/<span class="name">version</span>&gt;</span></span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<h2 id="&#x6211;&#x7684;flume&#x4E0A;&#x62A5;&#x5230;hdfs&#x914D;&#x7F6E;"><a href="#&#x6211;&#x7684;flume&#x4E0A;&#x62A5;&#x5230;hdfs&#x914D;&#x7F6E;" class="headerlink" title="&#x6211;&#x7684;flume&#x4E0A;&#x62A5;&#x5230;hdfs&#x914D;&#x7F6E;"></a>&#x6211;&#x7684;flume&#x4E0A;&#x62A5;&#x5230;hdfs&#x914D;&#x7F6E;</h2><figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># name the components on this agent</span></div><div class="line">a1.<span class="attr">sources</span> = r1</div><div class="line">a1.<span class="attr">sinks</span> = hdfs-sink</div><div class="line">a1.<span class="attr">channels</span> = hdfs-channel</div><div class="line"></div><div class="line"><span class="comment"># define interceptor</span></div><div class="line">a1.sources.r1.<span class="attr">interceptors</span> = i1</div><div class="line">a1.sources.r1.interceptors.i1.<span class="attr">type</span> = com.firstshare.flume.interceptor.HDFSInterceptor$Builder</div><div class="line">a1.sources.r1.interceptors.i1.hdfsinterceptor.<span class="attr">switch</span> = <span class="literal">true</span></div><div class="line"></div><div class="line"><span class="comment"># describe/configure the source</span></div><div class="line">a1.sources.r1.<span class="attr">type</span> = spooldir</div><div class="line">a1.sources.r1.<span class="attr">spoolDir</span> = /data/appStatLog/flume</div><div class="line">a1.sources.r1.<span class="attr">deletePolicy</span> = immediate</div><div class="line">a1.sources.r1.<span class="attr">basenameHeader</span> = <span class="literal">true</span></div><div class="line">a1.sources.r1.<span class="attr">basenameHeaderKey</span> = file</div><div class="line">a1.sources.r1.<span class="attr">ignorePattern</span> = ^(.)*\\.tmp$</div><div class="line">a1.sources.r1.<span class="attr">fileSuffix</span> = .COMPLETED</div><div class="line"></div><div class="line"><span class="comment"># hdfs sink</span></div><div class="line">a1.sinks.hdfs-sink.<span class="attr">type</span> = hdfs</div><div class="line"><span class="comment"># hdfs&#x8DEF;&#x5F84;&#x89C4;&#x5219;:  /facishare-data/&#x4EA7;&#x54C1;&#x7EBF;/&#x6A21;&#x5757;/&#x5B50;&#x6A21;&#x5757;/$year/$month/$day/$filename.$host.lzo</span></div><div class="line">a1.sinks.hdfs-sink.hdfs.<span class="attr">path</span> = /facishare-data/app/center/web/%{year}/%{month}/%{day}/</div><div class="line">a1.sinks.hdfs-sink.hdfs.<span class="attr">filePrefix</span> = %{filename}.%{host}</div><div class="line">a1.sinks.hdfs-sink.hdfs.<span class="attr">fileSuffix</span> = .lzo</div><div class="line">a1.sinks.hdfs-sink.hdfs.<span class="attr">fileType</span> = CompressedStream</div><div class="line">a1.sinks.hdfs-sink.hdfs.<span class="attr">codeC</span> = com.hadoop.compression.lzo.LzopCodec</div><div class="line"></div><div class="line"><span class="comment"># roll -&gt; close current file and create a new one</span></div><div class="line"><span class="comment"># Number of seconds to wait before rolling current file (0 = never roll based on time interval)</span></div><div class="line">a1.sinks.hdfs-sink.hdfs.<span class="attr">rollInterval</span> = <span class="number">0</span></div><div class="line"><span class="comment"># File size to trigger roll, in bytes (0: never roll based on file size)</span></div><div class="line">a1.sinks.hdfs-sink.hdfs.<span class="attr">rollSize</span> = <span class="number">204800000</span></div><div class="line">a1.sinks.hdfs-sink.hdfs.<span class="attr">rollCount</span> = <span class="number">0</span></div><div class="line"><span class="comment"># Timeout after which inactive files get closed (0 = disable automatic closing of idle files)</span></div><div class="line">a1.sinks.hdfs-sink.hdfs.<span class="attr">idleTimeout</span> = <span class="number">30</span></div><div class="line"></div><div class="line">a1.channels.hdfs-channel.<span class="attr">type</span> = file</div><div class="line">a1.channels.hdfs-channel.<span class="attr">checkpointDir</span> = ./checkpointDir</div><div class="line">a1.channels.hdfs-channel.<span class="attr">dataDirs</span> = ./dataDir</div><div class="line"></div><div class="line"><span class="comment"># bind the source and sink to the channel</span></div><div class="line">a1.sources.r1.<span class="attr">channels</span> = hdfs-channel</div><div class="line">a1.sinks.hdfs-sink.<span class="attr">channel</span> = hdfs-channel</div></pre></td></tr></table></figure>
+<p>&#x5176;&#x4E2D;HDFSInterceptor&#x662F;&#x81EA;&#x5DF1;&#x5B9E;&#x73B0;&#x7684;&#xFF0C;&#x4E3B;&#x8981;&#x6DFB;&#x52A0;&#x51E0;&#x4E2A;&#x53C2;&#x6570;&#x5230;header&#x4E2D;&#xFF0C;&#x4F7F;&#x4E0A;&#x62A5;&#x5230;hdfs&#x4E2D;&#x7684;&#x6587;&#x4EF6;&#x540D;&#x66F4;&#x7B26;&#x5408;&#x6211;&#x4EEC;&#x7684;&#x9700;&#x6C42;&#x3002;</p>
+<h2 id="&#x53C2;&#x8003;&#x6587;&#x6863;"><a href="#&#x53C2;&#x8003;&#x6587;&#x6863;" class="headerlink" title="&#x53C2;&#x8003;&#x6587;&#x6863;"></a>&#x53C2;&#x8003;&#x6587;&#x6863;</h2><ul>
+<li>flume&#x5B98;&#x7F51;UserGuide: <a href="http://flume.apache.org/FlumeUserGuide.html" target="_blank" rel="external">http://flume.apache.org/FlumeUserGuide.html</a></li>
+<li>Hadoop2.0&#x7684;HA&#x4ECB;&#x7ECD;: <a href="http://www.tuicool.com/articles/IBZFvy" target="_blank" rel="external">http://www.tuicool.com/articles/IBZFvy</a></li>
+<li>HDFS High Availability Using the Quorum Journal Manager:<br><a href="http://hadoop.apache.org/docs/r2.6.0/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html" target="_blank" rel="external">http://hadoop.apache.org/docs/r2.6.0/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2015/12/11/flume-ng/" data-id="ciqrrv6mu001k2x9k16rzou50" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2015/12/11/flume-ng/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/flume/">flume</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/12/31/kafka-reassign/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          kafka reassign
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/12/10/hadoop-lzo/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Cloudera中配置hadoop_lzo</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/12/11/flume-ng/" data-title="flume-ng配置以及使用lzo" data-url="http://wzktravel.github.io/2015/12/11/flume-ng/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/squid/">squid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/squid/" style="font-size: 10px;">squid</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/15/proxy-server/">搭建proxy伺服器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/24/upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/hadoop-management/">hadoop集群管理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/04/azkaban-how-to-install-and-use/">azkaban的安装和使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

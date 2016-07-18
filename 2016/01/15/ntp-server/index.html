@@ -1,0 +1,292 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ntp server搭建 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="NTP（Network Time Protocol）是用来使计算机时间同步化的一种协议，它可以使计算机对其服务器或时钟源做同步化，它可以提供高精准度的时间校正。在CDH集群中，要求服务器之间时钟尽量保持同步，本例讲解如何在CentOS6.5上配置NTP服务器和NTP客户端，可使多台客户机的时间与指定的NTP服务器的时间保持一致。从而保证多台服务器的时间同步。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ntp server搭建">
+<meta property="og:url" content="http://wzktravel.github.io/2016/01/15/ntp-server/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="NTP（Network Time Protocol）是用来使计算机时间同步化的一种协议，它可以使计算机对其服务器或时钟源做同步化，它可以提供高精准度的时间校正。在CDH集群中，要求服务器之间时钟尽量保持同步，本例讲解如何在CentOS6.5上配置NTP服务器和NTP客户端，可使多台客户机的时间与指定的NTP服务器的时间保持一致。从而保证多台服务器的时间同步。">
+<meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images%2Fio%2Fntp-server.png">
+<meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images%2Fio%2Fntp-client.png">
+<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ntp server搭建">
+<meta name="twitter:description" content="NTP（Network Time Protocol）是用来使计算机时间同步化的一种协议，它可以使计算机对其服务器或时钟源做同步化，它可以提供高精准度的时间校正。在CDH集群中，要求服务器之间时钟尽量保持同步，本例讲解如何在CentOS6.5上配置NTP服务器和NTP客户端，可使多台客户机的时间与指定的NTP服务器的时间保持一致。从而保证多台服务器的时间同步。">
+<meta name="twitter:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images%2Fio%2Fntp-server.png">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-ntp-server" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/01/15/ntp-server/" class="article-date">
+  <time datetime="2016-01-15T10:25:41.000Z" itemprop="datePublished">2016-01-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ntp server搭建
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>NTP&#xFF08;Network Time Protocol&#xFF09;&#x662F;&#x7528;&#x6765;&#x4F7F;&#x8BA1;&#x7B97;&#x673A;&#x65F6;&#x95F4;&#x540C;&#x6B65;&#x5316;&#x7684;&#x4E00;&#x79CD;&#x534F;&#x8BAE;&#xFF0C;&#x5B83;&#x53EF;&#x4EE5;&#x4F7F;&#x8BA1;&#x7B97;&#x673A;&#x5BF9;&#x5176;&#x670D;&#x52A1;&#x5668;&#x6216;&#x65F6;&#x949F;&#x6E90;&#x505A;&#x540C;&#x6B65;&#x5316;&#xFF0C;&#x5B83;&#x53EF;&#x4EE5;&#x63D0;&#x4F9B;&#x9AD8;&#x7CBE;&#x51C6;&#x5EA6;&#x7684;&#x65F6;&#x95F4;&#x6821;&#x6B63;&#x3002;<br>&#x5728;CDH&#x96C6;&#x7FA4;&#x4E2D;&#xFF0C;&#x8981;&#x6C42;&#x670D;&#x52A1;&#x5668;&#x4E4B;&#x95F4;&#x65F6;&#x949F;&#x5C3D;&#x91CF;&#x4FDD;&#x6301;&#x540C;&#x6B65;&#xFF0C;&#x672C;&#x4F8B;&#x8BB2;&#x89E3;&#x5982;&#x4F55;&#x5728;CentOS6.5&#x4E0A;&#x914D;&#x7F6E;NTP&#x670D;&#x52A1;&#x5668;&#x548C;NTP&#x5BA2;&#x6237;&#x7AEF;&#xFF0C;&#x53EF;&#x4F7F;&#x591A;&#x53F0;&#x5BA2;&#x6237;&#x673A;&#x7684;&#x65F6;&#x95F4;&#x4E0E;&#x6307;&#x5B9A;&#x7684;NTP&#x670D;&#x52A1;&#x5668;&#x7684;&#x65F6;&#x95F4;&#x4FDD;&#x6301;&#x4E00;&#x81F4;&#x3002;&#x4ECE;&#x800C;&#x4FDD;&#x8BC1;&#x591A;&#x53F0;&#x670D;&#x52A1;&#x5668;&#x7684;&#x65F6;&#x95F4;&#x540C;&#x6B65;&#x3002;<br><a id="more"></a></p>
+<h2 id="ntp-server"><a href="#NTP-server" class="headerlink" title="NTP server"></a>NTP server</h2><p>&#x4FEE;&#x6539;<code>/etc/ntp.conf</code><br><img src="http://7xlgd1.com1.z0.glb.clouddn.com/images%2Fio%2Fntp-server.png" alt="ntp server"></p>
+<p>&#x8BF4;&#x660E;&#xFF1A;</p>
+<ol>
+<li><code>server 1.cn.pool.ntp.org</code> &#x662F;&#x8FDC;&#x7A0B;&#x65F6;&#x95F4;&#x670D;&#x52A1;&#x5668;&#x7684;&#x5730;&#x5740;&#x3002;CentOS&#x5728;&#x6B64;&#x5904;&#x7684;&#x914D;&#x7F6E;&#x9879;&#x662F; <code>0.centos.pool.ntp.org</code>, <code>1.centos.pool.ntp.org</code>, <code>2.centos.pool.ntp.org</code>, &#x6D4B;&#x8BD5;&#x4E2D;&#x53D1;&#x73B0;&#x8FD9;&#x51E0;&#x4E2A;&#x65F6;&#x95F4;&#x670D;&#x52A1;&#x5668;&#x90FD;&#x4E0D;&#x80FD;&#x6B63;&#x786E;&#x7684;&#x540C;&#x6B65;&#xFF0C;&#x6240;&#x4EE5;&#x628A;&#x5B83;&#x4EEC;&#x7ED9;&#x6CE8;&#x91CA;&#x6389;&#x3002;</li>
+<li><code>server 127.127.1.0</code> &#x548C; <code>fudge 127.127.1.0 stratum 10</code> &#x5982;&#x679C;&#x914D;&#x7F6E;&#x7684;&#x8FDC;&#x7A0B;server&#x65E0;&#x6548;&#x65F6;&#xFF0C;&#x5219;NTP&#x670D;&#x52A1;&#x5668;&#x4F1A;&#x6839;&#x636E;&#x8FD9;&#x91CC;&#x7684;&#x914D;&#x7F6E;&#xFF0C;&#x628A;&#x81EA;&#x5DF1;&#x7684;&#x65F6;&#x95F4;&#x505A;&#x4E3A;NTP&#x670D;&#x52A1;&#x5668;&#x7684;&#x65F6;&#x95F4;&#xFF0C;&#x5373;&#x548C;&#x81EA;&#x5DF1;&#x540C;&#x6B65;&#x3002;&#x8003;&#x8651;&#x5230;&#x6709;&#x7684;&#x5C40;&#x57DF;&#x7F51;&#x91CC;&#x4E0D;&#x53EF;&#x4EE5;&#x8BBF;&#x95EE;&#x5916;&#x7F51;&#xFF0C;&#x6240;&#x6709;&#x8FD9;&#x91CC;&#x9700;&#x8981;&#x628A;&#x8FD9;&#x4E2A;&#x914D;&#x7F6E;&#x9879;&#x7528;&#x4E0A;&#x3002;</li>
+<li>NTP&#x670D;&#x52A1;&#x9ED8;&#x8BA4;&#x8D70;UPD&#x534F;&#x8BAE;&#xFF0C;&#x4F7F;&#x7528;123&#x7AEF;&#x53E3;&#xFF0C;&#x5982;&#x679C;&#x542F;&#x52A8;&#x9632;&#x706B;&#x5899;&#x7684;&#x8BDD;&#xFF0C;&#x9700;&#x8981;&#x914D;&#x7F6E;&#x4E00;&#x4E0B;&#x9632;&#x706B;&#x5899;&#x3002;</li>
+<li>ntp server&#x914D;&#x7F6E;&#x5B8C;&#x6210;&#x540E;&#xFF0C;&#x6267;&#x884C;<code>service ntpd restart</code>&#x5373;&#x53EF;&#x3002; </li>
+<li>NTP&#x670D;&#x52A1;&#x542F;&#x52A8;&#x540E;&#x5927;&#x7EA6;&#x9700;&#x8981;3&#xFF5E;5&#x5206;&#x949F;&#x7684;&#x65F6;&#x95F4;&#x624D;&#x4F1A;&#x8FDB;&#x884C;&#x4E00;&#x6B21;&#x65F6;&#x95F4;&#x540C;&#x6B65;&#x3002;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x547D;&#x4EE4;<code>ntpstat</code>&#x67E5;&#x770B;&#x540C;&#x6B65;&#x60C5;&#x51B5;&#x3002;<br>&#x53EA;&#x6709;NTP&#x670D;&#x52A1;&#x5668;&#x540C;&#x6B65;&#x6210;&#x529F;&#x540E;&#xFF0C;NTP&#x5BA2;&#x6237;&#x7AEF;&#x624D;&#x53EF;&#x4EE5;&#x540C;&#x6765;&#x540C;&#x6B65;&#x65F6;&#x95F4;&#x3002;&#x5982;&#x679C;&#x9700;&#x8981;&#x7ACB;&#x523B;&#x4ECE;&#x6307;&#x5B9A;&#x7684;&#x65F6;&#x95F4;&#x670D;&#x52A1;&#x5668;&#x540C;&#x6B65;&#x65F6;&#x95F4;&#xFF0C;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;<code>ntpdate</code> &#x547D;&#x4EE4;&#x3002;&#x4F7F;&#x7528;<code>ntpdate</code>&#x547D;&#x4EE4;&#x65F6;&#xFF0C;&#x9700;&#x8981;&#x5148;&#x5173;&#x95ED;ntp&#x670D;&#x52A1;<code>service ntpd stop</code>&#x3002;&#x7136;&#x540E;&#x6267;&#x884C;<code>ntpdate 1.cn.pool.ntp.org</code> &#x5373;&#x53EF;&#x7ACB;&#x5373;&#x5B8C;&#x6210;&#x65F6;&#x95F4;&#x7684;&#x540C;&#x6B65;&#xFF0C;&#x7136;&#x540E;&#x542F;&#x52A8;ntp&#x670D;&#x52A1;<code>service ntpd start</code>&#x3002;</li>
+</ol>
+<h2 id="ntp-client"><a href="#NTP-client" class="headerlink" title="NTP client"></a>NTP client</h2><p>&#x540C;&#x6837;&#x4FEE;&#x6539;<code>/etc/ntp.conf</code><br><img src="http://7xlgd1.com1.z0.glb.clouddn.com/images%2Fio%2Fntp-client.png" alt="ntp client"></p>
+<p>&#x8BF4;&#x660E;:<br>&#x5BA2;&#x6237;&#x7AEF;&#x7684;&#x914D;&#x7F6E;&#x6BD4;&#x670D;&#x52A1;&#x5668;&#x7684;&#x914D;&#x7F6E;&#x8981;&#x7B80;&#x5355;&#x4E00;&#x4E0B;&#xFF0C;&#x53EA;&#x9700;&#x52A0;&#x5165; <code>server 172.31.107.9</code> &#x5373;&#x53EF;&#xFF0C;&#x8868;&#x660E;&#x672C;&#x673A;&#x7684;&#x65F6;&#x95F4;&#x670D;&#x52A1;&#x5668;&#x3002;&#x5176;&#x4ED6;&#x64CD;&#x4F5C;&#x4E0E;&#x670D;&#x52A1;&#x5668;&#x4E00;&#x81F4;&#x3002;</p>
+<h2 id="&#x6279;&#x91CF;&#x4FEE;&#x6539;ntp-client&#x914D;&#x7F6E;"><a href="#&#x6279;&#x91CF;&#x4FEE;&#x6539;ntp-client&#x914D;&#x7F6E;" class="headerlink" title="&#x6279;&#x91CF;&#x4FEE;&#x6539;ntp client&#x914D;&#x7F6E;"></a>&#x6279;&#x91CF;&#x4FEE;&#x6539;ntp client&#x914D;&#x7F6E;</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">NTPSERVER=172.31.107.9</div><div class="line"><span class="keyword">for</span> IP <span class="keyword">in</span> `cat /etc/hosts | fgrep 103 | awk <span class="string">&apos;{print $1}&apos;</span>`; <span class="keyword">do</span></div><div class="line">    ssh <span class="variable">${IP}</span> <span class="string">&quot;</span></div><div class="line">        sed -i &apos;22,25s/^/#/g&apos; /etc/ntp.conf &amp;&amp; \</div><div class="line">        sed -i &apos;25a server &quot;<span class="variable">${NTPSERVER}</span><span class="string">&quot; iburst&apos; /etc/ntp.conf &amp;&amp; \</span></div><div class="line">        service ntpd stop &amp;&amp; \</div><div class="line">        ntpdate &quot;<span class="variable">${NTPSERVER}</span><span class="string">&quot; &amp;&amp; \</span></div><div class="line">        service ntpd start</div><div class="line">        &quot;</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure>
+<p>&#x8BF4;&#x660E;:</p>
+<ol>
+<li>&#x4ECE;hosts&#x4E2D;&#x627E;&#x5230;CDH&#x96C6;&#x7FA4;host</li>
+<li>&#x9700;&#x8981;&#x914D;&#x7F6E;root&#x514D;&#x767B;&#x9646;</li>
+<li>CDH&#x96C6;&#x7FA4;&#x673A;&#x5668;&#x4E2D;&#x7684;<code>/etc/hosts</code>&#x914D;&#x7F6E;&#x4E00;&#x81F4;&#xFF0C;&#x6240;&#x4EE5;&#x53EF;&#x4EE5;&#x6279;&#x91CF;&#x5904;&#x7406;</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/01/15/ntp-server/" data-id="ciqrrv6m7000x2x9kmd2saf9v" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/01/15/ntp-server/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cdh/">cdh</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ntp/">ntp</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/01/19/Enabling-Kerberos-In-CDH/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Cloudera启用kerberos
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/12/31/kafka-reassign/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">kafka reassign</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/01/15/ntp-server/" data-title="ntp server搭建" data-url="http://wzktravel.github.io/2016/01/15/ntp-server/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/squid/">squid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/squid/" style="font-size: 10px;">squid</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/15/proxy-server/">搭建proxy伺服器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/24/upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/hadoop-management/">hadoop集群管理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/04/azkaban-how-to-install-and-use/">azkaban的安装和使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

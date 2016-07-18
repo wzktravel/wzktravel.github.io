@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>linux sed命令 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="sed是一个很好的文件处理工具，本身是一个管道命令，主要是以行为单位进行处理，可以将数据行进行替换、删除、新增、选取等特定工作。我一般喜欢使用awk来处理文件，如果遇到需要进行替换的，会使用sed处理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux sed命令">
+<meta property="og:url" content="http://wzktravel.github.io/2015/09/19/linux-sed/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="sed是一个很好的文件处理工具，本身是一个管道命令，主要是以行为单位进行处理，可以将数据行进行替换、删除、新增、选取等特定工作。我一般喜欢使用awk来处理文件，如果遇到需要进行替换的，会使用sed处理。">
+<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux sed命令">
+<meta name="twitter:description" content="sed是一个很好的文件处理工具，本身是一个管道命令，主要是以行为单位进行处理，可以将数据行进行替换、删除、新增、选取等特定工作。我一般喜欢使用awk来处理文件，如果遇到需要进行替换的，会使用sed处理。">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-linux-sed" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/09/19/linux-sed/" class="article-date">
+  <time datetime="2015-09-19T15:53:30.000Z" itemprop="datePublished">2015-09-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      linux sed命令
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>sed&#x662F;&#x4E00;&#x4E2A;&#x5F88;&#x597D;&#x7684;&#x6587;&#x4EF6;&#x5904;&#x7406;&#x5DE5;&#x5177;&#xFF0C;&#x672C;&#x8EAB;&#x662F;&#x4E00;&#x4E2A;&#x7BA1;&#x9053;&#x547D;&#x4EE4;&#xFF0C;&#x4E3B;&#x8981;&#x662F;&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x8FDB;&#x884C;&#x5904;&#x7406;&#xFF0C;&#x53EF;&#x4EE5;&#x5C06;&#x6570;&#x636E;&#x884C;&#x8FDB;&#x884C;&#x66FF;&#x6362;&#x3001;&#x5220;&#x9664;&#x3001;&#x65B0;&#x589E;&#x3001;&#x9009;&#x53D6;&#x7B49;&#x7279;&#x5B9A;&#x5DE5;&#x4F5C;&#x3002;<br>&#x6211;&#x4E00;&#x822C;&#x559C;&#x6B22;&#x4F7F;&#x7528;awk&#x6765;&#x5904;&#x7406;&#x6587;&#x4EF6;&#xFF0C;&#x5982;&#x679C;&#x9047;&#x5230;&#x9700;&#x8981;&#x8FDB;&#x884C;&#x66FF;&#x6362;&#x7684;&#xFF0C;&#x4F1A;&#x4F7F;&#x7528;sed&#x5904;&#x7406;&#x3002;<br><a id="more"></a></p>
+<h3 id="&#x547D;&#x4EE4;&#x884C;&#x683C;&#x5F0F;"><a href="#&#x547D;&#x4EE4;&#x884C;&#x683C;&#x5F0F;" class="headerlink" title="&#x547D;&#x4EE4;&#x884C;&#x683C;&#x5F0F;"></a>&#x547D;&#x4EE4;&#x884C;&#x683C;&#x5F0F;</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sed [-Ealn] <span class="built_in">command</span> [file ...]</div><div class="line">sed [-Ealn] [<span class="_">-e</span> <span class="built_in">command</span>] [<span class="_">-f</span> <span class="built_in">command</span>_file] [-i extension] [file ...]</div></pre></td></tr></table></figure>
+<ol>
+<li><p>&#x9009;&#x9879;&#x4E0E;&#x53C2;&#x6570;&#xFF1A;<br>-n : &#x4F7F;&#x7528;&#x5B89;&#x9759;(silent)&#x6A21;&#x5F0F;&#x3002;&#x5728;&#x4E00;&#x822C; sed &#x7684;&#x7528;&#x6CD5;&#x4E2D;&#xFF0C;&#x6240;&#x6709;&#x6765;&#x81EA; STDIN &#x7684;&#x6570;&#x636E;&#x4E00;&#x822C;&#x90FD;&#x4F1A;&#x88AB;&#x5217;&#x51FA;&#x5230;&#x8424;&#x5E55;&#x4E0A;&#x3002;&#x4F46;&#x5982;&#x679C;&#x52A0;&#x4E0A; -n &#x53C2;&#x6570;&#x540E;&#xFF0C;&#x5219;&#x53EA;&#x6709;&#x7ECF;&#x8FC7;sed &#x7279;&#x6B8A;&#x5904;&#x7406;&#x7684;&#x90A3;&#x4E00;&#x884C;(&#x6216;&#x8005;&#x52A8;&#x4F5C;)&#x624D;&#x4F1A;&#x88AB;&#x5217;&#x51FA;&#x6765;&#x3002;<br>-e : &#x76F4;&#x63A5;&#x5728;&#x547D;&#x4EE4;&#x5217;&#x6A21;&#x5F0F;&#x4E0A;&#x8FDB;&#x884C; sed &#x7684;&#x52A8;&#x4F5C;&#x7F16;&#x8F91;&#xFF1B;<br>-f : &#x76F4;&#x63A5;&#x5C06; sed &#x7684;&#x52A8;&#x4F5C;&#x5199;&#x5728;&#x4E00;&#x4E2A;&#x6587;&#x4EF6;&#x5185;&#xFF0C; -f filename &#x5219;&#x53EF;&#x4EE5;&#x8FD0;&#x884C; filename &#x5185;&#x7684; sed &#x52A8;&#x4F5C;&#xFF1B;<br>-r : sed &#x7684;&#x52A8;&#x4F5C;&#x652F;&#x6301;&#x7684;&#x662F;&#x5EF6;&#x4F38;&#x578B;&#x6B63;&#x89C4;&#x8868;&#x793A;&#x6CD5;&#x7684;&#x8BED;&#x6CD5;&#x3002;(&#x9ED8;&#x8BA4;&#x662F;&#x57FA;&#x7840;&#x6B63;&#x89C4;&#x8868;&#x793A;&#x6CD5;&#x8BED;&#x6CD5;)<br>-i : &#x76F4;&#x63A5;&#x4FEE;&#x6539;&#x8BFB;&#x53D6;&#x7684;&#x6587;&#x4EF6;&#x5185;&#x5BB9;&#xFF0C;&#x800C;&#x4E0D;&#x662F;&#x7531;&#x8424;&#x5E55;&#x8F93;&#x51FA;&#x3002;</p>
+</li>
+<li><p>&#x52A8;&#x4F5C;&#x8BF4;&#x660E;&#xFF1A;  [n1[,n2]]function<br>n1, n2 : &#x4E0D;&#x89C1;&#x5F97;&#x4F1A;&#x5B58;&#x5728;&#xFF0C;&#x4E00;&#x822C;&#x4EE3;&#x8868;&#x300E;&#x9009;&#x62E9;&#x8FDB;&#x884C;&#x52A8;&#x4F5C;&#x7684;&#x884C;&#x6570;&#x300F;&#xFF0C;&#x4E3E;&#x4F8B;&#x6765;&#x8BF4;&#xFF0C;&#x5982;&#x679C;&#x6211;&#x7684;&#x52A8;&#x4F5C;&#x662F;&#x9700;&#x8981;&#x5728; 10 &#x5230; 20 &#x884C;&#x4E4B;&#x95F4;&#x8FDB;&#x884C;&#x7684;&#xFF0C;&#x5219;&#x300E; 10,20[&#x52A8;&#x4F5C;&#x884C;&#x4E3A;] &#x300F;</p>
+</li>
+<li><p>commond&#xFF1A;<br>a : &#x65B0;&#x589E;&#xFF0C;a &#x7684;&#x540E;&#x9762;&#x53EF;&#x4EE5;&#x63A5;&#x5B57;&#x4E32;&#xFF0C;&#x800C;&#x8FD9;&#x4E9B;&#x5B57;&#x4E32;&#x4F1A;&#x5728;&#x65B0;&#x7684;&#x4E00;&#x884C;&#x51FA;&#x73B0;(&#x76EE;&#x524D;&#x7684;&#x4E0B;&#x4E00;&#x884C;)&#xFF5E;<br>c : &#x53D6;&#x4EE3;&#xFF0C;c &#x7684;&#x540E;&#x9762;&#x53EF;&#x4EE5;&#x63A5;&#x5B57;&#x4E32;&#xFF0C;&#x8FD9;&#x4E9B;&#x5B57;&#x4E32;&#x53EF;&#x4EE5;&#x53D6;&#x4EE3; n1,n2 &#x4E4B;&#x95F4;&#x7684;&#x884C;&#xFF01;<br>d : &#x5220;&#x9664;&#xFF0C;d &#x540E;&#x9762;&#x901A;&#x5E38;&#x4E0D;&#x63A5;&#x4EFB;&#x4F55;&#x4E1C;&#x897F;&#xFF1B;<br>i : &#x63D2;&#x5165;&#xFF0C;i &#x7684;&#x540E;&#x9762;&#x53EF;&#x4EE5;&#x63A5;&#x5B57;&#x4E32;&#xFF0C;&#x800C;&#x8FD9;&#x4E9B;&#x5B57;&#x4E32;&#x4F1A;&#x5728;&#x65B0;&#x7684;&#x4E00;&#x884C;&#x51FA;&#x73B0;(&#x76EE;&#x524D;&#x7684;&#x4E0A;&#x4E00;&#x884C;)&#xFF1B;<br>p : &#x5217;&#x5370;&#xFF0C;&#x4EA6;&#x5373;&#x5C06;&#x67D0;&#x4E2A;&#x9009;&#x62E9;&#x7684;&#x6570;&#x636E;&#x5370;&#x51FA;&#x3002;&#x901A;&#x5E38; p &#x4F1A;&#x4E0E;&#x53C2;&#x6570; sed -n &#x4E00;&#x8D77;&#x8FD0;&#x884C;&#xFF5E;<br>s : &#x53D6;&#x4EE3;&#xFF0C;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x8FDB;&#x884C;&#x53D6;&#x4EE3;&#x7684;&#x5DE5;&#x4F5C;&#x54E9;&#xFF01;&#x901A;&#x5E38;&#x8FD9;&#x4E2A; s &#x7684;&#x52A8;&#x4F5C;&#x53EF;&#x4EE5;&#x642D;&#x914D;&#x6B63;&#x89C4;&#x8868;&#x793A;&#x6CD5;&#xFF01;&#x4F8B;&#x5982; <code>1,20s/old/new/g</code>    </p>
+</li>
+</ol>
+<h3 id="&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x5220;&#x9664;"><a href="#&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x5220;&#x9664;" class="headerlink" title="&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x5220;&#x9664;"></a>&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x5220;&#x9664;</h3><p>&#x5C06; /etc/passwd &#x7684;&#x5185;&#x5BB9;&#x5217;&#x51FA;&#x5E76;&#x4E14;&#x5217;&#x5370;&#x884C;&#x53F7;&#xFF0C;&#x540C;&#x65F6;&#xFF0C;&#x5C06;&#x7B2C; 2~5 &#x884C;&#x5220;&#x9664;&#xFF01;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">~ nl /etc/passwd | head -10 | sed <span class="string">&apos;2,5d&apos;</span></div><div class="line"> 1	root:x:0:0:root:/root:/bin/zsh</div><div class="line"> 6	sync:x:5:0:sync:/sbin:/bin/sync</div><div class="line"> 7	shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown</div><div class="line"> 8	halt:x:7:0:halt:/sbin:/sbin/halt</div><div class="line"> 9	mail:x:8:12:mail:/var/spool/mail:/sbin/nologin</div><div class="line">10	uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin</div></pre></td></tr></table></figure></p>
+<ul>
+<li><code>nl</code>&#x547D;&#x4EE4;&#x7C7B;&#x4F3C;&#x4E8E;cat&#xFF0C;&#x4F46;&#x662F;&#x53EF;&#x4EE5;&#x6253;&#x5370;&#x51FA;&#x884C;&#x53F7;</li>
+<li>&#x5982;&#x679C;&#x53EA;&#x5220;&#x9664;&#x4E00;&#x884C; <code>sed &apos;2d&apos;</code>&#x5373;&#x53EF;</li>
+<li>&#x5982;&#x679C;&#x5220;&#x9664;&#x5230;&#x6700;&#x540E;&#x4E00;&#x884C;&#xFF0C;<code>sed &apos;2,$d</code>&#x3002;</li>
+</ul>
+<h3 id="&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x65B0;&#x589E;"><a href="#&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x65B0;&#x589E;" class="headerlink" title="&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x65B0;&#x589E;"></a>&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x65B0;&#x589E;</h3><p>&#x5728;&#x7B2C;&#x4E8C;&#x884C;&#x540E;(&#x4EA6;&#x5373;&#x662F;&#x52A0;&#x5728;&#x7B2C;&#x4E09;&#x884C;)&#x52A0;&#x4E0A;&#x300E;drink tea?&#x300F;&#x5B57;&#x6837;&#xFF01;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">   ~ nl /etc/passwd | head -5 | sed <span class="string">&apos;2a &quot;drink tea?&quot;&apos;</span></div><div class="line">     1	root:x:0:0:root:/root:/bin/zsh</div><div class="line">     2	bin:x:1:1:bin:/bin:/sbin/nologin</div><div class="line"><span class="string">&quot;drink tea?&quot;</span></div><div class="line">     3	daemon:x:2:2:daemon:/sbin:/sbin/nologin</div><div class="line">     4	adm:x:3:4:adm:/var/adm:/sbin/nologin</div><div class="line">     5	lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin</div></pre></td></tr></table></figure></p>
+<ul>
+<li>&#x5728;&#x7B2C;&#x4E8C;&#x884C;&#x524D;&#x5462;&#xFF1F;<code>nl /etc/passwd | head -5 | sed &apos;2i &quot;drink tea?&quot;&apos;</code>&#xFF0C;&#x662F;&#x4E0D;&#x662F;&#x548C;vim&#x4E2D;i,a&#x7C7B;&#x4F3C;&#xFF1F;</li>
+<li>&#x5982;&#x679C;&#x6DFB;&#x52A0;&#x591A;&#x884C;&#x5462;&#xFF1F;&#x5728;&#x4EE5;&#x6BCF;&#x4E00;&#x884C;&#x4E4B;&#x95F4;&#x52A0;<code>\n</code>&#x5373;&#x53EF;&#x3002;</li>
+</ul>
+<h3 id="&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x53D6;&#x4EE3;"><a href="#&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x53D6;&#x4EE3;" class="headerlink" title="&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x53D6;&#x4EE3;"></a>&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x53D6;&#x4EE3;</h3><p>&#x5C06;&#x7B2C;2-5&#x884C;&#x7684;&#x5185;&#x5BB9;&#x53D6;&#x4EE3;&#x6210;&#x4E3A;&#x300E;No 2-3 line&#x300F;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">    ~ nl /etc/passwd | head -5 | sed <span class="string">&apos;2,3c No 2-3 line&apos;</span></div><div class="line">     1	root:x:0:0:root:/root:/bin/zsh</div><div class="line">No 2-3 line</div><div class="line">     4	adm:x:3:4:adm:/var/adm:/sbin/nologin</div><div class="line">     5	lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin</div></pre></td></tr></table></figure></p>
+<h3 id="&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x663E;&#x793A;"><a href="#&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x663E;&#x793A;" class="headerlink" title="&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x663E;&#x793A;"></a>&#x4EE5;&#x884C;&#x4E3A;&#x5355;&#x4F4D;&#x663E;&#x793A;</h3><p>&#x4EC5;&#x5217;&#x51FA; /etc/passwd &#x6587;&#x4EF6;&#x5185;&#x7684;&#x7B2C; 5-7 &#x884C;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">~ nl /etc/passwd | sed -n <span class="string">&apos;5,7p&apos;</span></div><div class="line"> 5	lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin</div><div class="line"> 6	sync:x:5:0:sync:/sbin:/bin/sync</div><div class="line"> 7	shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown</div></pre></td></tr></table></figure></p>
+<p>&#x4E0A;&#x8FF0;&#x7684;&#x547D;&#x4EE4;&#x4E2D;&#x6709;&#x4E2A;&#x91CD;&#x8981;&#x7684;&#x9009;&#x9879;&#x300E; -n &#x300F;&#xFF0C;&#x6309;&#x7167;&#x8BF4;&#x660E;&#x6587;&#x4EF6;&#xFF0C;&#x8FD9;&#x4E2A; -n &#x4EE3;&#x8868;&#x7684;&#x662F;&#x300E;&#x5B89;&#x9759;&#x6A21;&#x5F0F;&#x300F;&#xFF01; &#x90A3;&#x4E48;&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x4F7F;&#x7528;&#x5B89;&#x9759;&#x6A21;&#x5F0F;&#x5462;&#xFF1F;&#x4F60;&#x53EF;&#x4EE5;&#x81EA;&#x884C;&#x4E0B;&#x8FBE; <code>sed &apos;5,7p&apos;</code> &#x5C31;&#x77E5;&#x9053;&#x4E86; (5-7 &#x884C;&#x4F1A;&#x91CD;&#x590D;&#x8F93;&#x51FA;)&#xFF01;&#x4F46;&#x5982;&#x679C;&#x52A0;&#x4E0A; -n &#x53C2;&#x6570;&#x540E;&#xFF0C;&#x5219;&#x53EA;&#x6709;&#x7ECF;&#x8FC7;sed &#x7279;&#x6B8A;&#x5904;&#x7406;&#x7684;&#x90A3;&#x4E00;&#x884C;(&#x6216;&#x8005;&#x52A8;&#x4F5C;)&#x624D;&#x4F1A;&#x88AB;&#x5217;&#x51FA;&#x6765;&#x3002;</p>
+<h3 id="&#x90E8;&#x5206;&#x6570;&#x636E;&#x7684;&#x641C;&#x5BFB;&#x5E76;&#x53D6;&#x4EE3;&#x7684;&#x529F;&#x80FD;"><a href="#&#x90E8;&#x5206;&#x6570;&#x636E;&#x7684;&#x641C;&#x5BFB;&#x5E76;&#x53D6;&#x4EE3;&#x7684;&#x529F;&#x80FD;" class="headerlink" title="&#x90E8;&#x5206;&#x6570;&#x636E;&#x7684;&#x641C;&#x5BFB;&#x5E76;&#x53D6;&#x4EE3;&#x7684;&#x529F;&#x80FD;"></a>&#x90E8;&#x5206;&#x6570;&#x636E;&#x7684;&#x641C;&#x5BFB;&#x5E76;&#x53D6;&#x4EE3;&#x7684;&#x529F;&#x80FD;</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sed <span class="string">&apos;s/&#x8981;&#x88AB;&#x53D6;&#x4EE3;&#x7684;&#x5B57;&#x4E32;/&#x65B0;&#x7684;&#x5B57;&#x4E32;/g&apos;</span></div></pre></td></tr></table></figure>
+<ol>
+<li>&#x793A;&#x4F8B;&#x4E00;: &#x53D6;&#x5F97;<code>ifconfig en0</code>&#x4E2D;ip&#x5730;&#x5740;<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">   ~ ifconfig en0 | fgrep inet | fgrep netmask</div><div class="line">   inet 192.168.31.166 netmask 0xffffff00 broadcast 192.168.31.255</div><div class="line">   ~ ifconfig en0 | fgrep inet | fgrep netmask | sed <span class="string">&apos;s/inet //g&apos;</span> | sed <span class="string">&apos;s/ netmask.*$//g&apos;</span></div><div class="line">192.168.31.166</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>&#x5176;&#x5B9E;&#x5C31;&#x662F;&#x7ECF;&#x8FC7;&#x4E24;&#x6B21;sed&#x66FF;&#x6362;&#xFF0C;&#x5C06;inet&#x548C;netmask&#x4E4B;&#x540E;&#x7684;&#x5B57;&#x7B26;&#x90FD;&#x66FF;&#x6362;&#x4E3A;&#x7A7A;&#x4E32;</p>
+<ol>
+<li>&#x627E;&#x5230;/etc/man.conf&#x4E2D;&#xFF0C;&#x6240;&#x6709;&#x5E26;&#x201D;MAN&#x201D;&#x5E76;&#x4E14;&#x4E0D;&#x662F;&#x4EE5;&#x201D;#&#x201D;&#x5F00;&#x5934;&#x7684;&#x884C;</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">~ cat /etc/man.conf | fgrep <span class="string">&quot;MAN&quot;</span> | sed <span class="string">&apos;s/#.*$//g&apos;</span> | sed <span class="string">&apos;/^$/d&apos;</span> | tail -5</div><div class="line">MANPATH_MAP	/usr/<span class="built_in">local</span>/sbin		/usr/<span class="built_in">local</span>/share/man</div><div class="line">MANPATH_MAP	/usr/X11/bin		/usr/X11/man</div><div class="line">MANPATH_MAP	/usr/bin/X11		/usr/X11/man</div><div class="line">MANPATH_MAP	/usr/bin/mh		/usr/share/man</div><div class="line">MANSECT		1:1p:8:2:3:3p:4:5:6:7:9:0p:tcl:n:l:p:o</div></pre></td></tr></table></figure>
+<p>&#x9996;&#x5148;&#x5C06;&#x5E26;&#x201D;MAN&#x201D;&#x7684;&#x884C;&#x8FC7;&#x6EE4;&#x51FA;&#x6765;&#xFF0C;&#x7136;&#x540E;<code>sed &apos;s/#.*$//g&apos;</code>&#x5C06;&#x201D;#&#x201D;&#x5F00;&#x5934;&#x7684;&#x884C;&#x53D8;&#x6210;&#x7A7A;&#x884C;&#xFF0C;&#x6700;&#x540E;<code>sed &apos;/^$/d&apos;</code>&#x5220;&#x9664;&#x7A7A;&#x884C;</p>
+<ol>
+<li>&#x627E;&#x5230;pid&#x4E3A;23975&#x7684;pstree&#x4E2D;&#x6240;&#x6709;Pid<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">~ pstree -p 23975 | sed <span class="string">&apos;s/(/\n(/g&apos;</span> | grep <span class="string">&apos;(&apos;</span> | sed <span class="string">&apos;s/(\(.*\))/\1/g&apos;</span> | tr <span class="string">&quot;\n&quot;</span> <span class="string">&quot; &quot;</span></div><div class="line">23975-+-nginx 30180 30181 30182 30183 30184 30185 30186 30187 30188---{nginx} 30189</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="&#x76F4;&#x63A5;&#x4FEE;&#x6539;&#x6587;&#x4EF6;&#x614E;&#x7528;"><a href="#&#x76F4;&#x63A5;&#x4FEE;&#x6539;&#x6587;&#x4EF6;-&#x614E;&#x7528;" class="headerlink" title="&#x76F4;&#x63A5;&#x4FEE;&#x6539;&#x6587;&#x4EF6;(&#x614E;&#x7528;!)"></a>&#x76F4;&#x63A5;&#x4FEE;&#x6539;&#x6587;&#x4EF6;(&#x614E;&#x7528;!)</h3><ol>
+<li><p>&#x5C06;sed.log&#x4E2D;&#x7B2C;2&#x884C;&#x672B;&#x5C3E;&#x7684;.&#x66FF;&#x6362;&#x4E3A;!</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">~ cat sed.log</div><div class="line">Hello world.</div><div class="line">Holy shit.</div><div class="line"></div><div class="line">~ sed -i <span class="string">&apos;2s/\.$/!/g&apos;</span> sed.log </div><div class="line"></div><div class="line">~ cat sed.log</div><div class="line">Hello world.</div><div class="line">Holy shit!</div></pre></td></tr></table></figure>
+</li>
+<li><p>&#x5728;sed.log&#x6700;&#x540E;&#x4E00;&#x884C;&#x63D2;&#x5165;&#x201D;#This is a test&#x201D;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">~ sed -i <span class="string">&apos;$a #This is a test&apos;</span> sed.log</div><div class="line">~ cat sed.log</div><div class="line">Hello world.</div><div class="line">Holy shit!</div><div class="line"><span class="comment">#This is a test</span></div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>sed &#x7684;&#x300E; -i &#x300F;&#x9009;&#x9879;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x4FEE;&#x6539;&#x6587;&#x4EF6;&#x5185;&#x5BB9;&#xFF0C;&#x8FD9;&#x529F;&#x80FD;&#x975E;&#x5E38;&#x6709;&#x5E2E;&#x52A9;&#xFF01;&#x4E3E;&#x4F8B;&#x6765;&#x8BF4;&#xFF0C;&#x5982;&#x679C;&#x4F60;&#x6709;&#x4E00;&#x4E2A; 100 &#x4E07;&#x884C;&#x7684;&#x6587;&#x4EF6;&#xFF0C;&#x4F60;&#x8981;&#x5728;&#x7B2C; 100 &#x884C;&#x52A0;&#x67D0;&#x4E9B;&#x6587;&#x5B57;&#xFF0C;&#x6B64;&#x65F6;&#x4F7F;&#x7528; vim &#x53EF;&#x80FD;&#x4F1A;&#x75AF;&#x6389;&#xFF01;&#x56E0;&#x4E3A;&#x6587;&#x4EF6;&#x592A;&#x5927;&#x4E86;&#xFF01;&#x90A3;&#x600E;&#x529E;&#xFF1F;&#x4F7F;&#x7528;sed&#x80FD;&#x5F88;&#x597D;&#x89E3;&#x51B3;&#x8FD9;&#x4E2A;&#x95EE;&#x9898;&#x3002;&#x900F;&#x8FC7; sed &#x76F4;&#x63A5;&#x4FEE;&#x6539;/&#x53D6;&#x4EE3;&#x7684;&#x529F;&#x80FD;&#xFF0C;&#x4F60;&#x751A;&#x81F3;&#x4E0D;&#x9700;&#x8981;&#x4F7F;&#x7528; vim &#x53BB;&#x4FEE;&#x8BA2;&#xFF01;</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2015/09/19/linux-sed/" data-id="ciqrrv6lo000q2x9kymum6g3j" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2015/09/19/linux-sed/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sed/">sed</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell/">shell</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/09/21/linux-awk/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          linux awk命令
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/09/14/java-queue/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">java多线程中的Queue</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/09/19/linux-sed/" data-title="linux sed命令" data-url="http://wzktravel.github.io/2015/09/19/linux-sed/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/squid/">squid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/squid/" style="font-size: 10px;">squid</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/15/proxy-server/">搭建proxy伺服器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/24/upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/hadoop-management/">hadoop集群管理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/04/azkaban-how-to-install-and-use/">azkaban的安装和使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

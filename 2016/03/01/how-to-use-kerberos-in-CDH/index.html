@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>kerberos使用手册 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="kerberos使用手册，包括管理员和普通用户。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kerberos使用手册">
+<meta property="og:url" content="http://wzktravel.github.io/2016/03/01/how-to-use-kerberos-in-CDH/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="kerberos使用手册，包括管理员和普通用户。">
+<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kerberos使用手册">
+<meta name="twitter:description" content="kerberos使用手册，包括管理员和普通用户。">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-how-to-use-kerberos-in-CDH" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/03/01/how-to-use-kerberos-in-CDH/" class="article-date">
+  <time datetime="2016-03-01T09:56:45.000Z" itemprop="datePublished">2016-03-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      kerberos使用手册
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>kerberos&#x4F7F;&#x7528;&#x624B;&#x518C;&#xFF0C;&#x5305;&#x62EC;&#x7BA1;&#x7406;&#x5458;&#x548C;&#x666E;&#x901A;&#x7528;&#x6237;&#x3002;<br><a id="more"></a></p>
+<h2 id="&#x7B80;&#x4ECB;"><a href="#&#x7B80;&#x4ECB;" class="headerlink" title="&#x7B80;&#x4ECB;"></a>&#x7B80;&#x4ECB;</h2><h3 id="kerberos&#x662F;&#x4EC0;&#x4E48;"><a href="#kerberos&#x662F;&#x4EC0;&#x4E48;&#xFF1F;" class="headerlink" title="kerberos&#x662F;&#x4EC0;&#x4E48;&#xFF1F;"></a>kerberos&#x662F;&#x4EC0;&#x4E48;&#xFF1F;</h3><blockquote>
+<p>Kerberos&#x63D0;&#x4F9B;&#x4E86;&#x4E00;&#x79CD;&#x5355;&#x70B9;&#x767B;&#x5F55;(SSO)&#x7684;&#x65B9;&#x6CD5;&#x3002;&#x8003;&#x8651;&#x8FD9;&#x6837;&#x4E00;&#x4E2A;&#x573A;&#x666F;&#xFF0C;&#x5728;&#x4E00;&#x4E2A;&#x7F51;&#x7EDC;&#x4E2D;&#x6709;&#x4E0D;&#x540C;&#x7684;&#x670D;&#x52A1;&#x5668;&#xFF0C;&#x6BD4;&#x5982;&#xFF0C;&#x6253;&#x5370;&#x670D;&#x52A1;&#x5668;&#x3001;&#x90AE;&#x4EF6;&#x670D;&#x52A1;&#x5668;&#x548C;&#x6587;&#x4EF6;&#x670D;&#x52A1;&#x5668;&#x3002;&#x8FD9;&#x4E9B;&#x670D;&#x52A1;&#x5668;&#x90FD;&#x6709;&#x8BA4;&#x8BC1;&#x7684;&#x9700;&#x6C42;&#x3002;&#x5F88;&#x81EA;&#x7136;&#x7684;&#xFF0C;&#x4E0D;&#x53EF;&#x80FD;&#x8BA9;&#x6BCF;&#x4E2A;&#x670D;&#x52A1;&#x5668;&#x81EA;&#x5DF1;&#x5B9E;&#x73B0;&#x4E00;&#x5957;&#x8BA4;&#x8BC1;&#x7CFB;&#x7EDF;&#xFF0C;&#x800C;&#x662F;&#x63D0;&#x4F9B;&#x4E00;&#x4E2A;&#x4E2D;&#x5FC3;&#x8BA4;&#x8BC1;&#x670D;&#x52A1;&#x5668;&#xFF08;AS-Authentication Server&#xFF09;&#x4F9B;&#x8FD9;&#x4E9B;&#x670D;&#x52A1;&#x5668;&#x4F7F;&#x7528;&#x3002;&#x8FD9;&#x6837;&#x4EFB;&#x4F55;&#x5BA2;&#x6237;&#x7AEF;&#x5C31;&#x53EA;&#x9700;&#x7EF4;&#x62A4;&#x4E00;&#x4E2A;&#x5BC6;&#x7801;&#x5C31;&#x80FD;&#x767B;&#x5F55;&#x6240;&#x6709;&#x670D;&#x52A1;&#x5668;&#x3002;</p>
+<p>&#x56E0;&#x6B64;&#xFF0C;&#x5728;Kerberos&#x7CFB;&#x7EDF;&#x4E2D;&#x81F3;&#x5C11;&#x6709;&#x4E09;&#x4E2A;&#x89D2;&#x8272;&#xFF1A;&#x8BA4;&#x8BC1;&#x670D;&#x52A1;&#x5668;&#xFF08;AS&#xFF09;&#xFF0C;&#x5BA2;&#x6237;&#x7AEF;&#xFF08;Client&#xFF09;&#x548C;&#x666E;&#x901A;&#x670D;&#x52A1;&#x5668;&#xFF08;Server&#xFF09;&#x3002;&#x5BA2;&#x6237;&#x7AEF;&#x548C;&#x670D;&#x52A1;&#x5668;&#x5C06;&#x5728;AS&#x7684;&#x5E2E;&#x52A9;&#x4E0B;&#x5B8C;&#x6210;&#x76F8;&#x4E92;&#x8BA4;&#x8BC1;&#x3002;&#x5728;Kerberos&#x7CFB;&#x7EDF;&#x4E2D;&#xFF0C;&#x5BA2;&#x6237;&#x7AEF;&#x548C;&#x670D;&#x52A1;&#x5668;&#x90FD;&#x6709;&#x4E00;&#x4E2A;&#x552F;&#x4E00;&#x7684;&#x540D;&#x5B57;&#xFF0C;&#x53EB;&#x505A;Principal&#x3002;&#x540C;&#x65F6;&#xFF0C;&#x5BA2;&#x6237;&#x7AEF;&#x548C;&#x670D;&#x52A1;&#x5668;&#x90FD;&#x6709;&#x81EA;&#x5DF1;&#x7684;&#x5BC6;&#x7801;&#xFF0C;&#x5E76;&#x4E14;&#x5B83;&#x4EEC;&#x7684;&#x5BC6;&#x7801;&#x53EA;&#x6709;&#x81EA;&#x5DF1;&#x548C;&#x8BA4;&#x8BC1;&#x670D;&#x52A1;&#x5668;AS&#x77E5;&#x9053;&#x3002;</p> 
+
+</blockquote>
+<h3 id="kerberos&#x5728;cdh&#x4E2D;&#x7684;&#x4F7F;&#x7528;"><a href="#kerberos&#x5728;CDH&#x4E2D;&#x7684;&#x4F7F;&#x7528;" class="headerlink" title="kerberos&#x5728;CDH&#x4E2D;&#x7684;&#x4F7F;&#x7528;"></a>kerberos&#x5728;CDH&#x4E2D;&#x7684;&#x4F7F;&#x7528;</h3><ol>
+<li>&#x5728;&#x5404;&#x670D;&#x52A1;&#x4E4B;&#x95F4;&#x901A;&#x4FE1;&#x4F7F;&#x7528;kerberos&#xFF0C;&#x5982;&#x5404;&#x670D;&#x52A1;&#x8FDE;&#x63A5;zookeeper&#xFF0C;opentsdb&#x8FDE;&#x63A5;hbase&#x3002;</li>
+<li>&#x4F7F;&#x7528;&#x5404;&#x670D;&#x52A1;&#x5BA2;&#x6237;&#x7AEF;&#x65F6;&#xFF0C;&#x5FC5;&#x987B;&#x9996;&#x5148;&#x5207;&#x6362;&#x5230;&#x81EA;&#x5DF1;&#x7684;kerberos&#x8D26;&#x6237;&#xFF0C;&#x624D;&#x80FD;&#x591F;&#x8FDE;&#x63A5;&#x5230;&#x5404;&#x670D;&#x52A1;&#xFF0C;&#x5426;&#x5219;&#x4F1A;&#x62A5;&#x9519;&#x3002;</li>
+<li>&#x542F;&#x7528;kerberos&#x540E;&#xFF0C;&#x8FDE;&#x63A5;hive&#x53EA;&#x80FD;&#x4F7F;&#x7528;<code>beeline</code>&#xFF0C;<code>hive</code>&#x4E0D;&#x518D;&#x652F;&#x6301;&#x3002;</li>
+</ol>
+<h2 id="&#x666E;&#x901A;&#x7528;&#x6237;"><a href="#&#x666E;&#x901A;&#x7528;&#x6237;" class="headerlink" title="&#x666E;&#x901A;&#x7528;&#x6237;"></a>&#x666E;&#x901A;&#x7528;&#x6237;</h2><p>&#x53C2;&#x8003;<a href="http://web.mit.edu/kerberos/krb5-latest/doc/user/index.html" target="_blank" rel="external">http://web.mit.edu/kerberos/krb5-latest/doc/user/index.html</a><br>&#x6BCF;&#x4EBA;&#x5C3D;&#x91CF;&#x4F7F;&#x7528;&#x81EA;&#x5DF1;&#x7684;&#x8D26;&#x53F7;&#x767B;&#x9646;&#x96C6;&#x7FA4;&#x4E2D;&#x673A;&#x5668;&#xFF0C;&#x5426;&#x5219;&#x53EF;&#x80FD;&#x5728;&#x5207;&#x6362;kerberos&#x8D26;&#x6237;&#x65F6;&#x8986;&#x76D6;&#x5176;&#x4ED6;&#x4EBA;&#x8D26;&#x53F7;&#x6216;&#x88AB;&#x8986;&#x76D6;&#x3002;</p>
+<ul>
+<li>&#x4F7F;&#x7528;&#x5BC6;&#x7801;&#x5207;&#x6362;&#x7528;&#x6237;</li>
+</ul>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">kinit</span> username</div></pre></td></tr></table></figure>
+<p>&#x6B64;&#x547D;&#x4EE4;&#x9700;&#x8981;&#x8F93;&#x5165;&#x4F60;&#x5728;kerberos&#x4E2D;&#x7684;&#x5BC6;&#x7801;</p>
+<ul>
+<li>&#x4FEE;&#x6539;&#x5BC6;&#x7801;</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kpassword</div></pre></td></tr></table></figure>
+<ul>
+<li>&#x66F4;&#x65B0;credentials</li>
+</ul>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">kinit</span> -R</div></pre></td></tr></table></figure>
+<ul>
+<li>&#x9500;&#x6BC1;credentials</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kdestroy</div></pre></td></tr></table></figure>
+<ul>
+<li>&#x4F7F;&#x7528;keytab</li>
+</ul>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kinit -k -t user<span class="selector-class">.keytab</span> username</div></pre></td></tr></table></figure>
+<p>&#x514D;&#x5BC6;&#x7801;&#x5207;&#x6362;&#x7528;&#x6237;&#xFF0C;&#x4F46;&#x662F;&#x9700;&#x8981;&#x63D0;&#x524D;&#x751F;&#x6210;&#x597D;keytab&#xFF0C;&#x5E76;&#x4FDD;&#x8BC1;&#x53EA;&#x6709;&#x81EA;&#x5DF1;&#x6709;&#x8BFB;&#x5199;&#x6743;&#x9650;&#x3002;</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">klist</span> <span class="selector-tag">-k</span> <span class="selector-tag">user</span><span class="selector-class">.keytab</span></div></pre></td></tr></table></figure>
+<p>&#x67E5;&#x770B;&#x6B64;keytab&#x4E2D;&#x6240;&#x6709;principal</p>
+<h2 id="&#x7BA1;&#x7406;&#x5458;"><a href="#&#x7BA1;&#x7406;&#x5458;" class="headerlink" title="&#x7BA1;&#x7406;&#x5458;"></a>&#x7BA1;&#x7406;&#x5458;</h2><p>&#x53C2;&#x8003;<a href="http://web.mit.edu/kerberos/krb5-latest/doc/admin/database.html" target="_blank" rel="external">http://web.mit.edu/kerberos/krb5-latest/doc/admin/database.html</a></p>
+<p>&#x8FDB;&#x5165;kerberos&#x7BA1;&#x7406;&#x9875;&#x9762;&#xFF0C;&#x6709;&#x4E24;&#x79CD;&#x65B9;&#x5F0F;&#xFF1A;<br>&#x5728;Krb5 server&#x6240;&#x5728;&#x673A;&#x5668;&#x5E76;&#x4E14;&#x5F53;&#x524D;&#x7528;&#x6237;&#x662F;root&#x7684;&#x8BDD;&#xFF0C;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;<code>kadmin.local</code>&#x514D;&#x5BC6;&#x7801;&#x8FDB;&#x5165;&#xFF1B;&#x5F53;&#x524D;&#x7528;&#x6237;&#x662F;&#x975E;root&#x7528;&#x6237;&#x6216;&#x5728;&#x5176;&#x4ED6;&#x673A;&#x5668;&#x4E0A;&#x65F6;&#xFF0C;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;<code>kadmin $admin_user</code>&#x8FDB;&#x5165;&#xFF0C;&#x9700;&#x8981;&#x8F93;&#x5165;&#x6B64;admin&#x7528;&#x6237;&#x7684;&#x5BC6;&#x7801;&#x3002;<br>&#x5982;&#x679C;&#x9700;&#x8981;&#x76F4;&#x63A5;&#x6267;&#x884C;&#x547D;&#x4EE4;&#xFF0C;&#x4F7F;&#x7528;<code>-q</code>&#x53C2;&#x6570;</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kadmin<span class="selector-class">.local</span> -<span class="selector-tag">q</span> <span class="string">&quot;listprincs&quot;</span></div></pre></td></tr></table></figure>
+<h3 id="&#x5217;&#x51FA;&#x6240;&#x6709;principal-list_principals-listprincs"><a href="#&#x5217;&#x51FA;&#x6240;&#x6709;principal-list-principals-listprincs" class="headerlink" title="&#x5217;&#x51FA;&#x6240;&#x6709;principal: list_principals, listprincs"></a>&#x5217;&#x51FA;&#x6240;&#x6709;principal: list_principals, listprincs</h3><p><strong> listprincs [expression] </strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">listprincs *<span class="built_in">test</span>*</div></pre></td></tr></table></figure>
+<h3 id="&#x67E5;&#x770B;principal&#x4FE1;&#x606F;-get_principal-getprinc"><a href="#&#x67E5;&#x770B;principal&#x4FE1;&#x606F;-get-principal-getprinc" class="headerlink" title="&#x67E5;&#x770B;principal&#x4FE1;&#x606F;: get_principal, getprinc"></a>&#x67E5;&#x770B;principal&#x4FE1;&#x606F;: get_principal, getprinc</h3><p><strong> getprinc [-terse] principal </strong></p>
+<ul>
+<li><code>-terse</code>&#x8F93;&#x51FA;&#x66F4;&#x52A0;&#x7B80;&#x6D01;&#xFF0C;&#x5404;&#x4FE1;&#x606F;&#x4E4B;&#x95F4;&#x4EE5;tab&#x4F5C;&#x4E3A;&#x5206;&#x9694;&#x7B26;&#x3002;</li>
+</ul>
+<h3 id="&#x6DFB;&#x52A0;principal-add_principal-addprinc"><a href="#&#x6DFB;&#x52A0;principal-add-principal-addprinc" class="headerlink" title="&#x6DFB;&#x52A0;principal: add_principal, addprinc"></a>&#x6DFB;&#x52A0;principal: add_principal, addprinc</h3><p><strong> addprinc [options] principal </strong></p>
+<ul>
+<li><code>-randkey</code><br>&#x968F;&#x673A;&#x751F;&#x6210;&#x4E00;&#x4E2A;&#x503C;&#x4F5C;&#x4E3A;principal&#x7684;key</li>
+<li><code>-pw</code><br>&#x8BBE;&#x7F6E;&#x5BC6;&#x7801;&#xFF0C;&#x6B64;&#x9009;&#x9879;&#x4E00;&#x822C;&#x7528;&#x5728;&#x811A;&#x672C;&#x4E2D;&#x3002;</li>
+<li>&#x793A;&#x4F8B;</li>
+</ul>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">addprinc -pw password user<span class="variable">@DOMAIN</span>.COM</div><div class="line">addprinc -randkey user<span class="variable">@DOMAIN</span>.COM</div></pre></td></tr></table></figure>
+<ul>
+<li>&#x53E6;&#x5916;&#x53EF;&#x4EE5;&#x5BF9;principal&#x8BBE;&#x7F6E;&#x8FC7;&#x671F;&#x65F6;&#x95F4;&#x7B49;&#xFF0C;&#x5177;&#x4F53;&#x53C2;&#x8003;&#x4E0A;&#x65B9;&#x94FE;&#x63A5;&#x3002;</li>
+</ul>
+<h3 id="&#x4FEE;&#x6539;principal-modify_principal-modprinc"><a href="#&#x4FEE;&#x6539;principal-modify-principal-modprinc" class="headerlink" title="&#x4FEE;&#x6539;principal: modify_principal, modprinc"></a>&#x4FEE;&#x6539;principal: modify_principal, modprinc</h3><p>&#x4E0E;addprinc&#x547D;&#x4EE4;&#x9009;&#x9879;&#x57FA;&#x672C;&#x4E00;&#x81F4;, <strong> modprinc [options] principal </strong></p>
+<h3 id="&#x5220;&#x9664;principal-delete_principal-delprinc"><a href="#&#x5220;&#x9664;principal-delete-principal-delprinc" class="headerlink" title="&#x5220;&#x9664;principal: delete_principal, delprinc"></a>&#x5220;&#x9664;principal: delete_principal, delprinc</h3><p><strong> delprinc [-force] principal </strong> </p>
+<h3 id="&#x4FEE;&#x6539;&#x5BC6;&#x7801;-change_password-cpw"><a href="#&#x4FEE;&#x6539;&#x5BC6;&#x7801;-change-password-cpw" class="headerlink" title="&#x4FEE;&#x6539;&#x5BC6;&#x7801;: change_password, cpw"></a>&#x4FEE;&#x6539;&#x5BC6;&#x7801;: change_password, cpw</h3><p><strong> change_password [options] principal </strong></p>
+<ul>
+<li><code>-randkey</code><br>&#x968F;&#x673A;&#x751F;&#x6210;&#x4E00;&#x4E2A;&#x503C;&#x4F5C;&#x4E3A;principal&#x7684;key</li>
+<li><code>-pw</code><br>&#x8BBE;&#x7F6E;&#x5BC6;&#x7801;&#xFF0C;&#x6B64;&#x9009;&#x9879;&#x4E00;&#x822C;&#x7528;&#x5728;&#x811A;&#x672C;&#x4E2D;&#x3002;</li>
+<li>&#x793A;&#x4F8B;</li>
+</ul>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cpw <span class="keyword">user</span></div><div class="line"><span class="title">cpw</span> -pw password user</div></pre></td></tr></table></figure>
+<h3 id="&#x751F;&#x6210;keytab"><a href="#&#x751F;&#x6210;keytab" class="headerlink" title="&#x751F;&#x6210;keytab"></a>&#x751F;&#x6210;keytab</h3><ul>
+<li>&#x751F;&#x6210;&#x5355;&#x4E00;&#x7684;keytab: <code>xst -k ${USERNAME}.keytab ${USERNAME}@DOMAIN.COM</code></li>
+<li>&#x5408;&#x5E76;&#x591A;&#x4E2A;keytab</li>
+</ul>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ ktutil</div><div class="line">ktutil: rkt <span class="selector-tag">a</span><span class="selector-class">.keytab</span></div><div class="line">ktutil: rkt <span class="selector-tag">b</span><span class="selector-class">.keytab</span></div><div class="line">ktutil: wkt merge<span class="selector-class">.keytab</span></div><div class="line">ktutil: exit</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/03/01/how-to-use-kerberos-in-CDH/" data-id="ciqrrv6mn001d2x9kdox7p9mc" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/03/01/how-to-use-kerberos-in-CDH/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CDH/">CDH</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kerberos/">kerberos</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/03/05/Disable-kerberos-in-CDH/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          CDH禁用kerberos
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/02/25/Enabling-sentry-in-CDH/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">CDH启用sentry</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/03/01/how-to-use-kerberos-in-CDH/" data-title="kerberos使用手册" data-url="http://wzktravel.github.io/2016/03/01/how-to-use-kerberos-in-CDH/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/squid/">squid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/squid/" style="font-size: 10px;">squid</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/15/proxy-server/">搭建proxy伺服器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/24/upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/hadoop-management/">hadoop集群管理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/04/azkaban-how-to-install-and-use/">azkaban的安装和使用</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>
