@@ -4,14 +4,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives: 2016/1 | wzktravel</title>
+  <title>使用Python获取yarn任务状态 | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="wzktravel">
-<meta property="og:url" content="http://wzktravel.github.io/archives/2016/01/index.html">
+  <meta name="description" content="使用Python获取yarn任务状态">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Python获取yarn任务状态">
+<meta property="og:url" content="http://wzktravel.github.io/2016/07/18/yarn-history/index.html">
 <meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="使用Python获取yarn任务状态">
+<meta property="og:updated_time" content="2016-07-21T12:22:26.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="wzktravel">
+<meta name="twitter:title" content="使用Python获取yarn任务状态">
+<meta name="twitter:description" content="使用Python获取yarn任务状态">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -64,96 +68,68 @@
   </div>
 </header>
     <div class="outer">
-      <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2016/01/29/flume-hdfs-ucs-4/" class="archive-article-date">
-  <time datetime="2016-01-29T05:09:59.000Z" itemprop="datePublished">1月 29</time>
+      <section id="main"><article id="post-yarn-history" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/07/18/yarn-history/" class="article-date">
+  <time datetime="2016-07-18T09:05:46.000Z" itemprop="datePublished">2016-07-18</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/01/29/flume-hdfs-ucs-4/">Flume SpoolDirectorySource遇到emoj截断问题</a>
+    <h1 class="article-title" itemprop="name">
+      使用Python获取yarn任务状态
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2016/01/19/hdfs-add-nodes-dynamically/" class="archive-article-date">
-  <time datetime="2016-01-19T06:59:01.000Z" itemprop="datePublished">1月 19</time>
-</a>
+    <div class="article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/01/19/hdfs-add-nodes-dynamically/">HFDS修改备份系数和动态增删节点</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2016/01/19/Enabling-Kerberos-In-CDH/" class="archive-article-date">
-  <time datetime="2016-01-19T03:11:47.000Z" itemprop="datePublished">1月 19</time>
-</a>
+        <p>&#x4F7F;&#x7528;Python&#x83B7;&#x53D6;yarn&#x4EFB;&#x52A1;&#x72B6;&#x6001;<br><a id="more"></a></p>
+<h2 id="yarn-history"><a href="#yarn-history" class="headerlink" title="yarn history"></a>yarn history</h2><p>&#x4F7F;&#x7528;yarn history server rest api, &#x53C2;&#x8003;<a href="http://hadoop.apache.org/docs/r2.6.0/hadoop-mapreduce-client/hadoop-mapreduce-client-hs/HistoryServerRest.html" target="_blank" rel="external">http://hadoop.apache.org/docs/r2.6.0/hadoop-mapreduce-client/hadoop-mapreduce-client-hs/HistoryServerRest.html</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> httplib</div><div class="line"><span class="keyword">import</span> urllib</div><div class="line"><span class="keyword">import</span> json</div><div class="line"><span class="keyword">import</span> time </div><div class="line"></div><div class="line">yarnHistoryServer = <span class="string">&quot;172.31.103.124&quot;</span></div><div class="line">conn = httplib.HTTPConnection(yarnHistoryServer, port=<span class="string">&quot;19888&quot;</span>)</div><div class="line">headers = {<span class="string">&quot;accept&quot;</span>: <span class="string">&quot;application/json&quot;</span>}</div><div class="line">body = {<span class="string">&quot;limit&quot;</span>: <span class="number">100</span>, <span class="string">&quot;user&quot;</span>: <span class="string">&quot;chenlong&quot;</span>, <span class="string">&quot;state&quot;</span>: <span class="string">&quot;SUCCEEDED&quot;</span>}</div><div class="line">url = <span class="string">&quot;/ws/v1/history/mapreduce/jobs?%s&quot;</span> % urllib.urlencode(body)</div><div class="line">conn.request(<span class="string">&quot;GET&quot;</span>, url, headers=headers)</div><div class="line">response = conn.getresponse()</div><div class="line">data = response.read()</div><div class="line">conn.close()</div><div class="line"></div><div class="line">json = json.loads(data)</div><div class="line"></div><div class="line">jobs = json[<span class="string">&apos;jobs&apos;</span>][<span class="string">&apos;job&apos;</span>]</div><div class="line"></div><div class="line"><span class="keyword">for</span> job <span class="keyword">in</span> jobs:</div><div class="line">    <span class="keyword">if</span> job[<span class="string">&apos;state&apos;</span>] == <span class="string">&apos;SUCCEEDED&apos;</span>:</div><div class="line">        submitTime = job[<span class="string">&apos;submitTime&apos;</span>]</div><div class="line">        submitTimeFormat = time.strftime(<span class="string">&apos;%Y-%m-%d %H:%M:%S&apos;</span>, time.localtime(submitTime / <span class="number">1000</span>))</div><div class="line">        duration = job[<span class="string">&apos;finishTime&apos;</span>] - job[<span class="string">&apos;startTime&apos;</span>]</div><div class="line">        <span class="keyword">print</span> <span class="string">&apos;%s\t%s\t%s\t%s&apos;</span> % (submitTimeFormat, job[<span class="string">&apos;user&apos;</span>], job[<span class="string">&apos;name&apos;</span>], duration)</div></pre></td></tr></table></figure>
+<h2 id="spark-history"><a href="#spark-history" class="headerlink" title="spark history"></a>spark history</h2><p>&#x53C2;&#x8003;<a href="https://github.com/apache/spark/blob/master/docs/monitoring.md" target="_blank" rel="external">https://github.com/apache/spark/blob/master/docs/monitoring.md</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> urllib</div><div class="line"><span class="keyword">import</span> httplib</div><div class="line"><span class="keyword">import</span> json</div><div class="line"><span class="keyword">import</span> time</div><div class="line"></div><div class="line">sparkHistoryServer = <span class="string">&quot;172.31.103.128&quot;</span></div><div class="line">conn = httplib.HTTPConnection(sparkHistoryServer, port=<span class="string">&quot;18088&quot;</span>)</div><div class="line">body = {<span class="string">&quot;minDate&quot;</span>: <span class="string">&quot;2016-06-01&quot;</span>, <span class="string">&quot;status&quot;</span>: <span class="string">&quot;completed&quot;</span>}</div><div class="line">url = <span class="string">&quot;/api/v1/applications?%s&quot;</span> % urllib.urlencode(body)</div><div class="line">conn.request(<span class="string">&quot;GET&quot;</span>, url)</div><div class="line">response = conn.getresponse()</div><div class="line">data = response.read()</div><div class="line">conn.close()</div><div class="line"></div><div class="line">jobs = json.loads(data)</div><div class="line"></div><div class="line"><span class="keyword">for</span> job <span class="keyword">in</span> jobs:</div><div class="line">    name = job[<span class="string">&apos;name&apos;</span>]</div><div class="line">    attempts = job[<span class="string">&apos;attempts&apos;</span>]</div><div class="line">    firstAttempt = attempts[<span class="number">0</span>]</div><div class="line">    user = firstAttempt[<span class="string">&apos;sparkUser&apos;</span>]</div><div class="line"></div><div class="line">    <span class="keyword">if</span> user == <span class="string">&quot;chenb&quot;</span> <span class="keyword">and</span> <span class="string">&quot;App C&quot;</span> <span class="keyword">in</span> name:</div><div class="line">        startTime = firstAttempt[<span class="string">&apos;startTime&apos;</span>]</div><div class="line">        endTime = firstAttempt[<span class="string">&apos;endTime&apos;</span>]</div><div class="line">        startTimeStamp = time.mktime(time.strptime(startTime, <span class="string">&quot;%Y-%m-%dT%H:%M:%S.%f%Z&quot;</span>))</div><div class="line">        endTimeStamp = time.mktime(time.strptime(endTime, <span class="string">&quot;%Y-%m-%dT%H:%M:%S.%f%Z&quot;</span>))</div><div class="line">        duration = endTimeStamp - startTimeStamp</div><div class="line"></div><div class="line">        <span class="keyword">print</span> <span class="string">&apos;%s\t%s\t%s\t%s&apos;</span> % (startTime, user, name, duration)</div></pre></td></tr></table></figure>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/01/19/Enabling-Kerberos-In-CDH/">Cloudera启用kerberos</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2016/01/15/ntp-server/" class="archive-article-date">
-  <time datetime="2016-01-15T10:25:41.000Z" itemprop="datePublished">1月 15</time>
-</a>
+    </div>
+    <footer class="article-footer">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/01/15/ntp-server/">ntp server搭建</a>
-    </h1>
-  
+        <a data-url="http://wzktravel.github.io/2016/07/18/yarn-history/" data-id="ciqwaehbr0022uw9kigyf5lsu" class="article-share-link">分享到</a>
+      
 
-    </header>
+      
+        <a href="http://wzktravel.github.io/2016/07/18/yarn-history/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/yarn/">yarn</a></li></ul>
+
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/07/15/proxy-server/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">搭建proxy伺服器</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-  
-    </div></section>
-  
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/07/18/yarn-history/" data-title="使用Python获取yarn任务状态" data-url="http://wzktravel.github.io/2016/07/18/yarn-history/"></div>
+  </section>
 </section>
       
       <aside id="sidebar">
