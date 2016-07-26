@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>bash和expect中map的用法 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在bash和expect中，都有类似于map的数据结构，但用法有比较大差异。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="bash和expect中map的用法">
+<meta property="og:url" content="http://wzktravel.github.io/2016/07/26/map-in-expect-and-bash/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="在bash和expect中，都有类似于map的数据结构，但用法有比较大差异。">
+<meta property="og:updated_time" content="2016-07-26T08:00:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="bash和expect中map的用法">
+<meta name="twitter:description" content="在bash和expect中，都有类似于map的数据结构，但用法有比较大差异。">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-map-in-expect-and-bash" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/07/26/map-in-expect-and-bash/" class="article-date">
+  <time datetime="2016-07-26T07:19:17.000Z" itemprop="datePublished">2016-07-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      bash和expect中map的用法
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&#x5728;bash&#x548C;expect&#x4E2D;&#xFF0C;&#x90FD;&#x6709;&#x7C7B;&#x4F3C;&#x4E8E;map&#x7684;&#x6570;&#x636E;&#x7ED3;&#x6784;&#xFF0C;&#x4F46;&#x7528;&#x6CD5;&#x6709;&#x6BD4;&#x8F83;&#x5927;&#x5DEE;&#x5F02;&#x3002;</p>
+<a id="more"></a>
+<h2 id="bash&#x4E2D;&#x7684;map"><a href="#bash&#x4E2D;&#x7684;map" class="headerlink" title="bash&#x4E2D;&#x7684;map"></a>bash&#x4E2D;&#x7684;map</h2><blockquote>
+<p>bash&#x4E2D;&#x6709;&#x4E24;&#x79CD;&#x6570;&#x7EC4;&#xFF1A;&#x4E00;&#x79CD;&#x662F;&#x7D22;&#x5F15;&#x6570;&#x7EC4;(indexed array)&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x901A;&#x8FC7;&#x6574;&#x6570;&#x4E0B;&#x6807;&#x6765;&#x7D22;&#x5F15;&#x6570;&#x7EC4;&#xFF0C;&#x5BF9;&#x5E94;&#x9AD8;&#x7EA7;&#x8BED;&#x8A00;&#x4E2D;&#x7684;&#x6570;&#x7EC4;(array)&#xFF1B;&#x53E6;&#x4E00;&#x79CD;&#x662F;&#x5173;&#x8054;&#x6570;&#x7EC4;(associative array)&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x901A;&#x8FC7;&#x4EFB;&#x610F;&#x5B57;&#x7B26;&#x4E32;&#x6765;&#x67E5;&#x627E;&#x5143;&#x7D20;&#xFF0C;&#x5BF9;&#x5E94;&#x9AD8;&#x7EA7;&#x8BED;&#x8A00;&#x4E2D;&#x7684;&#x6620;&#x5C04;&#x8868;(map&#x6216;&#x8005;hash map)&#x3002;bash&#x53EA;&#x652F;&#x6301;&#x4E00;&#x7EF4;&#x6570;&#x7EC4;&#xFF0C;&#x4E0D;&#x8FC7;&#x6570;&#x7EC4;&#x5927;&#x5C0F;&#x6CA1;&#x6709;&#x9650;&#x5236;&#x3002;&#x6CE8;&#x610F;&#x7D22;&#x5F15;&#x6570;&#x7EC4;&#x7684;&#x4E0B;&#x6807;&#x662F;&#x4ECE;0&#x5F00;&#x59CB;&#x7684;&#x3002;&#x53E6;&#x5916;&#xFF0C;&#x5173;&#x8054;&#x6570;&#x7EC4;&#x53EA;&#x5728;bash 4.0&#x4EE5;&#x4E0A;&#x7248;&#x672C;&#x652F;&#x6301;&#x3002;</p>
+</blockquote>
+<h3 id="&#x58F0;&#x660E;&#x6570;&#x7EC4;"><a href="#&#x58F0;&#x660E;&#x6570;&#x7EC4;" class="headerlink" title="&#x58F0;&#x660E;&#x6570;&#x7EC4;"></a>&#x58F0;&#x660E;&#x6570;&#x7EC4;</h3><ul>
+<li><p>&#x58F0;&#x660E;&#x4E00;&#x4E2A;&#x7D22;&#x5F15;&#x6570;&#x7EC4;&#xFF1A;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">declare</span> <span class="_">-a</span> arr <span class="comment"># &#x5168;&#x5C40;&#x53D8;&#x91CF; </span></div><div class="line"><span class="built_in">local</span> <span class="_">-a</span> arr   <span class="comment"># &#x51FD;&#x6570;&#x7684;&#x5C40;&#x90E8;&#x53D8;&#x91CF;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>&#x58F0;&#x660E;&#x4E00;&#x4E2A;&#x5173;&#x8054;&#x6570;&#x7EC4;&#xFF1A;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">declare</span> -A map <span class="comment"># &#x5168;&#x5C40;&#x53D8;&#x91CF;   </span></div><div class="line"><span class="built_in">local</span> -A map   <span class="comment"># &#x51FD;&#x6570;&#x7684;&#x5C40;&#x90E8;&#x53D8;&#x91CF;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="&#x6570;&#x7EC4;&#x7684;&#x8D4B;&#x503C;&#x548C;&#x5F15;&#x7528;"><a href="#&#x6570;&#x7EC4;&#x7684;&#x8D4B;&#x503C;&#x548C;&#x5F15;&#x7528;" class="headerlink" title="&#x6570;&#x7EC4;&#x7684;&#x8D4B;&#x503C;&#x548C;&#x5F15;&#x7528;"></a>&#x6570;&#x7EC4;&#x7684;&#x8D4B;&#x503C;&#x548C;&#x5F15;&#x7528;</h3><ul>
+<li><p>&#x7D22;&#x5F15;&#x6570;&#x7EC4;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">arr=(var0 var1 var2 var3)</div><div class="line"><span class="built_in">echo</span> <span class="variable">${arr[0]}</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>&#x5173;&#x8054;&#x6570;&#x7EC4;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">map=([<span class="string">&quot;a&quot;</span>]=<span class="string">&quot;var1&quot;</span> [<span class="string">&quot;bc&quot;</span>]=<span class="string">&quot;var2&quot;</span> [<span class="string">&quot;def&quot;</span>]=<span class="string">&quot;var3&quot;</span>)</div><div class="line"><span class="built_in">echo</span> <span class="variable">${map[&quot;a&quot;]}</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="&#x6570;&#x7EC4;&#x7684;&#x904D;&#x5386;"><a href="#&#x6570;&#x7EC4;&#x7684;&#x904D;&#x5386;" class="headerlink" title="&#x6570;&#x7EC4;&#x7684;&#x904D;&#x5386;"></a>&#x6570;&#x7EC4;&#x7684;&#x904D;&#x5386;</h3><ul>
+<li>&#x7D22;&#x5F15;&#x6570;&#x7EC4;</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">declare</span> <span class="_">-a</span> arr</div><div class="line">arr=(<span class="string">&quot;a&quot;</span> <span class="string">&quot;b&quot;</span> <span class="string">&quot;c&quot;</span>)</div><div class="line"><span class="keyword">for</span> k <span class="keyword">in</span> <span class="variable">${!arr[@]}</span>; <span class="keyword">do</span></div><div class="line">    <span class="built_in">echo</span> <span class="variable">$k</span><span class="string">&quot; = &quot;</span><span class="variable">${arr[$k]}</span></div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure>
+<ul>
+<li>&#x5173;&#x8054;&#x6570;&#x7EC4;</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">declare</span> -A map</div><div class="line">map=([<span class="string">&quot;a&quot;</span>]=<span class="string">&quot;hello&quot;</span> [<span class="string">&quot;b&quot;</span>]=<span class="string">&quot;world&quot;</span> [<span class="string">&quot;c&quot;</span>]=<span class="string">&quot;!&quot;</span>)</div><div class="line"><span class="keyword">for</span> m <span class="keyword">in</span> <span class="variable">${!map[@]}</span>; <span class="keyword">do</span></div><div class="line">    <span class="built_in">echo</span> <span class="variable">$m</span><span class="string">&quot; = &quot;</span><span class="variable">${map[$m]}</span></div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure>
+<h2 id="expect&#x4E2D;&#x7684;map"><a href="#expect&#x4E2D;&#x7684;map" class="headerlink" title="expect&#x4E2D;&#x7684;map"></a>expect&#x4E2D;&#x7684;map</h2><p>expect&#x662F;&#x4E00;&#x79CD;<code>tcl</code>(Tool Control Language)&#x8BED;&#x8A00;&#xFF0C;<code>tcl</code>&#x5B98;&#x7F51;<a href="https://www.tcl.tk/" target="_blank" rel="external">https://www.tcl.tk/</a>&#x3002;</p>
+<h3 id="array&#x793A;&#x4F8B;"><a href="#array&#x793A;&#x4F8B;" class="headerlink" title="array&#x793A;&#x4F8B;"></a>array&#x793A;&#x4F8B;</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">array <span class="built_in">set</span> colors {</div><div class="line">    red   <span class="comment">#ff0000</span></div><div class="line">    green <span class="comment">#00ff00</span></div><div class="line">    blue  <span class="comment">#0000ff</span></div><div class="line">}</div><div class="line">foreach name [array names colors] {</div><div class="line">    puts <span class="string">&quot;<span class="variable">$name</span> is <span class="variable">$colors</span>(<span class="variable">$name</span>)&quot;</span></div><div class="line">}</div></pre></td></tr></table></figure>
+<h3 id="&#x5177;&#x4F53;expect&#x793A;&#x4F8B;"><a href="#&#x5177;&#x4F53;expect&#x793A;&#x4F8B;" class="headerlink" title="&#x5177;&#x4F53;expect&#x793A;&#x4F8B;"></a>&#x5177;&#x4F53;expect&#x793A;&#x4F8B;</h3><p>&#x6279;&#x91CF;&#x8FDB;&#x884C;<code>ssh-copy-id</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/expect</span></div><div class="line">array <span class="built_in">set</span> arrays {</div><div class="line">    ip1 password1</div><div class="line">    ip2 password2</div><div class="line">    ip3 password3 </div><div class="line">}</div><div class="line">foreach h [array names arrays] {</div><div class="line">	<span class="built_in">set</span> ip <span class="variable">$h</span></div><div class="line">	<span class="built_in">set</span> passwd <span class="variable">$arrays</span>(<span class="variable">$h</span>)</div><div class="line">    spawn ssh-copy-id -i /root/.ssh/id_rsa.pub <span class="variable">$ip</span></div><div class="line">	expect {</div><div class="line">		<span class="string">&quot;(yes/no)*&quot;</span> { send <span class="string">&quot;yes\r&quot;</span>; exp_<span class="built_in">continue</span> }</div><div class="line">		<span class="string">&quot;*assword*&quot;</span> { send <span class="string">&quot;<span class="variable">$passwd</span>\r&quot;</span> }</div><div class="line">	}</div><div class="line">	<span class="comment">#expect eof</span></div><div class="line">}</div></pre></td></tr></table></figure>
+<h3 id="&#x53E6;&#x9644;&#x4E00;&#x4E2A;expect&#x793A;&#x4F8B;"><a href="#&#x53E6;&#x9644;&#x4E00;&#x4E2A;expect&#x793A;&#x4F8B;" class="headerlink" title="&#x53E6;&#x9644;&#x4E00;&#x4E2A;expect&#x793A;&#x4F8B;"></a>&#x53E6;&#x9644;&#x4E00;&#x4E2A;expect&#x793A;&#x4F8B;</h3><p>&#x6839;&#x636E;&#x4F20;&#x8FDB;&#x6765;&#x7684;server&#x53C2;&#x6570;&#xFF0C;ssh&#x5230;&#x6B64;server&#x4E0A;&#x8FDB;&#x884C;rsync&#x64CD;&#x4F5C;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/expect</span></div><div class="line"><span class="built_in">set</span> timeout 1000</div><div class="line"><span class="built_in">set</span> server [lindex <span class="variable">$argv</span> 0]</div><div class="line"><span class="built_in">set</span> user <span class="string">&quot;user&quot;</span></div><div class="line"><span class="built_in">set</span> passwd <span class="string">&quot;password&quot;</span></div><div class="line"><span class="built_in">set</span> cmd <span class="string">&quot;export RSYNC_PASSWORD=password; rsync -avz /data/*/*2016-06-04-{14..23}.log data@172.31.10.10::data/rsync_history/&quot;</span></div><div class="line"></div><div class="line">spawn ssh <span class="_">-l</span> <span class="variable">$user</span> <span class="variable">$server</span> <span class="variable">$cmd</span></div><div class="line">expect {</div><div class="line">    <span class="string">&quot;(yes/no)&quot;</span> { send <span class="string">&quot;yes\r&quot;</span>; exp_<span class="built_in">continue</span> }</div><div class="line">    <span class="string">&quot;*assword*&quot;</span> { send <span class="string">&quot;<span class="variable">$passwd</span>\r&quot;</span> }</div><div class="line">}</div><div class="line">expect eof</div></pre></td></tr></table></figure>
+<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ol>
+<li>Arrays In Bash: <a href="http://www.gnu.org/software/bash/manual/html_node/Arrays.html" target="_blank" rel="external">http://www.gnu.org/software/bash/manual/html_node/Arrays.html</a></li>
+<li>Array In TCL: <a href="http://wiki.tcl.tk/1032" target="_blank" rel="external">http://wiki.tcl.tk/1032</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/07/26/map-in-expect-and-bash/" data-id="cir368wks001vaq9k0fq0gs4f" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/07/26/map-in-expect-and-bash/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/expect/">expect</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell/">shell</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/07/18/yarn-history/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">使用Python获取yarn任务状态</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/07/26/map-in-expect-and-bash/" data-title="bash和expect中map的用法" data-url="http://wzktravel.github.io/2016/07/26/map-in-expect-and-bash/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/">CDH</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awk/">awk</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloudera/">cloudera</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/expect/">expect</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log/">log</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lzo/">lzo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ntp/">ntp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/queue/">queue</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sed/">sed</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/squid/">squid</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调度/">调度</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CDH/" style="font-size: 15px;">CDH</a> <a href="/tags/awk/" style="font-size: 10px;">awk</a> <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 11.67px;">cdh</a> <a href="/tags/cloudera/" style="font-size: 11.67px;">cloudera</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/expect/" style="font-size: 10px;">expect</a> <a href="/tags/flume/" style="font-size: 11.67px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.67px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 13.33px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.67px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jvm/" style="font-size: 10px;">jvm</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 13.33px;">kerberos</a> <a href="/tags/lambda/" style="font-size: 10px;">lambda</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/lzo/" style="font-size: 10px;">lzo</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/ntp/" style="font-size: 10px;">ntp</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/queue/" style="font-size: 10px;">queue</a> <a href="/tags/scala/" style="font-size: 13.33px;">scala</a> <a href="/tags/sed/" style="font-size: 10px;">sed</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 18.33px;">shell</a> <a href="/tags/spark/" style="font-size: 13.33px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/squid/" style="font-size: 10px;">squid</a> <a href="/tags/vim/" style="font-size: 11.67px;">vim</a> <a href="/tags/yarn/" style="font-size: 11.67px;">yarn</a> <a href="/tags/任务调度/" style="font-size: 10px;">任务调度</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/调度/" style="font-size: 10px;">调度</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/26/map-in-expect-and-bash/">bash和expect中map的用法</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/18/yarn-history/">使用Python获取yarn任务状态</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/15/proxy-server/">搭建proxy伺服器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/24/upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/11/elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>
