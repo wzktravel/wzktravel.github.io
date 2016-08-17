@@ -4,14 +4,24 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives | wzktravel</title>
+  <title>Memory Reserved on YARN | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="wzktravel">
-<meta property="og:url" content="http://wzktravel.github.io/archives/page/3/index.html">
+  <meta name="description" content="&amp;#x5728;yarn&amp;#x7684;resource manager&amp;#x9875;&amp;#x9762;&amp;#x4E2D;&amp;#x6709;&amp;#x4E00;&amp;#x9879;&amp;#x662F;Memory Reserved&amp;#xFF0C;&amp;#x89E3;&amp;#x91CA;&amp;#x5982;&amp;#x4E0B;:
+
+An implementation detail of this change that preve">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Memory Reserved on YARN">
+<meta property="og:url" content="http://wzktravel.github.io/2016/08/17/What-is-Memory-reserved-on-Yarn/index.html">
 <meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="&amp;#x5728;yarn&amp;#x7684;resource manager&amp;#x9875;&amp;#x9762;&amp;#x4E2D;&amp;#x6709;&amp;#x4E00;&amp;#x9879;&amp;#x662F;Memory Reserved&amp;#xFF0C;&amp;#x89E3;&amp;#x91CA;&amp;#x5982;&amp;#x4E0B;:
+
+An implementation detail of this change that preve">
+<meta property="og:updated_time" content="2016-08-17T11:24:39.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="wzktravel">
+<meta name="twitter:title" content="Memory Reserved on YARN">
+<meta name="twitter:description" content="&amp;#x5728;yarn&amp;#x7684;resource manager&amp;#x9875;&amp;#x9762;&amp;#x4E2D;&amp;#x6709;&amp;#x4E00;&amp;#x9879;&amp;#x662F;Memory Reserved&amp;#xFF0C;&amp;#x89E3;&amp;#x91CA;&amp;#x5982;&amp;#x4E0B;:
+
+An implementation detail of this change that preve">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -64,210 +74,69 @@
   </div>
 </header>
     <div class="outer">
-      <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2015" class="archive-year">2015</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2015/12/11/flume-ng/" class="archive-article-date">
-  <time datetime="2015-12-11T08:11:55.000Z" itemprop="datePublished">12月 11</time>
+      <section id="main"><article id="post-What-is-Memory-reserved-on-Yarn" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/08/17/What-is-Memory-reserved-on-Yarn/" class="article-date">
+  <time datetime="2016-08-17T07:57:44.000Z" itemprop="datePublished">2016-08-17</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/12/11/flume-ng/">flume-ng配置以及使用lzo</a>
+    <h1 class="article-title" itemprop="name">
+      Memory Reserved on YARN
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2015/12/10/hadoop-lzo/" class="archive-article-date">
-  <time datetime="2015-12-10T13:09:53.000Z" itemprop="datePublished">12月 10</time>
-</a>
+    <div class="article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/12/10/hadoop-lzo/">Cloudera中配置hadoop_lzo</a>
-    </h1>
-  
+        <p>&#x5728;yarn&#x7684;resource manager&#x9875;&#x9762;&#x4E2D;&#x6709;&#x4E00;&#x9879;&#x662F;Memory Reserved&#xFF0C;&#x89E3;&#x91CA;&#x5982;&#x4E0B;:</p>
+<blockquote>
+<p>An implementation detail of this change that prevents applications from starving under this new flexibility is the notion of reserved containers. Imagine two jobs are running that each have enough tasks to saturate more than the entire cluster. One job wants each of its mappers to get 1GB, and another job wants its mappers to get 2GB. Suppose the first job starts and fills up the entire cluster. Whenever one of its task finishes, it will leave open a 1GB slot. Even though the second job deserves the space, a naive policy will give it to the first one because it&#x2019;s the only job with tasks that fit. This could cause the second job to be starved indefinitely. To prevent this unfortunate situation, when space on a node is offered to an application, if the application cannot immediately use it, it reserves it, and no other application can be allocated a container on that node until the reservation is fulfilled. Each node may have only one reserved container. The total reserved memory amount is reported in the ResourceManager UI. A high number means that it may take longer for new jobs to get space. </p>
+</blockquote>
+<p>&#x53C2;&#x8003;<a href="http://stackoverflow.com/a/28567229" target="_blank" rel="external">http://stackoverflow.com/a/28567229</a></p>
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2015/11/21/SimpleDateFormat/" class="archive-article-date">
-  <time datetime="2015-11-21T14:37:28.000Z" itemprop="datePublished">11月 21</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/11/21/SimpleDateFormat/">SimpleDateFormat时区和语言环境</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2015/09/25/java8-lambda/" class="archive-article-date">
-  <time datetime="2015-09-25T11:04:14.000Z" itemprop="datePublished">9月 25</time>
-</a>
+    </div>
+    <footer class="article-footer">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/09/25/java8-lambda/">java8 lambda</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2015/09/24/linux-kick-user/" class="archive-article-date">
-  <time datetime="2015-09-24T11:03:10.000Z" itemprop="datePublished">9月 24</time>
-</a>
+        <a data-url="http://wzktravel.github.io/2016/08/17/What-is-Memory-reserved-on-Yarn/" data-id="ciryw195s002k5i9khjnn65mb" class="article-share-link">分享到</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/09/24/linux-kick-user/">如何查看Linux中登陆的用户/踢出用户</a>
-    </h1>
-  
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2015/09/21/linux-awk/" class="archive-article-date">
-  <time datetime="2015-09-20T16:03:13.000Z" itemprop="datePublished">9月 21</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/09/21/linux-awk/">linux awk命令</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2015/09/19/linux-sed/" class="archive-article-date">
-  <time datetime="2015-09-19T15:53:30.000Z" itemprop="datePublished">9月 19</time>
-</a>
+        <a href="http://wzktravel.github.io/2016/08/17/What-is-Memory-reserved-on-Yarn/#ds-thread" class="article-comment-link">评论</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/09/19/linux-sed/">linux sed命令</a>
-    </h1>
-  
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2015/09/14/java-queue/" class="archive-article-date">
-  <time datetime="2015-09-14T15:02:37.000Z" itemprop="datePublished">9月 14</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/09/14/java-queue/">java多线程中的Queue</a>
-    </h1>
-  
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/yarn/">yarn</a></li></ul>
 
-    </header>
+    </footer>
   </div>
-</article>
   
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2015/09/13/shell-command/" class="archive-article-date">
-  <time datetime="2015-09-13T08:23:13.000Z" itemprop="datePublished">9月 13</time>
-</a>
-      
+<nav id="article-nav">
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/09/13/shell-command/">shell常用命令整理</a>
-    </h1>
   
+    <a href="/2016/08/15/recover-free-space-on-deleted-files/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">linux删除文件后空间未释放的解决方法</div>
+    </a>
+  
+</nav>
 
-    </header>
-  </div>
+  
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2015/09/10/log/" class="archive-article-date">
-  <time datetime="2015-09-10T12:03:00.000Z" itemprop="datePublished">9月 10</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/09/10/log/">日志追查总结</a>
-    </h1>
-  
 
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/08/17/What-is-Memory-reserved-on-Yarn/" data-title="Memory Reserved on YARN" data-url="http://wzktravel.github.io/2016/08/17/What-is-Memory-reserved-on-Yarn/"></div>
+  </section>
 </section>
       
       <aside id="sidebar">
