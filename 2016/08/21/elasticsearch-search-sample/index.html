@@ -4,14 +4,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>wzktravel</title>
+  <title>elasticsearch搜索示例 | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="wzktravel">
-<meta property="og:url" content="http://wzktravel.github.io/index.html">
+  <meta name="description" content="elasticsearch restful api1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768POST /datapt-logstatistic/_search{  &amp;quot;query">
+<meta property="og:type" content="article">
+<meta property="og:title" content="elasticsearch搜索示例">
+<meta property="og:url" content="http://wzktravel.github.io/2016/08/21/elasticsearch-search-sample/index.html">
 <meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="elasticsearch restful api1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768POST /datapt-logstatistic/_search{  &amp;quot;query">
+<meta property="og:updated_time" content="2016-08-21T15:08:09.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="wzktravel">
+<meta name="twitter:title" content="elasticsearch搜索示例">
+<meta name="twitter:description" content="elasticsearch restful api1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768POST /datapt-logstatistic/_search{  &amp;quot;query">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -64,9 +68,7 @@
   </div>
 </header>
     <div class="outer">
-      <section id="main">
-  
-    <article id="post-elasticsearch-search-sample" class="article article-type-post" itemscope itemprop="blogPost">
+      <section id="main"><article id="post-elasticsearch-search-sample" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/08/21/elasticsearch-search-sample/" class="article-date">
   <time datetime="2016-08-21T06:09:26.000Z" itemprop="datePublished">2016-08-21</time>
@@ -79,8 +81,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/08/21/elasticsearch-search-sample/">elasticsearch搜索示例</a>
+    <h1 class="article-title" itemprop="name">
+      elasticsearch搜索示例
     </h1>
   
 
@@ -108,456 +110,24 @@
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-What-is-Memory-reserved-on-Yarn" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/08/17/What-is-Memory-reserved-on-Yarn/" class="article-date">
-  <time datetime="2016-08-17T07:57:44.000Z" itemprop="datePublished">2016-08-17</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/08/17/What-is-Memory-reserved-on-Yarn/">Memory Reserved on YARN</a>
-    </h1>
+    <a href="/2016/08/17/What-is-Memory-reserved-on-Yarn/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Memory Reserved on YARN</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>&#x5728;yarn&#x7684;resource manager&#x9875;&#x9762;&#x4E2D;&#x6709;&#x4E00;&#x9879;&#x662F;Memory Reserved&#xFF0C;&#x89E3;&#x91CA;&#x5982;&#x4E0B;:</p>
-<blockquote>
-<p>An implementation detail of this change that prevents applications from starving under this new flexibility is the notion of reserved containers. Imagine two jobs are running that each have enough tasks to saturate more than the entire cluster. One job wants each of its mappers to get 1GB, and another job wants its mappers to get 2GB. Suppose the first job starts and fills up the entire cluster. Whenever one of its task finishes, it will leave open a 1GB slot. Even though the second job deserves the space, a naive policy will give it to the first one because it&#x2019;s the only job with tasks that fit. This could cause the second job to be starved indefinitely. To prevent this unfortunate situation, when space on a node is offered to an application, if the application cannot immediately use it, it reserves it, and no other application can be allocated a container on that node until the reservation is fulfilled. Each node may have only one reserved container. The total reserved memory amount is reported in the ResourceManager UI. A high number means that it may take longer for new jobs to get space. </p>
-</blockquote>
-<p>&#x53C2;&#x8003;<a href="http://stackoverflow.com/a/28567229" target="_blank" rel="external">http://stackoverflow.com/a/28567229</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/08/17/What-is-Memory-reserved-on-Yarn/" data-id="cis4r2c3j002gkc9kicy9fwfz" class="article-share-link">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/08/17/What-is-Memory-reserved-on-Yarn/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/yarn/">yarn</a></li></ul>
-
-    </footer>
-  </div>
   
 </article>
 
 
-  
-    <article id="post-recover-free-space-on-deleted-files" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/08/15/recover-free-space-on-deleted-files/" class="article-date">
-  <time datetime="2016-08-15T03:22:22.000Z" itemprop="datePublished">2016-08-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/08/15/recover-free-space-on-deleted-files/">linux删除文件后空间未释放的解决方法</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在linux下有时会遇到一种情况，某个文件删除了，但是磁盘空间并没有释放。这是因为仍然有进程在使用此文件，其文件句柄没有被释放。<br>下面介绍两种方式来解决此问题。<br>
-        
-          <p class="article-more-link">
-            <a href="/2016/08/15/recover-free-space-on-deleted-files/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/08/15/recover-free-space-on-deleted-files/" data-id="cis4r2c3h002ekc9k3daog5vs" class="article-share-link">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/08/15/recover-free-space-on-deleted-files/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-determine-night-mode-in-java" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/07/28/determine-night-mode-in-java/" class="article-date">
-  <time datetime="2016-07-28T03:03:48.000Z" itemprop="datePublished">2016-07-28</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/28/determine-night-mode-in-java/">java中判断是否在夜间</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在夜间模式时间段可以自定义的情况下，判断传入的时间在不在夜间模式时间段内。<br>使用JodaTime进行时间操作。<br>
-        
-          <p class="article-more-link">
-            <a href="/2016/07/28/determine-night-mode-in-java/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/07/28/determine-night-mode-in-java/" data-id="cis4r2c3c0029kc9km0345tye" class="article-share-link">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/07/28/determine-night-mode-in-java/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jodatime/">jodatime</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-map-in-expect-and-bash" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/07/26/map-in-expect-and-bash/" class="article-date">
-  <time datetime="2016-07-26T07:19:17.000Z" itemprop="datePublished">2016-07-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/26/map-in-expect-and-bash/">bash和expect中map的用法</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在bash和expect中，都有类似于map的数据结构，但用法有比较大差异。</p>
-        
-          <p class="article-more-link">
-            <a href="/2016/07/26/map-in-expect-and-bash/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/07/26/map-in-expect-and-bash/" data-id="cis4r2c3g002bkc9kqjlfuhi0" class="article-share-link">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/07/26/map-in-expect-and-bash/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell/">shell</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-yarn-history" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/07/18/yarn-history/" class="article-date">
-  <time datetime="2016-07-18T09:05:46.000Z" itemprop="datePublished">2016-07-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/18/yarn-history/">使用Python获取yarn任务状态</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>使用Python获取yarn任务状态<br>
-        
-          <p class="article-more-link">
-            <a href="/2016/07/18/yarn-history/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/07/18/yarn-history/" data-id="cis4r2c3a0024kc9kr6zha0hq" class="article-share-link">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/07/18/yarn-history/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/yarn/">yarn</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-proxy-server" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/07/15/proxy-server/" class="article-date">
-  <time datetime="2016-07-15T10:08:23.000Z" itemprop="datePublished">2016-07-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/15/proxy-server/">搭建proxy伺服器</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>近期使用爬虫爬取数据，需要使用代理，记录一下搭建proxy伺服器的过程，这里使用的是<code>squid</code>.<br>
-        
-          <p class="article-more-link">
-            <a href="/2016/07/15/proxy-server/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/07/15/proxy-server/" data-id="cis4r2c38001zkc9k5cgqbd1g" class="article-share-link">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/07/15/proxy-server/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-upgrade-cdh-to-5-7-0" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/24/upgrade-cdh-to-5-7-0/" class="article-date">
-  <time datetime="2016-05-24T10:08:23.000Z" itemprop="datePublished">2016-05-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/24/upgrade-cdh-to-5-7-0/">升级CDH到5.7.0</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近对CDH进行升级，从5.4.8升级到5.7.0，主要想升级spark和hbase。<br>
-        
-          <p class="article-more-link">
-            <a href="/2016/05/24/upgrade-cdh-to-5-7-0/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/05/24/upgrade-cdh-to-5-7-0/" data-id="cis4r2c3m002lkc9kwp7x7sh3" class="article-share-link">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/05/24/upgrade-cdh-to-5-7-0/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cdh/">cdh</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/">hive</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spark/">spark</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-elasticsearch-reindex" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/11/elasticsearch-reindex/" class="article-date">
-  <time datetime="2016-05-11T12:09:22.000Z" itemprop="datePublished">2016-05-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/11/elasticsearch-reindex/">elasticsearch修改mapping重建索引</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近需要对elasticsearch中某个index的mapping进行修改，整理一下流程。<br>
-        
-          <p class="article-more-link">
-            <a href="/2016/05/11/elasticsearch-reindex/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/05/11/elasticsearch-reindex/" data-id="cis4r2c390021kc9kou258jh0" class="article-share-link">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/05/11/elasticsearch-reindex/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hadoop-management" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/10/hadoop-management/" class="article-date">
-  <time datetime="2016-05-10T01:33:37.000Z" itemprop="datePublished">2016-05-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/10/hadoop-management/">hadoop集群管理</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>hadoop集群管理<br>
-        
-          <p class="article-more-link">
-            <a href="/2016/05/10/hadoop-management/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/05/10/hadoop-management/" data-id="cis4r2c3b0026kc9kbicgsosr" class="article-share-link">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/05/10/hadoop-management/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hdfs/">hdfs</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/yarn/">yarn</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-  
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
-    </nav>
-  
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/08/21/elasticsearch-search-sample/" data-title="elasticsearch搜索示例" data-url="http://wzktravel.github.io/2016/08/21/elasticsearch-search-sample/"></div>
+  </section>
 </section>
       
       <aside id="sidebar">
