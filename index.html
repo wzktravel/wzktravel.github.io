@@ -66,6 +66,55 @@
     <div class="outer">
       <section id="main">
   
+    <article id="post-hive-join-problem" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/08/22/hive-join-problem/" class="article-date">
+  <time datetime="2016-08-22T07:29:16.000Z" itemprop="datePublished">2016-08-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/08/22/hive-join-problem/">hive join遇到的问题及解决方法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这几天遇到一个问题，hive在执行join操作时报错，<code>return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapredLocalTask</code>，又没有特别有用的信息，经过一番分析和搜索找到解决方法。在这里记录一下。<br>
+        
+          <p class="article-more-link">
+            <a href="/2016/08/22/hive-join-problem/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/08/22/hive-join-problem/" data-id="cis6654hr002o329kcbf78kvm" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/08/22/hive-join-problem/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/">hive</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-elasticsearch-search-sample" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/08/21/elasticsearch-search-sample/" class="article-date">
@@ -88,14 +137,17 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <a id="more"></a>
-<h3 id="elasticsearch-restful-api"><a href="#elasticsearch-restful-api" class="headerlink" title="elasticsearch restful api"></a>elasticsearch restful api</h3><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div></pre></td><td class="code"><pre><div class="line">POST /datapt-logstatistic/_search</div><div class="line">{</div><div class="line">  &quot;query&quot;: {</div><div class="line">    &quot;bool&quot;: {</div><div class="line">      &quot;filter&quot;: {</div><div class="line">        &quot;range&quot;: {</div><div class="line">          &quot;time&quot;: {</div><div class="line">            &quot;lte&quot;: &quot;2016-08-22&quot;,</div><div class="line">            &quot;gte&quot;: &quot;2016-08-21&quot;</div><div class="line">          }</div><div class="line">        }</div><div class="line">      },</div><div class="line">      &quot;must&quot;: [</div><div class="line">        {</div><div class="line">          &quot;term&quot;: {</div><div class="line">            &quot;nav&quot;: &quot;iOS&quot;</div><div class="line">          }</div><div class="line">        },</div><div class="line">        {</div><div class="line">          &quot;term&quot;: {</div><div class="line">            &quot;key&quot;: &quot;M99.M1&quot;</div><div class="line">          }</div><div class="line">        }</div><div class="line">      ]</div><div class="line">    }</div><div class="line">  },</div><div class="line">  &quot;size&quot;: 0,</div><div class="line">  &quot;aggs&quot;: {</div><div class="line">    &quot;stat&quot;: {</div><div class="line">      &quot;terms&quot;: {</div><div class="line">        &quot;field&quot;: &quot;value&quot;,</div><div class="line">        &quot;size&quot;: 0,</div><div class="line">        &quot;order&quot;: {</div><div class="line">          &quot;totalCount&quot;: &quot;desc&quot;</div><div class="line">        }</div><div class="line">      },</div><div class="line">      &quot;aggs&quot;: {</div><div class="line">        &quot;totalCount&quot;: {</div><div class="line">          &quot;sum&quot;: {</div><div class="line">            &quot;field&quot;: &quot;totalCount&quot;</div><div class="line">          }</div><div class="line">        },</div><div class="line">        &quot;successCount&quot;: {</div><div class="line">          &quot;sum&quot;: {</div><div class="line">            &quot;field&quot;: &quot;successCount&quot;</div><div class="line">          }</div><div class="line">        },</div><div class="line">        &quot;failCount&quot;: {</div><div class="line">          &quot;sum&quot;: {</div><div class="line">            &quot;field&quot;: &quot;failCount&quot;</div><div class="line">          }</div><div class="line">        },</div><div class="line">        &quot;failPercent&quot;: {</div><div class="line">          &quot;bucket_script&quot;: {</div><div class="line">            &quot;buckets_path&quot;: {</div><div class="line">              &quot;fail&quot;: &quot;failCount&quot;,</div><div class="line">              &quot;total&quot;: &quot;totalCount&quot;</div><div class="line">            },</div><div class="line">            &quot;script&quot;: {</div><div class="line">              &quot;lang&quot;: &quot;expression&quot;,</div><div class="line">              &quot;inline&quot;: &quot;fail / total * 100&quot;</div><div class="line">            }</div><div class="line">          }</div><div class="line">        }</div><div class="line">      }</div><div class="line">    }</div><div class="line">  }</div><div class="line">}</div></pre></td></tr></table></figure>
-<h3 id="java-api"><a href="#java-api" class="headerlink" title="java api"></a>java api</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">List&lt;Map&lt;String, Object&gt;&gt; aggList = Lists.newLinkedList();</div><div class="line"></div><div class="line"><span class="comment">// &#x805A;&#x5408;&#x524D;&#x8FDB;&#x884C;&#x67E5;&#x8BE2;, &#x5148;&#x8FC7;&#x6EE4;&#x51FA;&#x9700;&#x8981;&#x7684;&#x5185;&#x5BB9;</span></div><div class="line">BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();</div><div class="line"></div><div class="line"><span class="comment">// &#x65F6;&#x95F4;&#x8303;&#x56F4;</span></div><div class="line">RangeQueryBuilder timeRangeBuilder = QueryBuilders.rangeQuery(<span class="string">&quot;time&quot;</span>).lte(timeTo).gte(timeFrom);</div><div class="line">boolQuery.filter(timeRangeBuilder);</div><div class="line"><span class="comment">// &#x5FC5;&#x987B;&#x5339;&#x914D;nav&#x548C;key</span></div><div class="line"><span class="keyword">if</span> (! Strings.isNullOrEmpty(nav)) {</div><div class="line">    boolQuery.must(QueryBuilders.termQuery(<span class="string">&quot;nav&quot;</span>, nav));</div><div class="line">}</div><div class="line">boolQuery.must(QueryBuilders.termQuery(<span class="string">&quot;key&quot;</span>, key));</div><div class="line"></div><div class="line">SumBuilder totalCountAgg = AggregationBuilders.sum(<span class="string">&quot;totalCount&quot;</span>).field(<span class="string">&quot;totalCount&quot;</span>);</div><div class="line">SumBuilder successCountAgg = AggregationBuilders.sum(<span class="string">&quot;successCount&quot;</span>).field(<span class="string">&quot;successCount&quot;</span>);</div><div class="line">SumBuilder failCountAgg = AggregationBuilders.sum(<span class="string">&quot;failCount&quot;</span>).field(<span class="string">&quot;failCount&quot;</span>);</div><div class="line"></div><div class="line">TermsBuilder aggBuilder = AggregationBuilders</div><div class="line">    .terms(<span class="string">&quot;stat&quot;</span>)</div><div class="line">    .field(<span class="string">&quot;value&quot;</span>)</div><div class="line">    .size(<span class="number">0</span>)</div><div class="line">    .order(Terms.Order.aggregation(<span class="string">&quot;totalCount&quot;</span>, <span class="keyword">false</span>))</div><div class="line">    .subAggregation(totalCountAgg)</div><div class="line">    .subAggregation(successCountAgg)</div><div class="line">    .subAggregation(failCountAgg);</div><div class="line"></div><div class="line">SearchRequestBuilder builder = ElasticSearchHelper.newBuilder(LOG_STATISTIC_INDEX);</div><div class="line">SearchResponse response;</div><div class="line"><span class="keyword">try</span> {</div><div class="line">    response = builder.setQuery(boolQuery)</div><div class="line">        .addAggregation(aggBuilder)</div><div class="line">        .get();</div><div class="line">} <span class="keyword">catch</span> (Exception e) {</div><div class="line">    LOG.error(<span class="string">&quot;Cannot get aggregations for nav {} and key {}&quot;</span>, nav, key, e);</div><div class="line">}</div></pre></td></tr></table></figure>
+        <p>elasticsearch restful api和java api搜索示例。<br>
+        
+          <p class="article-more-link">
+            <a href="/2016/08/21/elasticsearch-search-sample/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/08/21/elasticsearch-search-sample/" data-id="cis4r2c3k002jkc9klkxy7uvk" class="article-share-link">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/08/21/elasticsearch-search-sample/" data-id="cis6654hm002e329k1vmoq8py" class="article-share-link">分享到</a>
       
 
       
@@ -144,7 +196,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/08/17/What-is-Memory-reserved-on-Yarn/" data-id="cis4r2c3j002gkc9kicy9fwfz" class="article-share-link">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/08/17/What-is-Memory-reserved-on-Yarn/" data-id="cis6654hp002l329k4n19lua4" class="article-share-link">分享到</a>
       
 
       
@@ -193,7 +245,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/08/15/recover-free-space-on-deleted-files/" data-id="cis4r2c3h002ekc9k3daog5vs" class="article-share-link">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/08/15/recover-free-space-on-deleted-files/" data-id="cis6654hn002g329km91q11v9" class="article-share-link">分享到</a>
       
 
       
@@ -242,7 +294,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/07/28/determine-night-mode-in-java/" data-id="cis4r2c3c0029kc9km0345tye" class="article-share-link">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/07/28/determine-night-mode-in-java/" data-id="cis6654ho002j329kbg7bepwa" class="article-share-link">分享到</a>
       
 
       
@@ -291,7 +343,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/07/26/map-in-expect-and-bash/" data-id="cis4r2c3g002bkc9kqjlfuhi0" class="article-share-link">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/07/26/map-in-expect-and-bash/" data-id="cis6654hj0029329k2femclvs" class="article-share-link">分享到</a>
       
 
       
@@ -340,7 +392,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/07/18/yarn-history/" data-id="cis4r2c3a0024kc9kr6zha0hq" class="article-share-link">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/07/18/yarn-history/" data-id="cis6654hf0025329ktmbtmnkv" class="article-share-link">分享到</a>
       
 
       
@@ -389,7 +441,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/07/15/proxy-server/" data-id="cis4r2c38001zkc9k5cgqbd1g" class="article-share-link">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/07/15/proxy-server/" data-id="cis6654hg0026329khwopap5o" class="article-share-link">分享到</a>
       
 
       
@@ -438,7 +490,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/05/24/upgrade-cdh-to-5-7-0/" data-id="cis4r2c3m002lkc9kwp7x7sh3" class="article-share-link">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/05/24/upgrade-cdh-to-5-7-0/" data-id="cis6654hl002b329kp9r5q3yd" class="article-share-link">分享到</a>
       
 
       
@@ -487,7 +539,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/05/11/elasticsearch-reindex/" data-id="cis4r2c390021kc9kou258jh0" class="article-share-link">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/05/11/elasticsearch-reindex/" data-id="cis6654hd0020329kc7y5j5gj" class="article-share-link">分享到</a>
       
 
       
@@ -496,55 +548,6 @@
 
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hadoop-management" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/10/hadoop-management/" class="article-date">
-  <time datetime="2016-05-10T01:33:37.000Z" itemprop="datePublished">2016-05-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/10/hadoop-management/">hadoop集群管理</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>hadoop集群管理<br>
-        
-          <p class="article-more-link">
-            <a href="/2016/05/10/hadoop-management/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/05/10/hadoop-management/" data-id="cis4r2c3b0026kc9kbicgsosr" class="article-share-link">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/05/10/hadoop-management/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hdfs/">hdfs</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/yarn/">yarn</a></li></ul>
 
     </footer>
   </div>
@@ -568,7 +571,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jodatime/">jodatime</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/schedule/">schedule</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread/">thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">3</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jodatime/">jodatime</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/schedule/">schedule</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread/">thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -577,7 +580,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 15.71px;">cdh</a> <a href="/tags/elasticsearch/" style="font-size: 11.43px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.43px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.43px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 12.86px;">hdfs</a> <a href="/tags/hive/" style="font-size: 11.43px;">hive</a> <a href="/tags/java/" style="font-size: 14.29px;">java</a> <a href="/tags/jodatime/" style="font-size: 10px;">jodatime</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 12.86px;">kerberos</a> <a href="/tags/linux/" style="font-size: 18.57px;">linux</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/scala/" style="font-size: 12.86px;">scala</a> <a href="/tags/schedule/" style="font-size: 11.43px;">schedule</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 17.14px;">shell</a> <a href="/tags/spark/" style="font-size: 12.86px;">spark</a> <a href="/tags/thread/" style="font-size: 10px;">thread</a> <a href="/tags/vim/" style="font-size: 11.43px;">vim</a> <a href="/tags/yarn/" style="font-size: 12.86px;">yarn</a>
+      <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 15.71px;">cdh</a> <a href="/tags/elasticsearch/" style="font-size: 11.43px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.43px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.43px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 12.86px;">hdfs</a> <a href="/tags/hive/" style="font-size: 12.86px;">hive</a> <a href="/tags/java/" style="font-size: 14.29px;">java</a> <a href="/tags/jodatime/" style="font-size: 10px;">jodatime</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 12.86px;">kerberos</a> <a href="/tags/linux/" style="font-size: 18.57px;">linux</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/scala/" style="font-size: 12.86px;">scala</a> <a href="/tags/schedule/" style="font-size: 11.43px;">schedule</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 17.14px;">shell</a> <a href="/tags/spark/" style="font-size: 12.86px;">spark</a> <a href="/tags/thread/" style="font-size: 10px;">thread</a> <a href="/tags/vim/" style="font-size: 11.43px;">vim</a> <a href="/tags/yarn/" style="font-size: 12.86px;">yarn</a>
     </div>
   </div>
 
@@ -586,7 +589,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -596,6 +599,10 @@
     <h3 class="widget-title">近期文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/08/22/hive-join-problem/">hive join遇到的问题及解决方法</a>
+          </li>
         
           <li>
             <a href="/2016/08/21/elasticsearch-search-sample/">elasticsearch搜索示例</a>
@@ -611,10 +618,6 @@
         
           <li>
             <a href="/2016/07/28/determine-night-mode-in-java/">java中判断是否在夜间</a>
-          </li>
-        
-          <li>
-            <a href="/2016/07/26/map-in-expect-and-bash/">bash和expect中map的用法</a>
           </li>
         
       </ul>

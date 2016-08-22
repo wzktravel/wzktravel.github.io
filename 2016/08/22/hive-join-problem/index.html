@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>hive join遇到的问题及解决方法 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="这几天遇到一个问题，hive在执行join操作时报错，return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapredLocalTask，又没有特别有用的信息，经过一番分析和搜索找到解决方法。在这里记录一下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hive join遇到的问题及解决方法">
+<meta property="og:url" content="http://wzktravel.github.io/2016/08/22/hive-join-problem/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="这几天遇到一个问题，hive在执行join操作时报错，return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapredLocalTask，又没有特别有用的信息，经过一番分析和搜索找到解决方法。在这里记录一下。">
+<meta property="og:updated_time" content="2016-08-22T15:02:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="hive join遇到的问题及解决方法">
+<meta name="twitter:description" content="这几天遇到一个问题，hive在执行join操作时报错，return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapredLocalTask，又没有特别有用的信息，经过一番分析和搜索找到解决方法。在这里记录一下。">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-hive-join-problem" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/08/22/hive-join-problem/" class="article-date">
+  <time datetime="2016-08-22T07:29:16.000Z" itemprop="datePublished">2016-08-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      hive join遇到的问题及解决方法
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&#x8FD9;&#x51E0;&#x5929;&#x9047;&#x5230;&#x4E00;&#x4E2A;&#x95EE;&#x9898;&#xFF0C;hive&#x5728;&#x6267;&#x884C;join&#x64CD;&#x4F5C;&#x65F6;&#x62A5;&#x9519;&#xFF0C;<code>return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapredLocalTask</code>&#xFF0C;&#x53C8;&#x6CA1;&#x6709;&#x7279;&#x522B;&#x6709;&#x7528;&#x7684;&#x4FE1;&#x606F;&#xFF0C;&#x7ECF;&#x8FC7;&#x4E00;&#x756A;&#x5206;&#x6790;&#x548C;&#x641C;&#x7D22;&#x627E;&#x5230;&#x89E3;&#x51B3;&#x65B9;&#x6CD5;&#x3002;&#x5728;&#x8FD9;&#x91CC;&#x8BB0;&#x5F55;&#x4E00;&#x4E0B;&#x3002;<br><a id="more"></a></p>
+<h2 id="&#x95EE;&#x9898;"><a href="#&#x95EE;&#x9898;" class="headerlink" title="&#x95EE;&#x9898;"></a>&#x95EE;&#x9898;</h2><p>&#x5728;&#x505A;&#x5927;&#x5C0F;&#x8868;&#x7684;join&#x65F6;&#x51FA;&#x73B0;&#x7684;&#xFF0C;&#x9519;&#x8BEF;&#x4FE1;&#x606F;&#x5982;&#x4E0B;&#x3002;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">org.apache.hive.service.cli.HiveSQLException: Error <span class="keyword">while</span> processing statement: FAILED: Execution Error, <span class="keyword">return</span> code <span class="number">1</span> from org.apache.hadoop.hive.ql.exec.mr.MapredLocalTask</div><div class="line">    at org.apache.hive.service.cli.operation.Operation.toSQLException(Operation.java:<span class="number">374</span>)</div><div class="line">    at org.apache.hive.service.cli.operation.SQLOperation.runQuery(SQLOperation.java:<span class="number">180</span>)</div><div class="line">    at org.apache.hive.service.cli.operation.SQLOperation.access$<span class="number">100</span>(SQLOperation.java:<span class="number">72</span>)</div><div class="line">    at org.apache.hive.service.cli.operation.SQLOperation$<span class="number">2</span>$<span class="number">1</span>.run(SQLOperation.java:<span class="number">232</span>)</div><div class="line">    at java.security.AccessController.doPrivileged(Native Method)</div><div class="line">    at javax.security.auth.Subject.doAs(Subject.java:<span class="number">422</span>)</div><div class="line">    at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:<span class="number">1693</span>)</div><div class="line">    at org.apache.hive.service.cli.operation.SQLOperation$<span class="number">2</span>.run(SQLOperation.java:<span class="number">245</span>)</div><div class="line">    at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:<span class="number">511</span>)</div><div class="line">    at java.util.concurrent.FutureTask.run(FutureTask.java:<span class="number">266</span>)</div><div class="line">    at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:<span class="number">1142</span>)</div><div class="line">    at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:<span class="number">617</span>)</div><div class="line">    at java.lang.Thread.run(Thread.java:<span class="number">745</span>)</div></pre></td></tr></table></figure>
+<h2 id="&#x89E3;&#x51B3;"><a href="#&#x89E3;&#x51B3;" class="headerlink" title="&#x89E3;&#x51B3;"></a>&#x89E3;&#x51B3;</h2><p>&#x9996;&#x5148;&#x6CE8;&#x610F;&#x5230;&#x662F;<code>MapredLocalTask</code>&#xFF0C;&#x5F00;&#x542F;&#x4E86;&#x672C;&#x5730;&#x6A21;&#x5F0F;&#x3002;&#x90A3;&#x5173;&#x95ED;&#x672C;&#x5730;&#x6A21;&#x5F0F;&#x8BD5;&#x4E00;&#x4E0B;&#xFF0C;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">set</span> hive.exec.mode.local.auto=<span class="literal">false</span>;</div></pre></td></tr></table></figure>
+<p>&#x7ED3;&#x679C;&#x8FD8;&#x662F;&#x62A5;&#x76F8;&#x540C;&#x9519;&#x8BEF;&#xFF0C;&#x53EA;&#x80FD;&#x4ECE;&#x5176;&#x4ED6;&#x65B9;&#x9762;&#x8003;&#x8651;&#x3002;</p>
+<p>&#x5728;&#x9ED8;&#x8BA4;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;hive&#x7684;join&#x7B56;&#x7565;&#x662F;&#x8FDB;&#x884C;reduce side join&#xFF0C;&#x4F46;&#x662F;&#x5F53;&#x4E24;&#x4E2A;&#x8868;&#x4E2D;&#x6709;&#x4E00;&#x4E2A;&#x662F;&#x5C0F;&#x8868;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x5C31;&#x4F1A;&#x4F7F;&#x7528;map join&#xFF0C;&#x628A;&#x5176;&#x4E2D;&#x8F83;&#x5C0F;&#x7684;&#x4E00;&#x4E2A;&#x8868;&#x590D;&#x5236;&#x5230;&#x6240;&#x6709;&#x8282;&#x70B9;&#xFF0C;&#x8FD9;&#x6837;&#x53E6;&#x4E00;&#x4E2A;&#x8868;&#x5728;&#x6BCF;&#x4E2A;&#x8282;&#x70B9;&#x4E0A;&#x9762;&#x7684;&#x5206;&#x7247;&#x5C31;&#x53EF;&#x4EE5;&#x8DDF;&#x8FD9;&#x4E2A;&#x5B8C;&#x6574;&#x7684;&#x8868;join&#x3002;<br>&#x5206;&#x6790;&#x8FD9;&#x4E2A;&#x95EE;&#x9898;&#xFF0C;job&#x4F7F;&#x7528;map join&#x65F6;&#x53EF;&#x80FD;&#x9020;&#x6210;&#x5185;&#x5B58;&#x6EA2;&#x51FA;&#xFF0C;&#x5173;&#x95ED;&#x5176;&#x81EA;&#x52A8;&#x88C5;&#x6362;&#x5C1D;&#x8BD5;&#x4E00;&#x4E0B;&#x3002;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">set</span> hive.auto.convert.join = <span class="literal">false</span>;</div></pre></td></tr></table></figure>
+<p>&#x679C;&#x7136;ok&#x4E86;&#x3002;</p>
+<h2 id="&#x77E5;&#x8BC6;"><a href="#&#x77E5;&#x8BC6;" class="headerlink" title="&#x77E5;&#x8BC6;"></a>&#x77E5;&#x8BC6;</h2><h3 id="hive&#x672C;&#x5730;&#x6A21;&#x5F0F;"><a href="#hive&#x672C;&#x5730;&#x6A21;&#x5F0F;" class="headerlink" title="hive&#x672C;&#x5730;&#x6A21;&#x5F0F;"></a>hive&#x672C;&#x5730;&#x6A21;&#x5F0F;</h3><blockquote>
+<p>0.7&#x7248;&#x672C;&#x540E;Hive&#x5F00;&#x59CB;&#x652F;&#x6301;&#x4EFB;&#x52A1;&#x6267;&#x884C;&#x9009;&#x62E9;&#x672C;&#x5730;&#x6A21;&#x5F0F;(local mode)&#x3002;&#x5927;&#x591A;&#x6570;&#x7684;Hadoop job&#x662F;&#x9700;&#x8981;hadoop&#x63D0;&#x4F9B;&#x7684;&#x5B8C;&#x6574;&#x7684;&#x53EF;&#x6269;&#x5C55;&#x6027;&#x6765;&#x5904;&#x7406;&#x5927;&#x6570;&#x636E;&#x7684;&#x3002;&#x4E0D;&#x8FC7;&#xFF0C;&#x6709;&#x65F6;hive&#x7684;&#x8F93;&#x5165;&#x6570;&#x636E;&#x91CF;&#x662F;&#x975E;&#x5E38;&#x5C0F;&#x7684;&#x3002;&#x5728;&#x8FD9;&#x79CD;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x4E3A;&#x67E5;&#x8BE2;&#x51FA;&#x53D1;&#x6267;&#x884C;&#x4EFB;&#x52A1;&#x7684;&#x65F6;&#x95F4;&#x6D88;&#x8017;&#x53EF;&#x80FD;&#x4F1A;&#x6BD4;&#x5B9E;&#x9645;job&#x7684;&#x6267;&#x884C;&#x65F6;&#x95F4;&#x8981;&#x591A;&#x7684;&#x591A;&#x3002;&#x5BF9;&#x4E8E;&#x5927;&#x591A;&#x6570;&#x8FD9;&#x79CD;&#x60C5;&#x51B5;&#xFF0C;hive&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x672C;&#x5730;&#x6A21;&#x5F0F;&#x5728;&#x5355;&#x53F0;&#x673A;&#x5668;&#x4E0A;&#x5904;&#x7406;&#x6240;&#x6709;&#x7684;&#x4EFB;&#x52A1;&#x3002;&#x5BF9;&#x4E8E;&#x5C0F;&#x6570;&#x636E;&#x96C6;&#xFF0C;&#x6267;&#x884C;&#x65F6;&#x95F4;&#x4F1A;&#x660E;&#x663E;&#x88AB;&#x7F29;&#x77ED;&#x3002;<br>&#x5982;&#x6B64;&#x4E00;&#x6765;&#xFF0C;&#x5BF9;&#x6570;&#x636E;&#x91CF;&#x6BD4;&#x8F83;&#x5C0F;&#x7684;&#x64CD;&#x4F5C;&#xFF0C;&#x5C31;&#x53EF;&#x4EE5;&#x5728;&#x672C;&#x5730;&#x6267;&#x884C;&#xFF0C;&#x8FD9;&#x6837;&#x8981;&#x6BD4;&#x63D0;&#x4EA4;&#x4EFB;&#x52A1;&#x5230;&#x96C6;&#x7FA4;&#x6267;&#x884C;&#x6548;&#x7387;&#x8981;&#x5FEB;&#x5F88;&#x591A;&#x3002;</p>
+</blockquote>
+<p>&#x5F00;&#x542F;hive&#x672C;&#x5730;&#x6A21;&#x5F0F;&#x9700;&#x8981;&#x4E3B;&#x52A8;&#x914D;&#x7F6E;&#x5982;&#x4E0B;&#x53C2;&#x6570;:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hive&gt; <span class="built_in">set</span> hive.exec.mode.local.auto=<span class="literal">true</span>; <span class="comment">## &#x9ED8;&#x8BA4;&#x4E3A;false</span></div></pre></td></tr></table></figure></p>
+<p>&#x53E6;&#x5916;&#xFF0C;&#x5F00;&#x542F;&#x672C;&#x5730;&#x6A21;&#x5F0F;&#x540E;&#xFF0C;&#x4E5F;&#x9700;&#x8981;job&#x6EE1;&#x8DB3;&#x4E00;&#x5B9A;&#x6761;&#x4EF6;&#x624D;&#x80FD;&#x771F;&#x6B63;&#x4F7F;&#x7528;&#x672C;&#x5730;&#x6A21;&#x5F0F;:</p>
+<ol>
+<li>job&#x7684;&#x8F93;&#x5165;&#x6570;&#x636E;&#x5927;&#x5C0F;&#x5FC5;&#x987B;&#x5C0F;&#x4E8E;&#x53C2;&#x6570;&#xFF1A;<code>hive.exec.mode.local.auto.inputbytes.max</code>&#xFF0C;&#x9ED8;&#x8BA4;128MB</li>
+<li>job&#x7684;map&#x6570;&#x5FC5;&#x987B;&#x5C0F;&#x4E8E;&#x53C2;&#x6570;&#xFF1A;<code>hive.exec.mode.local.auto.tasks.max</code>&#xFF0C;&#x9ED8;&#x8BA4;&#x4E3A;4</li>
+<li>job&#x7684;reduce&#x6570;&#x5FC5;&#x987B;&#x4E3A;0&#x6216;&#x8005;1</li>
+</ol>
+<h3 id="hive-join&#x7B97;&#x6CD5;"><a href="#hive-join&#x7B97;&#x6CD5;" class="headerlink" title="hive join&#x7B97;&#x6CD5;"></a>hive join&#x7B97;&#x6CD5;</h3><p>&#x5904;&#x7406;&#x5206;&#x5E03;&#x5F0F;join&#xFF0C;&#x4E00;&#x822C;&#x6709;&#x4E24;&#x79CD;&#x65B9;&#x6CD5;&#xFF1A;</p>
+<blockquote>
+<ul>
+<li>replication join&#xFF1A;&#x628A;&#x5176;&#x4E2D;&#x4E00;&#x4E2A;&#x8868;&#x590D;&#x5236;&#x5230;&#x6240;&#x6709;&#x8282;&#x70B9;&#xFF0C;&#x8FD9;&#x6837;&#x53E6;&#x4E00;&#x4E2A;&#x8868;&#x5728;&#x6BCF;&#x4E2A;&#x8282;&#x70B9;&#x4E0A;&#x9762;&#x7684;&#x5206;&#x7247;&#x5C31;&#x53EF;&#x4EE5;&#x8DDF;&#x8FD9;&#x4E2A;&#x5B8C;&#x6574;&#x7684;&#x8868;join&#x4E86;&#xFF1B;&#x5728;M/R job&#x4E2D;&#x5BF9;&#x5E94;map side join&#x3002;</li>
+<li>repartition join&#xFF1A;&#x628A;&#x4E24;&#x4EFD;&#x6570;&#x636E;&#x6309;&#x7167;join key&#x8FDB;&#x884C;hash&#x91CD;&#x5206;&#x5E03;&#xFF0C;&#x8BA9;&#x6BCF;&#x4E2A;&#x8282;&#x70B9;&#x5904;&#x7406;hash&#x503C;&#x76F8;&#x540C;&#x7684;join key&#x6570;&#x636E;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x505A;&#x5C40;&#x90E8;&#x7684;join&#xFF0C;&#x5728;M/R job&#x4E2D;&#x5BF9;&#x5E94;reduce side join&#x3002;</li>
+</ul>
+</blockquote>
+<h4 id="reduce-side-join"><a href="#reduce-side-join" class="headerlink" title="reduce side join"></a>reduce side join</h4><p>&#x5728;&#x9ED8;&#x8BA4;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;hive&#x7684;join&#x7B56;&#x7565;&#x662F;&#x8FDB;&#x884C;reduce side join&#x3002;</p>
+<h4 id="map-side-join"><a href="#map-side-join" class="headerlink" title="map side join"></a>map side join</h4><p>&#x5F53;&#x5927;&#x5C0F;&#x8868;&#x8FDB;&#x884C;join&#x65F6;&#xFF0C;&#x53EF;&#x4EE5;&#x8003;&#x8651;map side join&#xFF0C;&#x56E0;&#x4E3A;&#x5C0F;&#x8868;&#x590D;&#x5236;&#x7684;&#x4EE3;&#x4EF7;&#x4F1A;&#x597D;&#x8FC7;&#x5927;&#x8868;Shuffle&#x7684;&#x4EE3;&#x4EF7;&#x3002;&#x4F7F;&#x7528;map side join&#xFF0C;&#x6709;&#x4E24;&#x79CD;&#x65B9;&#x5F0F;&#xFF1A;</p>
+<ol>
+<li>&#x76F4;&#x63A5;&#x5728;sql&#x4E2D;&#x5199;hint&#xFF0C;&#x8BED;&#x6CD5;&#x662F;<code>/*+MapJOIN (tbl)*/</code>&#xFF0C;&#x5176;&#x4E2D;tbl&#x5C31;&#x662F;&#x4F60;&#x60F3;&#x8981;&#x505A;replication&#x7684;&#x8868;&#x3002;</li>
+<li>&#x8BBE;&#x7F6E;<code>hive.auto.convert.join = true</code>&#xFF0C;&#x8FD9;&#x6837;Hive&#x4F1A;&#x81EA;&#x52A8;&#x5224;&#x65AD;&#x5F53;&#x524D;&#x7684;join&#x64CD;&#x4F5C;&#x662F;&#x5426;&#x5408;&#x9002;&#x505A;map join&#xFF0C;&#x4E3B;&#x8981;&#x662F;&#x627E;join&#x7684;&#x4E24;&#x4E2A;&#x8868;&#x4E2D;&#x6709;&#x6CA1;&#x6709;&#x5C0F;&#x8868;&#x3002;&#x81F3;&#x4E8E;&#x591A;&#x5927;&#x7684;&#x8868;&#x7B97;&#x5C0F;&#x8868;&#xFF0C;&#x5219;&#x662F;&#x7531;<code>hive.smalltable.filesize</code>&#x51B3;&#x5B9A;&#xFF0C;&#x9ED8;&#x8BA4;25MB&#x3002;</li>
+</ol>
+<h4 id="bucket-map-join"><a href="#bucket-map-join" class="headerlink" title="bucket map join"></a>bucket map join</h4><p>&#x5F53;&#x6CA1;&#x6709;&#x4E00;&#x4E2A;&#x8868;&#x8DB3;&#x591F;&#x5C0F;&#x5230;&#x80FD;&#x591F;&#x653E;&#x8FDB;&#x5185;&#x5B58;&#xFF0C;&#x4F46;&#x662F;&#x8FD8;&#x662F;&#x60F3;&#x7528;map join&#x600E;&#x4E48;&#x529E;&#xFF1F;&#x8FD9;&#x4E2A;&#x65F6;&#x5019;&#x5C31;&#x8981;&#x7528;&#x5230;<code>bucket map join</code>&#x3002;&#x5176;&#x65B9;&#x6CD5;&#x662F;&#x4E24;&#x4E2A;join&#x8868;&#x5728;join key&#x4E0A;&#x90FD;&#x505A;hash bucket&#xFF0C;&#x5E76;&#x4E14;&#x628A;&#x4F60;&#x6253;&#x7B97;&#x590D;&#x5236;&#x7684;&#x90A3;&#x4E2A;&#xFF08;&#x76F8;&#x5BF9;&#xFF09;&#x5C0F;&#x8868;&#x7684;bucket&#x6570;&#x8BBE;&#x7F6E;&#x4E3A;&#x5927;&#x8868;&#x7684;&#x500D;&#x6570;&#x3002;&#x8FD9;&#x6837;&#x6570;&#x636E;&#x5C31;&#x4F1A;&#x6309;&#x7167;join key&#x505A;hash bucket&#x3002;&#x5C0F;&#x8868;&#x4F9D;&#x7136;&#x590D;&#x5236;&#x5230;&#x6240;&#x6709;&#x8282;&#x70B9;&#xFF0C;Map join&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x5C0F;&#x8868;&#x7684;&#x6BCF;&#x4E00;&#x7EC4;bucket&#x52A0;&#x8F7D;&#x6210;hashtable&#xFF0C;&#x4E0E;&#x5BF9;&#x5E94;&#x7684;&#x4E00;&#x4E2A;&#x5927;&#x8868;bucket&#x505A;&#x5C40;&#x90E8;join&#xFF0C;&#x8FD9;&#x6837;&#x6BCF;&#x6B21;&#x53EA;&#x9700;&#x8981;&#x52A0;&#x8F7D;&#x90E8;&#x5206;hashtable&#x5C31;&#x53EF;&#x4EE5;&#x4E86;&#x3002;</p>
+<h4 id="sort-merge-bucket-map-join"><a href="#sort-merge-bucket-map-join" class="headerlink" title="sort merge bucket map join"></a>sort merge bucket map join</h4><p>&#x5728;&#x4E24;&#x4E2A;&#x8868;&#x7684;join key&#x90FD;&#x5177;&#x6709;&#x552F;&#x4E00;&#x6027;&#x7684;&#x65F6;&#x5019;&#xFF08;&#x4E5F;&#x5C31;&#x662F;&#x53EF;&#x505A;&#x4E3B;&#x952E;&#xFF09;&#xFF0C;&#x8FD8;&#x53EF;&#x4EE5;&#x8FDB;&#x4E00;&#x6B65;&#x505A;sort merge bucket map join&#x3002;&#x505A;&#x6CD5;&#x8FD8;&#x662F;&#x4E24;&#x8FB9;&#x8981;&#x505A;hash bucket&#xFF0C;&#x800C;&#x4E14;&#x6BCF;&#x4E2A;bucket&#x5185;&#x90E8;&#x8981;&#x8FDB;&#x884C;&#x6392;&#x5E8F;&#x3002;&#x8FD9;&#x6837;&#x4E00;&#x6765;&#x5F53;&#x4E24;&#x8FB9;bucket&#x8981;&#x505A;&#x5C40;&#x90E8;join&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x53EA;&#x9700;&#x8981;&#x7528;&#x7C7B;&#x4F3C;merge Sort&#x7B97;&#x6CD5;&#x4E2D;&#x7684;merge&#x64CD;&#x4F5C;&#x4E00;&#x6837;&#x628A;&#x4E24;&#x4E2A;bucket&#x987A;&#x5E8F;&#x904D;&#x5386;&#x4E00;&#x904D;&#x5373;&#x53EF;&#x5B8C;&#x6210;&#xFF0C;&#x8FD9;&#x6837;&#x751A;&#x81F3;&#x90FD;&#x4E0D;&#x7528;&#x628A;&#x4E00;&#x4E2A;bucket&#x5B8C;&#x6574;&#x7684;&#x52A0;&#x8F7D;&#x6210;hashtable&#xFF0C;&#x8FD9;&#x5BF9;&#x6027;&#x80FD;&#x7684;&#x63D0;&#x5347;&#x4F1A;&#x6709;&#x5F88;&#x5927;&#x5E2E;&#x52A9;&#x3002;</p>
+<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ol>
+<li><a href="http://www.cnblogs.com/kxdblog/p/4043242.html" target="_blank" rel="external">hive join&#x9047;&#x5230;&#x95EE;&#x9898;</a></li>
+<li><a href="http://www.csdn.net/article/2015-01-13/2823530" target="_blank" rel="external">&#x6DF1;&#x5165;&#x6D45;&#x51FA;&#x6570;&#x636E;&#x4ED3;&#x5E93;&#x4E2D;SQL&#x6027;&#x80FD;&#x4F18;&#x5316;&#x4E4B;Hive&#x7BC7;</a></li>
+<li><a href="http://blog.csdn.net/brightni/article/details/42167349" target="_blank" rel="external">Hive Setting&#x8C03;&#x4F18;</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/08/22/hive-join-problem/" data-id="cis6654hr002o329kcbf78kvm" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/08/22/hive-join-problem/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/">hive</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/08/21/elasticsearch-search-sample/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">elasticsearch搜索示例</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/08/22/hive-join-problem/" data-title="hive join遇到的问题及解决方法" data-url="http://wzktravel.github.io/2016/08/22/hive-join-problem/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jodatime/">jodatime</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/schedule/">schedule</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread/">thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 15.71px;">cdh</a> <a href="/tags/elasticsearch/" style="font-size: 11.43px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.43px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.43px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 12.86px;">hdfs</a> <a href="/tags/hive/" style="font-size: 12.86px;">hive</a> <a href="/tags/java/" style="font-size: 14.29px;">java</a> <a href="/tags/jodatime/" style="font-size: 10px;">jodatime</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 12.86px;">kerberos</a> <a href="/tags/linux/" style="font-size: 18.57px;">linux</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/scala/" style="font-size: 12.86px;">scala</a> <a href="/tags/schedule/" style="font-size: 11.43px;">schedule</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 17.14px;">shell</a> <a href="/tags/spark/" style="font-size: 12.86px;">spark</a> <a href="/tags/thread/" style="font-size: 10px;">thread</a> <a href="/tags/vim/" style="font-size: 11.43px;">vim</a> <a href="/tags/yarn/" style="font-size: 12.86px;">yarn</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/08/22/hive-join-problem/">hive join遇到的问题及解决方法</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/21/elasticsearch-search-sample/">elasticsearch搜索示例</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/17/What-is-Memory-reserved-on-Yarn/">Memory Reserved on YARN</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/15/recover-free-space-on-deleted-files/">linux删除文件后空间未释放的解决方法</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/28/determine-night-mode-in-java/">java中判断是否在夜间</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>
