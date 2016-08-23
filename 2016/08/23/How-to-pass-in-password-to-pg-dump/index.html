@@ -4,14 +4,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: quartz | wzktravel</title>
+  <title>如何在pg_dump时传入密码 | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="wzktravel">
-<meta property="og:url" content="http://wzktravel.github.io/tags/quartz/index.html">
+  <meta name="description" content="在做postgres的备份时，需要定时执行pg_dump命令，这就需要在人不介入的情况传入密码，有两种方式可以实现。一是使用环境变量PGPASSWORD，二是使用.pgpass文件。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何在pg_dump时传入密码">
+<meta property="og:url" content="http://wzktravel.github.io/2016/08/23/How-to-pass-in-password-to-pg-dump/index.html">
 <meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="在做postgres的备份时，需要定时执行pg_dump命令，这就需要在人不介入的情况传入密码，有两种方式可以实现。一是使用环境变量PGPASSWORD，二是使用.pgpass文件。">
+<meta property="og:updated_time" content="2016-08-23T13:11:53.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="wzktravel">
+<meta name="twitter:title" content="如何在pg_dump时传入密码">
+<meta name="twitter:description" content="在做postgres的备份时，需要定时执行pg_dump命令，这就需要在人不介入的情况传入密码，有两种方式可以实现。一是使用环境变量PGPASSWORD，二是使用.pgpass文件。">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -64,39 +68,77 @@
   </div>
 </header>
     <div class="outer">
-      <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2016/04/14/quartz-in-practice/" class="archive-article-date">
-  <time datetime="2016-04-14T03:26:50.000Z" itemprop="datePublished">4月 14</time>
+      <section id="main"><article id="post-How-to-pass-in-password-to-pg-dump" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/08/23/How-to-pass-in-password-to-pg-dump/" class="article-date">
+  <time datetime="2016-08-23T12:52:00.000Z" itemprop="datePublished">2016-08-23</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/04/14/quartz-in-practice/">quartz in practice</a>
+    <h1 class="article-title" itemprop="name">
+      如何在pg_dump时传入密码
     </h1>
   
 
-    </header>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&#x5728;&#x505A;postgres&#x7684;&#x5907;&#x4EFD;&#x65F6;&#xFF0C;&#x9700;&#x8981;&#x5B9A;&#x65F6;&#x6267;&#x884C;pg_dump&#x547D;&#x4EE4;&#xFF0C;&#x8FD9;&#x5C31;&#x9700;&#x8981;&#x5728;&#x4EBA;&#x4E0D;&#x4ECB;&#x5165;&#x7684;&#x60C5;&#x51B5;&#x4F20;&#x5165;&#x5BC6;&#x7801;&#xFF0C;&#x6709;&#x4E24;&#x79CD;&#x65B9;&#x5F0F;&#x53EF;&#x4EE5;&#x5B9E;&#x73B0;&#x3002;<br>&#x4E00;&#x662F;&#x4F7F;&#x7528;&#x73AF;&#x5883;&#x53D8;&#x91CF;PGPASSWORD&#xFF0C;&#x4E8C;&#x662F;&#x4F7F;&#x7528;.pgpass&#x6587;&#x4EF6;&#x3002;<br><a id="more"></a></p>
+<h3 id="&#x4F7F;&#x7528;&#x73AF;&#x5883;&#x53D8;&#x91CF;pgpassword"><a href="#&#x4F7F;&#x7528;&#x73AF;&#x5883;&#x53D8;&#x91CF;PGPASSWORD" class="headerlink" title="&#x4F7F;&#x7528;&#x73AF;&#x5883;&#x53D8;&#x91CF;PGPASSWORD"></a>&#x4F7F;&#x7528;&#x73AF;&#x5883;&#x53D8;&#x91CF;PGPASSWORD</h3><p>&#x4F7F;&#x7528;crontab&#x6267;&#x884C;shell&#x811A;&#x672C;&#xFF0C;&#x5728;<code>pg_dump</code>&#x4E4B;&#x524D;&#xFF0C;&#x8BBE;&#x7F6E;&#x73AF;&#x5883;&#x53D8;&#x91CF;&#x3002;<br>&#x793A;&#x4F8B;&#xFF1A;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">export</span> PGPASSWORD=<span class="string">&quot;<span class="variable">$pg_password</span>&quot;</span></div><div class="line">pg_dump -p 7432 -U scm &gt; pg.dump</div></pre></td></tr></table></figure>
+<p>&#x6216;&#x8005;&#x5728;&#x4E00;&#x884C;&#x547D;&#x4EE4;&#x4E2D;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">PGPASSWORD=<span class="string">&quot;<span class="variable">$pg_password</span>&quot;</span> pg_dump -p 7432 -U scm &gt; pg.dump</div></pre></td></tr></table></figure>
+<p><strong> &#x6CE8;&#x610F;&#xFF1A;&#x8FD9;&#x79CD;&#x65B9;&#x6CD5;&#x56E0;&#x4E3A;&#x5B89;&#x5168;&#x6027;&#x95EE;&#x9898;&#xFF0C;&#x6240;&#x4EE5;&#x4E0D;&#x63A8;&#x8350;&#x4F7F;&#x7528;&#x3002; </strong></p>
+<blockquote>
+<p>PGPASSWORD behaves the same as the password connection parameter. Use of this environment variable is not recommended for security reasons, as some operating systems allow non-root users to see process environment variables via ps; instead consider using the ~/.pgpass file</p>
+</blockquote>
+<p>@<a href="https://www.postgresql.org/docs/current/static/libpq-envars.html" target="_blank" rel="external">https://www.postgresql.org/docs/current/static/libpq-envars.html</a></p>
+<h3 id="&#x4F7F;&#x7528;pgpass&#x6587;&#x4EF6;"><a href="#&#x4F7F;&#x7528;-pgpass&#x6587;&#x4EF6;" class="headerlink" title="&#x4F7F;&#x7528;.pgpass&#x6587;&#x4EF6;"></a>&#x4F7F;&#x7528;.pgpass&#x6587;&#x4EF6;</h3><p>&#x53C2;&#x8003;<a href="https://www.postgresql.org/docs/current/static/libpq-pgpass.html" target="_blank" rel="external">https://www.postgresql.org/docs/current/static/libpq-pgpass.html</a></p>
+<p>&#x5728;&#x4E3B;&#x76EE;&#x5F55;&#x4E0B;&#x65B0;&#x5EFA;<code>~/.pgpass</code>&#x6587;&#x4EF6;&#xFF0C;&#x5E76;&#x8D4B;&#x6743;&#x9650;&#x4E3A;<code>600</code>&#xFF0C;&#x6587;&#x4EF6;&#x5185;&#x5BB9;&#x4E3A;</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">hostname</span><span class="selector-pseudo">:port</span><span class="selector-pseudo">:database</span><span class="selector-pseudo">:username</span><span class="selector-pseudo">:password</span></div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/08/23/How-to-pass-in-password-to-pg-dump/" data-id="cis7hsbth002mqu9kao0qaa3l" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/08/23/How-to-pass-in-password-to-pg-dump/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/postgres/">postgres</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql/">sql</a></li></ul>
+
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/08/22/hive-join-problem/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">hive join遇到的问题及解决方法</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-  
-    </div></section>
-  
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/08/23/How-to-pass-in-password-to-pg-dump/" data-title="如何在pg_dump时传入密码" data-url="http://wzktravel.github.io/2016/08/23/How-to-pass-in-password-to-pg-dump/"></div>
+  </section>
 </section>
       
       <aside id="sidebar">
