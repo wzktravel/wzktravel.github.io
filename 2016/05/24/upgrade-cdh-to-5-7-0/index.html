@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://wzktravel.github.io/2016/05/24/upgrade-cdh-to-5-7-0/index.html">
 <meta property="og:site_name" content="wzktravel">
 <meta property="og:description" content="最近对CDH进行升级，从5.4.8升级到5.7.0，主要想升级spark和hbase。">
-<meta property="og:updated_time" content="2016-08-17T11:29:00.000Z">
+<meta property="og:updated_time" content="2016-08-24T07:25:13.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="升级CDH到5.7.0">
 <meta name="twitter:description" content="最近对CDH进行升级，从5.4.8升级到5.7.0，主要想升级spark和hbase。">
@@ -176,10 +176,17 @@
  <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo service cloudera-scm-server-db stop</div></pre></td></tr></table></figure>
 <blockquote>
 <p>==<strong>Important:</strong>== If you are not running the embedded database service and you attempt to stop it, you receive a message indicating that the service cannot be found. If instead you get a message that the shutdown failed, the embedded database is still running, probably because services are connected to the Hive metastore. If the database shutdown fails due to connected services, issue the following command:<br> RHEL-compatible 7 and higher:</p>
- <figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ sudo service cloudera-scm-server-db next_stop_fast</div><div class="line">$ sudo service cloudera-scm-server-db stop</div><div class="line"><span class="string">``</span><span class="string">` </span></div><div class="line">All other Linux distributions:</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+ <figure class="highlight vbscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ sudo service cloudera-scm-<span class="built_in">server</span>-db next_stop_fast</div><div class="line">$ sudo service cloudera-scm-<span class="built_in">server</span>-db <span class="keyword">stop</span></div></pre></td></tr></table></figure>
 </blockquote>
-<p> sudo service cloudera-scm-server-db fast_stop</p>
- <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">    </div><div class="line"><span class="number">4</span>. &#x505C;&#x6B62;<span class="keyword">cloudera-agent&#x670D;&#x52A1;</span></div><div class="line"></div><div class="line">   ``` <span class="keyword">bash</span></div><div class="line">   $ sudo service <span class="keyword">cloudera-scm-agent </span>stop</div></pre></td></tr></table></figure>
+<p> All other Linux distributions:</p>
+<blockquote>
+ <figure class="highlight axapta"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo service cloudera-scm-<span class="keyword">server</span>-db fast_stop</div></pre></td></tr></table></figure>
+</blockquote>
+</li>
+</ol>
+<ol>
+<li><p>&#x505C;&#x6B62;cloudera-agent&#x670D;&#x52A1;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo service cloudera-scm-agent stop</div></pre></td></tr></table></figure>
 </li>
 </ol>
 <h4 id="&#x8BBE;&#x7F6E;repo"><a href="#&#x8BBE;&#x7F6E;repo" class="headerlink" title="&#x8BBE;&#x7F6E;repo"></a>&#x8BBE;&#x7F6E;repo</h4><h5 id="&#x5728;&#x7EBF;&#x5347;&#x7EA7;&#x4F7F;&#x7528;cloudera&#x6E90;"><a href="#&#x5728;&#x7EBF;&#x5347;&#x7EA7;&#xFF0C;&#x4F7F;&#x7528;cloudera&#x6E90;" class="headerlink" title="&#x5728;&#x7EBF;&#x5347;&#x7EA7;&#xFF0C;&#x4F7F;&#x7528;cloudera&#x6E90;"></a>&#x5728;&#x7EBF;&#x5347;&#x7EA7;&#xFF0C;&#x4F7F;&#x7528;cloudera&#x6E90;</h5><p>&#x5982;&#x679C;&#x7F51;&#x7EDC;&#x901F;&#x5EA6;&#x6BD4;&#x8F83;&#x5FEB;&#xFF0C;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x65B0;&#x5EFA;<code>cloudera-manager.repo</code>:</p>

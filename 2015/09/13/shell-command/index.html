@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://wzktravel.github.io/2015/09/13/shell-command/index.html">
 <meta property="og:site_name" content="wzktravel">
 <meta property="og:description" content="只整理一些平时想用，可能又突然记不起来的命令和用法。都是基于bash。如果不想在命令行使用man来阅读手册，可以在这个网站查看 http://explainshell.com/">
-<meta property="og:updated_time" content="2016-08-17T11:30:37.000Z">
+<meta property="og:updated_time" content="2016-08-24T07:24:58.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="shell常用命令整理">
 <meta name="twitter:description" content="只整理一些平时想用，可能又突然记不起来的命令和用法。都是基于bash。如果不想在命令行使用man来阅读手册，可以在这个网站查看 http://explainshell.com/">
@@ -141,10 +141,7 @@
 <li><code>&amp;&gt;</code>&#x8868;&#x793A;&#x5C06;&#x6807;&#x51C6;&#x8F93;&#x51FA;&#x548C;&#x9519;&#x8BEF;&#x8F93;&#x51FA;&#x540C;&#x65F6;&#x5199;&#x5230;&#x540C;&#x4E00;&#x4E2A;&#x6587;&#x4EF6;&#x4E2D;&#x3002;</li>
 </ul>
 <h3 id="&#x5176;&#x4ED6;"><a href="#&#x5176;&#x4ED6;" class="headerlink" title="&#x5176;&#x4ED6;"></a>&#x5176;&#x4ED6;</h3><ol>
-<li>&#x591A;&#x6761;&#x547D;&#x4EE4;, <code>;</code>, <code>&amp;&amp;</code>, <code>||</code><pre><code class="shell">1) command1 ; command2   //&#x4E0D;&#x7BA1;command1&#x662F;&#x5426;&#x6267;&#x884C;&#x6210;&#x529F;&#x90FD;&#x4F1A;&#x6267;&#x884C;command2
-2) command1 &amp;&amp; command2  //&#x53EA;&#x6709;command1&#x6267;&#x884C;&#x6210;&#x529F;&#x540E;&#xFF0C;command2&#x624D;&#x4F1A;&#x6267;&#x884C;&#xFF0C;&#x5426;&#x5219;command2&#x4E0D;&#x6267;&#x884C;
-3) command1 || command2  //command1&#x6267;&#x884C;&#x6210;&#x529F;&#x540E;command2 &#x4E0D;&#x6267;&#x884C;&#xFF0C;&#x5426;&#x5219;&#x53BB;&#x6267;&#x884C;command2&#xFF0C;&#x603B;&#x4E4B;command1&#x548C;command2&#x603B;&#x6709;&#x4E00;&#x6761;&#x547D;&#x4EE4;&#x4F1A;&#x6267;&#x884C;
-</code></pre>
+<li>&#x591A;&#x6761;&#x547D;&#x4EE4;, <code>;</code>, <code>&amp;&amp;</code>, <code>||</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">1) command1 ; command2   //&#x4E0D;&#x7BA1;command1&#x662F;&#x5426;&#x6267;&#x884C;&#x6210;&#x529F;&#x90FD;&#x4F1A;&#x6267;&#x884C;command2</div><div class="line">2) command1 &amp;&amp; command2  //&#x53EA;&#x6709;command1&#x6267;&#x884C;&#x6210;&#x529F;&#x540E;&#xFF0C;command2&#x624D;&#x4F1A;&#x6267;&#x884C;&#xFF0C;&#x5426;&#x5219;command2&#x4E0D;&#x6267;&#x884C;</div><div class="line">3) command1 || command2  //command1&#x6267;&#x884C;&#x6210;&#x529F;&#x540E;command2 &#x4E0D;&#x6267;&#x884C;&#xFF0C;&#x5426;&#x5219;&#x53BB;&#x6267;&#x884C;command2&#xFF0C;&#x603B;&#x4E4B;command1&#x548C;command2&#x603B;&#x6709;&#x4E00;&#x6761;&#x547D;&#x4EE4;&#x4F1A;&#x6267;&#x884C;</div></pre></td></tr></table></figure>
 </li>
 </ol>
 <h2 id="&#x7BA1;&#x9053;"><a href="#&#x7BA1;&#x9053;" class="headerlink" title="&#x7BA1;&#x9053;"></a>&#x7BA1;&#x9053;</h2><p>&#x7BA1;&#x9053;&#x53EF;&#x4EE5;&#x628A;&#x4E00;&#x7CFB;&#x5217;&#x547D;&#x4EE4;&#x8FDE;&#x63A5;&#x8D77;&#x6765;&#xFF0C;&#x8FD9;&#x610F;&#x5473;&#x7740;&#x7B2C;&#x4E00;&#x4E2A;&#x547D;&#x4EE4;&#x7684;&#x8F93;&#x51FA;&#x4F1A;&#x4F5C;&#x4E3A;&#x7B2C;&#x4E8C;&#x4E2A;&#x547D;&#x4EE4;&#x7684;&#x8F93;&#x5165;&#x901A;&#x8FC7;&#x7BA1;&#x9053;&#x4F20;&#x7ED9;&#x7B2C;&#x4E8C;&#x4E2A;&#x547D;&#x4EE4;&#xFF0C;&#x7B2C;&#x4E8C;&#x4E2A;&#x547D;&#x4EE4;&#x7684;&#x8F93;&#x51FA;&#x53C8;&#x4F1A;&#x4F5C;&#x4E3A;&#x7B2C;&#x4E09;&#x4E2A;&#x547D;&#x4EE4;&#x7684;&#x8F93;&#x5165;&#xFF0C;&#x4EE5;&#x6B64;&#x7C7B;&#x63A8;&#x3002;&#x663E;&#x793A;&#x5728;&#x5C4F;&#x5E55;&#x4E0A;&#x7684;&#x662F;&#x7BA1;&#x9053;&#x884C;&#x4E2D;&#x6700;&#x540E;&#x4E00;&#x4E2A;&#x547D;&#x4EE4;&#x7684;&#x8F93;&#x51FA;&#xFF08;&#x5982;&#x679C;&#x547D;&#x4EE4;&#x884C;&#x4E2D;&#x672A;&#x4F7F;&#x7528;&#x8F93;&#x51FA;&#x91CD;&#x5B9A;&#x5411;&#xFF09;&#x3002;<br>&#x6BD4;&#x5982;&#x5F88;&#x5E38;&#x7528;&#x7684; <code>ps -ef | grep resin</code>&#xFF0C;&#x7ED3;&#x679C;&#x53EA;&#x4F1A;&#x5C55;&#x73B0;&#x51FA;resin&#x7684;ps&#x4FE1;&#x606F;&#x3002;</p>

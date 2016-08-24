@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://wzktravel.github.io/2015/09/21/linux-awk/index.html">
 <meta property="og:site_name" content="wzktravel">
 <meta property="og:description" content="相对于sed常常作用于一整行进行处理，awk更倾向与一行当中分成数个“栏位”来处理。平时对日志或者小型文件进行处理时，awk很有用。">
-<meta property="og:updated_time" content="2016-08-17T11:30:53.000Z">
+<meta property="og:updated_time" content="2016-08-24T07:25:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="linux awk命令">
 <meta name="twitter:description" content="相对于sed常常作用于一整行进行处理，awk更倾向与一行当中分成数个“栏位”来处理。平时对日志或者小型文件进行处理时，awk很有用。">
@@ -544,8 +544,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">~ awk -F <span class="string">&apos;\t&apos;</span> <span class="string">&apos;{w[$1]+=1}  END{for (a in w) printf(&quot;%u\t%s\n&quot;, w[a], a)}&apos;</span></div><div class="line">~ awk -F <span class="string">&apos;\t&apos;</span> <span class="string">&apos;{w[$2]+=$1} END{for (a in w) printf(&quot;%u\t%s\n&quot;, w[a], a)}&apos;</span></div></pre></td></tr></table></figure>
 </li>
 <li><p>&#x5C06;&#x591A;&#x4E2A;&#x6587;&#x4EF6;&#x5185;&#x5BB9;&#x5408;&#x5E76;&#x5230;&#x4E00;&#x4E2A;&#x6587;&#x4EF6;&#x4E2D;(&#x4E0D;&#x6539;&#x53D8;&#x683C;&#x5F0F;)</p>
-<pre><code class="bash">awk <span class="string">&apos;{v=FILENAME}!a[v]++1&apos;</span> *.sort  &gt; all.sort
-</code></pre>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">awk <span class="string">&apos;{v=FILENAME}!a[v]++1&apos;</span> *.sort  &gt; all.sort</div></pre></td></tr></table></figure>
 </li>
 <li><p>awk&#x4F7F;&#x7528;shell&#x53D8;&#x91CF;&#xFF0C;&#x9700;&#x8981;&#x52A0;&#x4E0A;&#x5355;&#x5F15;&#x53F7;&#x3002;<code>&apos;${var}&apos;</code></p>
 </li>
