@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>自动登录到linux机器 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="使用sshpass实现的一个自动登录脚本。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自动登录到linux机器">
+<meta property="og:url" content="http://wzktravel.github.io/2016/08/24/auto-login-using-ssh/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="使用sshpass实现的一个自动登录脚本。">
+<meta property="og:updated_time" content="2016-09-01T06:10:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自动登录到linux机器">
+<meta name="twitter:description" content="使用sshpass实现的一个自动登录脚本。">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-auto-login-using-ssh" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/08/24/auto-login-using-ssh/" class="article-date">
+  <time datetime="2016-08-24T07:28:06.000Z" itemprop="datePublished">2016-08-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      自动登录到linux机器
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&#x4F7F;&#x7528;sshpass&#x5B9E;&#x73B0;&#x7684;&#x4E00;&#x4E2A;&#x81EA;&#x52A8;&#x767B;&#x5F55;&#x811A;&#x672C;&#x3002;<br><a id="more"></a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line">user=user</div><div class="line">password=password</div><div class="line">ip=<span class="variable">$1</span></div><div class="line">prefix=192.12.</div><div class="line">port=22</div><div class="line">cmd=<span class="built_in">pwd</span></div><div class="line"></div><div class="line">realip=</div><div class="line">flag=$(<span class="built_in">echo</span> <span class="variable">$ip</span> | awk <span class="string">&apos;/${prefix}|vlnx|VLNX/&apos;</span>)</div><div class="line"><span class="keyword">if</span> [[ <span class="variable">$flag</span> = <span class="string">&quot;&quot;</span> ]]; <span class="keyword">then</span></div><div class="line">   realip=<span class="variable">${prefix}</span><span class="variable">${ip}</span></div><div class="line"><span class="keyword">else</span></div><div class="line">   realip=<span class="variable">${ip}</span></div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">&quot;ssh <span class="variable">${user}</span>@<span class="variable">${realip}</span>&quot;</span></div><div class="line">sshpass -p <span class="variable">${password}</span> ssh -o BatchMode=no -o StrictHostKeyChecking=no <span class="_">-l</span> <span class="variable">${user}</span> -p <span class="variable">${port}</span> <span class="variable">${realip}</span> -t <span class="string">&quot;<span class="variable">$cmd</span>; bash --login&quot;</span></div></pre></td></tr></table></figure>
+<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ol>
+<li><a href="http://tcl.tk/man/tcl8.6/TclCmd/Tcl.htm" target="_blank" rel="external">http://tcl.tk/man/tcl8.6/TclCmd/Tcl.htm</a></li>
+<li><a href="http://linux.die.net/man/1/sshpass" target="_blank" rel="external">sshpass man page</a></li>
+<li>[sshpass sourceforge][<a href="https://sourceforge.net/projects/sshpass/" target="_blank" rel="external">https://sourceforge.net/projects/sshpass/</a>]</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/08/24/auto-login-using-ssh/" data-id="cisjy5w9s002tip9k7fyyvq6f" class="article-share-link">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/08/24/auto-login-using-ssh/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/09/01/elasticsearch-upgrade/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          elasticsearch升级过程
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/08/24/have-fun-with-canvas/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">一个有趣的canvas</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/08/24/auto-login-using-ssh/" data-title="自动登录到linux机器" data-url="http://wzktravel.github.io/2016/08/24/auto-login-using-ssh/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jodatime/">jodatime</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postgres/">postgres</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/schedule/">schedule</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread/">thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 15.71px;">cdh</a> <a href="/tags/elasticsearch/" style="font-size: 12.86px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.43px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.43px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hdfs/" style="font-size: 12.86px;">hdfs</a> <a href="/tags/hive/" style="font-size: 12.86px;">hive</a> <a href="/tags/java/" style="font-size: 14.29px;">java</a> <a href="/tags/jodatime/" style="font-size: 10px;">jodatime</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 12.86px;">kerberos</a> <a href="/tags/linux/" style="font-size: 18.57px;">linux</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/postgres/" style="font-size: 10px;">postgres</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/scala/" style="font-size: 12.86px;">scala</a> <a href="/tags/schedule/" style="font-size: 11.43px;">schedule</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 17.14px;">shell</a> <a href="/tags/spark/" style="font-size: 12.86px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/thread/" style="font-size: 10px;">thread</a> <a href="/tags/vim/" style="font-size: 11.43px;">vim</a> <a href="/tags/yarn/" style="font-size: 12.86px;">yarn</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/09/01/elasticsearch-upgrade/">elasticsearch升级过程</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/24/auto-login-using-ssh/">自动登录到linux机器</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/24/have-fun-with-canvas/">一个有趣的canvas</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/23/How-to-pass-in-password-to-pg-dump/">如何在pg_dump时传入密码</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/22/hive-join-problem/">hive join遇到的问题及解决方法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://github.com/wzktravel" target="_blank">作者</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>
