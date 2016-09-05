@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://wzktravel.github.io/2016/08/15/recover-free-space-on-deleted-files/index.html">
 <meta property="og:site_name" content="wzktravel">
 <meta property="og:description" content="在linux下有时会遇到一种情况，某个文件删除了，但是磁盘空间并没有释放。这是因为仍然有进程在使用此文件，其文件句柄没有被释放。下面介绍两种方式来解决此问题。">
-<meta property="og:updated_time" content="2016-08-17T11:31:47.000Z">
+<meta property="og:updated_time" content="2016-09-05T03:10:23.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="linux删除文件后空间未释放的解决方法">
 <meta name="twitter:description" content="在linux下有时会遇到一种情况，某个文件删除了，但是磁盘空间并没有释放。这是因为仍然有进程在使用此文件，其文件句柄没有被释放。下面介绍两种方式来解决此问题。">
@@ -105,7 +105,7 @@
  <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ lsof | fgrep <span class="string">&quot;deleted&quot;</span></div></pre></td></tr></table></figure>
 </li>
 <li><p>&#x627E;&#x5230;&#x6587;&#x4EF6;&#x63CF;&#x8FF0;&#x7B26;&#x6240;&#x5728;&#x5730;</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ls <span class="_">-l</span> /proc/<span class="variable">${pid}</span>/fs/ | fgrep <span class="string">&quot;deleted&quot;</span></div></pre></td></tr></table></figure>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ls <span class="_">-l</span> /proc/<span class="variable">${pid}</span>/fd/ | fgrep <span class="string">&quot;deleted&quot;</span></div></pre></td></tr></table></figure>
 </li>
 <li><p>&#x76F4;&#x63A5;&#x622A;&#x65AD;&#x6587;&#x4EF6;&#x63CF;&#x8FF0;&#x7B26;</p>
  <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># &#x6E05;&#x7A7A;fd</span></div><div class="line">&gt; /proc/<span class="variable">${pid}</span>/fd/<span class="variable">${id}</span></div><div class="line"><span class="comment"># &#x6216;&#x76F4;&#x63A5;&#x8C03;&#x7528;truncate&#x547D;&#x4EE4;</span></div><div class="line">truncate <span class="_">-s</span> 0 /proc/<span class="variable">${pid}</span>/fd/<span class="variable">${id}</span></div></pre></td></tr></table></figure>
@@ -116,10 +116,10 @@
  <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ lsof | fgrep <span class="string">&quot;deleted&quot;</span></div></pre></td></tr></table></figure>
 </li>
 <li><p>&#x627E;&#x5230;&#x6587;&#x4EF6;&#x63CF;&#x8FF0;&#x7B26;&#x6240;&#x5728;&#x5730;</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ls <span class="_">-l</span> /proc/<span class="variable">${pid}</span>/fs/ | fgrep <span class="string">&quot;deleted&quot;</span></div></pre></td></tr></table></figure>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ls <span class="_">-l</span> /proc/<span class="variable">${pid}</span>/fd/ | fgrep <span class="string">&quot;deleted&quot;</span></div></pre></td></tr></table></figure>
 </li>
 <li><p>&#x8FDB;&#x884C;&#x6062;&#x590D;</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat /proc/<span class="variable">${pid}</span>/fs/<span class="variable">${id}</span> &gt; /tmp/<span class="variable">${file}</span></div></pre></td></tr></table></figure>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat /proc/<span class="variable">${pid}</span>/fd/<span class="variable">${id}</span> &gt; /tmp/<span class="variable">${file}</span></div></pre></td></tr></table></figure>
 </li>
 </ol>
 <h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ol>
