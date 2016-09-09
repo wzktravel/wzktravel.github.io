@@ -4,18 +4,14 @@
 <head>
   <meta charset="utf-8">
   
-  <title>java中判断是否在夜间 | wzktravel</title>
+  <title>Tag: hbase | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="在夜间模式时间段可以自定义的情况下，判断传入的时间在不在夜间模式时间段内。使用JodaTime进行时间操作。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="java中判断是否在夜间">
-<meta property="og:url" content="http://wzktravel.github.io/2016/07/28/determine-night-mode-in-java/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="wzktravel">
+<meta property="og:url" content="http://wzktravel.github.io/tags/hbase/index.html">
 <meta property="og:site_name" content="wzktravel">
-<meta property="og:description" content="在夜间模式时间段可以自定义的情况下，判断传入的时间在不在夜间模式时间段内。使用JodaTime进行时间操作。">
-<meta property="og:updated_time" content="2016-08-15T03:46:26.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="java中判断是否在夜间">
-<meta name="twitter:description" content="在夜间模式时间段可以自定义的情况下，判断传入的时间在不在夜间模式时间段内。使用JodaTime进行时间操作。">
+<meta name="twitter:title" content="wzktravel">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -71,80 +67,39 @@
   </div>
 </header>
     <div class="outer">
-      <section id="main"><article id="post-determine-night-mode-in-java" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/07/28/determine-night-mode-in-java/" class="article-date">
-  <time datetime="2016-07-28T03:03:48.000Z" itemprop="datePublished">2016-07-28</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+      <section id="main">
   
-    <h1 class="article-title" itemprop="name">
-      java中判断是否在夜间
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2016" class="archive-year">2016</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2016/09/09/how-to-rename-hbase-table/" class="archive-article-date">
+  <time datetime="2016-09-09T10:53:23.000Z" itemprop="datePublished">9月 9</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2016/09/09/how-to-rename-hbase-table/">Hbase修改表名</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>&#x5728;&#x591C;&#x95F4;&#x6A21;&#x5F0F;&#x65F6;&#x95F4;&#x6BB5;&#x53EF;&#x4EE5;&#x81EA;&#x5B9A;&#x4E49;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x5224;&#x65AD;&#x4F20;&#x5165;&#x7684;&#x65F6;&#x95F4;&#x5728;&#x4E0D;&#x5728;&#x591C;&#x95F4;&#x6A21;&#x5F0F;&#x65F6;&#x95F4;&#x6BB5;&#x5185;&#x3002;<br>&#x4F7F;&#x7528;JodaTime&#x8FDB;&#x884C;&#x65F6;&#x95F4;&#x64CD;&#x4F5C;&#x3002;<br><a id="more"></a></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isInNight</span><span class="params">(<span class="keyword">long</span> timeInMillis)</span> </span>{</div><div class="line">  DateTime from = <span class="keyword">new</span> LocalTime(<span class="string">&quot;22:00&quot;</span>).toDateTimeToday();</div><div class="line">  DateTime to = <span class="keyword">new</span> LocalTime(<span class="string">&quot;11:00&quot;</span>).toDateTimeToday();</div><div class="line">  DateTime nextDayOfNightModeTo = to;</div><div class="line">  <span class="keyword">if</span> (to.compareTo(from) &lt; <span class="number">0</span>) { <span class="comment">// to &lt; from</span></div><div class="line">    nextDayOfNightModeTo = to.plusDays(<span class="number">1</span>);</div><div class="line">  }</div><div class="line">  <span class="keyword">long</span> millisOfNightMode = Seconds.secondsBetween(from, nextDayOfNightModeTo).getSeconds() * <span class="number">1000L</span>;</div><div class="line"></div><div class="line">  DateTime dateTime = <span class="keyword">new</span> DateTime(timeInMillis);</div><div class="line">  <span class="keyword">if</span> (dateTime.compareTo(from) &gt; <span class="number">0</span>) {</div><div class="line">    <span class="keyword">long</span> millisBetween = dateTime.getMillis() - from.getMillis();</div><div class="line">    <span class="keyword">if</span> (millisOfNightMode &gt; millisBetween) {</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    }</div><div class="line">  } <span class="keyword">else</span> <span class="keyword">if</span> (dateTime.compareTo(to) &lt; <span class="number">0</span>) {</div><div class="line">    <span class="keyword">long</span> millisBetween = to.getMillis() - from.getMillis();</div><div class="line">    <span class="keyword">if</span> (millisOfNightMode &gt; millisBetween) {</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    }</div><div class="line">  }</div><div class="line">  <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">}</div></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/07/28/determine-night-mode-in-java/" data-id="cisvnns9q002cep9kux7bq6hq" class="article-share-link" data-share="baidu" data-title="java中判断是否在夜间">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/07/28/determine-night-mode-in-java/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-        <span id="busuanzi_container_page_pv" style='display:none;float:right;margin-right:20px;color:#999;'>view <span id="busuanzi_value_page_pv"></span> times</span>
-      
-  
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jodatime/">jodatime</a></li></ul>
-
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2016/08/15/recover-free-space-on-deleted-files/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">
-        
-          linux删除文件后空间未释放的解决方法
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2016/07/26/map-in-expect-and-bash/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">bash和expect中map的用法</div>
-    </a>
-  
-</nav>
-
-  
 </article>
-
-
-  <section id="comments">
-    <div id="ds-thread" class="ds-thread" data-thread-key="2016/07/28/determine-night-mode-in-java/" data-title="java中判断是否在夜间" data-url="http://wzktravel.github.io/2016/07/28/determine-night-mode-in-java/"></div>
-  </section>
-
+  
+  
+    </div></section>
+  
 </section>
       
       <aside id="sidebar">
