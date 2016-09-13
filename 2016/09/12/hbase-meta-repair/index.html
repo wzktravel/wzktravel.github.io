@@ -4,14 +4,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: quartz | wzktravel</title>
+  <title>HBase数据丢失恢复 | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="wzktravel">
-<meta property="og:url" content="http://wzktravel.github.io/tags/quartz/index.html">
+  <meta name="description" content="关于HBase数据丢失恢复，可以详细看一下华为的这篇文章http://support.huawei.com/ecommunity/bbs/10242725.html，里面不止对原理进行讲解，而且有具体的场景演示和解决方案。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HBase数据丢失恢复">
+<meta property="og:url" content="http://wzktravel.github.io/2016/09/12/hbase-meta-repair/index.html">
 <meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="关于HBase数据丢失恢复，可以详细看一下华为的这篇文章http://support.huawei.com/ecommunity/bbs/10242725.html，里面不止对原理进行讲解，而且有具体的场景演示和解决方案。">
+<meta property="og:updated_time" content="2016-09-13T03:42:10.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="wzktravel">
+<meta name="twitter:title" content="HBase数据丢失恢复">
+<meta name="twitter:description" content="关于HBase数据丢失恢复，可以详细看一下华为的这篇文章http://support.huawei.com/ecommunity/bbs/10242725.html，里面不止对原理进行讲解，而且有具体的场景演示和解决方案。">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -67,39 +71,83 @@
   </div>
 </header>
     <div class="outer">
-      <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2016/04/14/quartz-in-practice/" class="archive-article-date">
-  <time datetime="2016-04-14T03:26:50.000Z" itemprop="datePublished">4月 14</time>
+      <section id="main"><article id="post-hbase-meta-repair" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/09/12/hbase-meta-repair/" class="article-date">
+  <time datetime="2016-09-12T15:46:46.000Z" itemprop="datePublished">2016-09-12</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/04/14/quartz-in-practice/">quartz in practice</a>
+    <h1 class="article-title" itemprop="name">
+      HBase数据丢失恢复
     </h1>
   
 
-    </header>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&#x5173;&#x4E8E;HBase&#x6570;&#x636E;&#x4E22;&#x5931;&#x6062;&#x590D;&#xFF0C;&#x53EF;&#x4EE5;&#x8BE6;&#x7EC6;&#x770B;&#x4E00;&#x4E0B;&#x534E;&#x4E3A;&#x7684;&#x8FD9;&#x7BC7;&#x6587;&#x7AE0;<a href="http://support.huawei.com/ecommunity/bbs/10242725.html" target="_blank" rel="external">http://support.huawei.com/ecommunity/bbs/10242725.html</a>&#xFF0C;&#x91CC;&#x9762;&#x4E0D;&#x6B62;&#x5BF9;&#x539F;&#x7406;&#x8FDB;&#x884C;&#x8BB2;&#x89E3;&#xFF0C;&#x800C;&#x4E14;&#x6709;&#x5177;&#x4F53;&#x7684;&#x573A;&#x666F;&#x6F14;&#x793A;&#x548C;&#x89E3;&#x51B3;&#x65B9;&#x6848;&#x3002;<br><a id="more"></a></p>
+<p>&#x4ECA;&#x5929;hbase&#x7684;&#x4E00;&#x53F0;region server&#x6302;&#x6389;&#xFF0C;&#x91CD;&#x542F;&#x540E;&#x8FDB;&#x884C;&#x67E5;&#x8BE2;&#xFF0C;&#x53D1;&#x73B0;&#x6709;&#x4E9B;&#x7EAA;&#x5F55;&#x67E5;&#x8BE2;&#x5931;&#x8D25;&#xFF0C;&#x62A5;<code>Region is not online</code>&#x7684;&#x5F02;&#x5E38;&#x3002;</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.hbase</span><span class="selector-class">.ipc</span><span class="selector-class">.RemoteWithExtrasException</span>(org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.hbase</span><span class="selector-class">.NotServingRegionException</span>): org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.hbase</span><span class="selector-class">.NotServingRegionException</span>: Region HJSTATE,<span class="number">9223370681872375807</span>_199999,<span class="number">1459388712948</span><span class="selector-class">.cfc561817b17589e451b2d585105580a</span>. is not online on hbaseserver1,<span class="number">60020</span>,<span class="number">1473686838114</span></div><div class="line">at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.hbase</span><span class="selector-class">.regionserver</span><span class="selector-class">.HRegionServer</span><span class="selector-class">.getRegionByEncodedName</span>(HRegionServer<span class="selector-class">.java</span>:<span class="number">2920</span>)</div><div class="line">at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.hbase</span><span class="selector-class">.regionserver</span><span class="selector-class">.RSRpcServices</span><span class="selector-class">.getRegion</span>(RSRpcServices<span class="selector-class">.java</span>:<span class="number">1053</span>)</div><div class="line">at org<span class="selector-class">.apache</span><span class="selector-class">.hadoop</span><span class="selector-class">.hbase</span><span class="selector-class">.regionserver</span><span class="selector-class">.RSRpcServices</span><span class="selector-class">.scan</span>(RSRpcServices<span class="selector-class">.java</span>:<span class="number">2385</span>)</div><div class="line">...</div></pre></td></tr></table></figure>
+<p>&#x9996;&#x5148;&#x68C0;&#x67E5;&#x4E86;HDFS&#x662F;&#x5426;&#x5B58;&#x5728;&#x6570;&#x636E;&#x4E22;&#x5931;&#x7684;&#x60C5;&#x51B5;&#xFF0C;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hdfs fsck -list-corruptfileblocks</div></pre></td></tr></table></figure>
+<p>&#x6CA1;&#x6709;&#x53D1;&#x73B0;&#x6709;&#x574F;&#x5757;&#x3002;</p>
+<p>&#x7136;&#x540E;&#x68C0;&#x67E5;hbase&#x96C6;&#x7FA4;&#x72B6;&#x6001;&#xFF0C;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hbase hbck</div></pre></td></tr></table></figure>
+<p>&#x679C;&#x7136;&#x51FA;&#x73B0;&#x4E00;&#x4E9B;ERROR&#x4FE1;&#x606F;&#xFF0C;&#x8FDB;&#x884C;&#x4FEE;&#x590D;&#xFF0C;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hbase hbck -repair</div></pre></td></tr></table></figure>
+<blockquote>
+<p>HBase&#x67D0;&#x4E9B;&#x6B63;&#x5E38;&#x6D41;&#x7A0B;(Region split, Region assign&#x7B49;)&#xFF0C;&#x4F1A;&#x5BFC;&#x81F4;HBCK&#x68C0;&#x67E5;&#x51FA;&#x96C6;&#x7FA4;&#x72B6;&#x6001;&#x4E3A;&#x5F02;&#x5E38;&#x3002;&#x8981;&#x786E;&#x5B9A;&#x96C6;&#x7FA4;&#x5F02;&#x5E38;&#xFF0C;&#x6700;&#x597D;&#x8FDE;&#x7EED;&#x6267;&#x884C;HBCK&#xFF0C;&#x4E14;&#x6BCF;&#x6B21;&#x5F02;&#x5E38;&#x90FD;&#x76F8;&#x540C;&#xFF0C;&#x624D;&#x80FD;&#x786E;&#x5B9A;&#x96C6;&#x7FA4;&#x51FA;&#x73B0;&#x5F02;&#x5E38;&#x3002;</p>
+</blockquote>
+<p>hbck&#x547D;&#x4EE4;&#x8BE6;&#x60C5;&#x67E5;&#x8BE2;&#x5B98;&#x7F51;<a href="http://hbase.apache.org/book.html#hbck.in.depth" target="_blank" rel="external">http://hbase.apache.org/book.html#hbck.in.depth</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/09/12/hbase-meta-repair/" data-id="cit0xnl3j002vuh9ku7e6y3ia" class="article-share-link" data-share="baidu" data-title="HBase数据丢失恢复">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/09/12/hbase-meta-repair/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+        <span id="busuanzi_container_page_pv" style='display:none;float:right;margin-right:20px;color:#999;'>view <span id="busuanzi_value_page_pv"></span> times</span>
+      
+  
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hbase/">hbase</a></li></ul>
+
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/09/09/how-to-rename-hbase-table/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Hbase修改表名</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-  
-    </div></section>
-  
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/09/12/hbase-meta-repair/" data-title="HBase数据丢失恢复" data-url="http://wzktravel.github.io/2016/09/12/hbase-meta-repair/"></div>
+  </section>
+
 </section>
       
       <aside id="sidebar">
