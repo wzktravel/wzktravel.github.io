@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>hadoop lzo介绍和使用 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="整理一下lzo相关知识和一些使用方法。附上对指定目录下日志进行lzo压缩的代码：https://github.com/wzktravel/hadoop-codec">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hadoop lzo介绍和使用">
+<meta property="og:url" content="http://wzktravel.github.io/2016/09/19/hadoop-lzo/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="整理一下lzo相关知识和一些使用方法。附上对指定目录下日志进行lzo压缩的代码：https://github.com/wzktravel/hadoop-codec">
+<meta property="og:updated_time" content="2016-09-19T02:20:27.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="hadoop lzo介绍和使用">
+<meta name="twitter:description" content="整理一下lzo相关知识和一些使用方法。附上对指定目录下日志进行lzo压缩的代码：https://github.com/wzktravel/hadoop-codec">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--<link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">-->
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  <!-- -->
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-hadoop-lzo" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/09/19/hadoop-lzo/" class="article-date">
+  <time datetime="2016-09-19T01:59:25.000Z" itemprop="datePublished">2016-09-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      hadoop lzo介绍和使用
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&#x6574;&#x7406;&#x4E00;&#x4E0B;lzo&#x76F8;&#x5173;&#x77E5;&#x8BC6;&#x548C;&#x4E00;&#x4E9B;&#x4F7F;&#x7528;&#x65B9;&#x6CD5;&#x3002;<br>&#x9644;&#x4E0A;&#x5BF9;&#x6307;&#x5B9A;&#x76EE;&#x5F55;&#x4E0B;&#x65E5;&#x5FD7;&#x8FDB;&#x884C;lzo&#x538B;&#x7F29;&#x7684;&#x4EE3;&#x7801;&#xFF1A;<a href="https://github.com/wzktravel/hadoop-codec" target="_blank" rel="external">https://github.com/wzktravel/hadoop-codec</a><br><a id="more"></a></p>
+<blockquote>
+<p>LZO is a compression codec which gives better compression and decompression speed than gzip, and also the capability to split. LZO allows this because its composed of many smaller (~256K) blocks of compressed data, allowing jobs to be split along block boundaries, as opposed to gzip where the dictionary for the whole file is written at the top.</p>
+<p>When you specify mapred.output.compression.codec as LzoCodec, hadoop will generate .lzo_deflate files. These contain the raw compressed data without any header, and cannot be decompressed with lzop -d command. Hadoop can read these files in the map phase, but this makes your life hard.</p>
+<p>When you specify LzopCodec as the compression.codec, hadoop will generate .lzo files. These contain the header and can be decompressed using lzop -d</p>
+<p>However, neither .lzo nor .lzo_deflate files are splittable by default. This is where LzoIndexer comes into play. It generates an index file which tells you where the record boundary is. This way, multiple map tasks can process the same file.</p>
+<p>See <a href="http://blog.cloudera.com/blog/2009/11/hadoop-at-twitter-part-1-splittable-lzo-compression/" target="_blank" rel="external">this cloudera blog post</a> and <a href="https://github.com/twitter/hadoop-lzo/blob/master/src/main/java/com/hadoop/compression/lzo/LzoIndexer.java" target="_blank" rel="external">LzoIndexer</a> for more info.</p>
+</blockquote>
+<h2 id="&#x521B;&#x5EFA;&#x7D22;&#x5F15;"><a href="#&#x521B;&#x5EFA;&#x7D22;&#x5F15;" class="headerlink" title="&#x521B;&#x5EFA;&#x7D22;&#x5F15;"></a>&#x521B;&#x5EFA;&#x7D22;&#x5F15;</h2><p>lzo&#x683C;&#x5F0F;&#x9ED8;&#x8BA4;&#x662F;&#x4E0D;&#x652F;&#x6301;splittable&#x7684;&#xFF0C;&#x9700;&#x8981;&#x4E3A;&#x5176;&#x6DFB;&#x52A0;&#x7D22;&#x5F15;&#x6587;&#x4EF6;&#xFF0C;&#x624D;&#x80FD;&#x652F;&#x6301;&#x591A;&#x4E2A;map&#x5E76;&#x884C;&#x5BF9;lzo&#x6587;&#x4EF6;&#x8FDB;&#x884C;&#x5904;&#x7406;</p>
+<h3 id="mapreduce&#x8F93;&#x51FA;&#x65F6;&#x521B;&#x5EFA;&#x7D22;&#x5F15;"><a href="#MapReduce&#x8F93;&#x51FA;&#x65F6;&#x521B;&#x5EFA;&#x7D22;&#x5F15;" class="headerlink" title="MapReduce&#x8F93;&#x51FA;&#x65F6;&#x521B;&#x5EFA;&#x7D22;&#x5F15;"></a>MapReduce&#x8F93;&#x51FA;&#x65F6;&#x521B;&#x5EFA;&#x7D22;&#x5F15;</h3><ol>
+<li><p>&#x4F7F;&#x7528;lzo&#x7D22;&#x5F15;&#x751F;&#x6210;&#x5668;</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// &#x4F7F;&#x7528;lzo&#x7D22;&#x5F15;&#x751F;&#x6210;&#x5668;</span></div><div class="line">LzoIndexer lzoIndexer = <span class="keyword">new</span> LzoIndexer(conf);</div><div class="line">lzoIndexer.index(<span class="keyword">new</span> Path(outputPath));</div></pre></td></tr></table></figure>
+</li>
+<li><p>&#x6216;&#x8005;&#x4F7F;&#x7528;&#x5206;&#x5E03;&#x5F0F;&#x7D22;&#x5F15;&#x751F;&#x6210;&#x5668;</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">DistributedLzoIndexer lzoIndexer = <span class="keyword">new</span> DistributedLzoIndexer();</div><div class="line">lzoIndexer.setConf(conf);</div><div class="line">lzoIndexer.run(<span class="keyword">new</span> String[]{outputPath});</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="&#x5BF9;&#x5DF2;&#x7ECF;&#x662F;lzo&#x7684;&#x6587;&#x4EF6;&#x5EFA;&#x7ACB;&#x7D22;&#x5F15;"><a href="#&#x5BF9;&#x5DF2;&#x7ECF;&#x662F;lzo&#x7684;&#x6587;&#x4EF6;&#x5EFA;&#x7ACB;&#x7D22;&#x5F15;" class="headerlink" title="&#x5BF9;&#x5DF2;&#x7ECF;&#x662F;lzo&#x7684;&#x6587;&#x4EF6;&#x5EFA;&#x7ACB;&#x7D22;&#x5F15;"></a>&#x5BF9;&#x5DF2;&#x7ECF;&#x662F;lzo&#x7684;&#x6587;&#x4EF6;&#x5EFA;&#x7ACB;&#x7D22;&#x5F15;</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">## &#x5355;&#x673A;&#x7248;</span></div><div class="line">$ hadoop jar /opt/cloudera/parcels/GPLEXTRAS/lib/hadoop/lib/hadoop-lzo.jar com.hadoop.compression.lzo.LzoIndexer /path/to/lzo/part-00000.lzo</div><div class="line"></div><div class="line"><span class="comment">## &#x5206;&#x5E03;&#x5F0F;&#x7248;</span></div><div class="line">$ hadoop jar /opt/cloudera/parcels/GPLEXTRAS/lib/hadoop/lib/hadoop-lzo.jar com.hadoop.compression.lzo.DistributedLzoIndexer /path/to/lzo/part-00000.lzo</div></pre></td></tr></table></figure>
+<p>&#x7D22;&#x5F15;&#x6587;&#x4EF6;&#x4E0E;&#x6E90;&#x6587;&#x4EF6;&#x5728;&#x76F8;&#x540C;&#x76EE;&#x5F55;&#x4E0B;&#x3002;</p>
+<h2 id="beachmark"><a href="#beachmark" class="headerlink" title="beachmark"></a>beachmark</h2><p>&#x4F7F;&#x7528;MapReduce&#x505A;wordcount</p>
+<table>
+<thead>
+<tr>
+<th>&#x8F93;&#x5165;</th>
+<th>&#x8F93;&#x5165;&#x5927;&#x5C0F;</th>
+<th>&#x8F93;&#x51FA;&#x5927;&#x5C0F;</th>
+<th>cpu</th>
+<th>memory</th>
+<th>map&#x8017;&#x65F6;</th>
+<th>reduce&#x8017;&#x65F6;</th>
+<th>&#x603B;&#x8017;&#x65F6;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Text</td>
+<td>70G</td>
+<td>55G</td>
+<td>190</td>
+<td>389G</td>
+<td>2&#x5206;4&#x79D2;</td>
+<td>10&#x5206;15&#x79D2;</td>
+<td>12&#x5206;24&#x79D2;</td>
+</tr>
+<tr>
+<td>Lzo</td>
+<td>4.3G</td>
+<td>3.1G</td>
+<td>36</td>
+<td>78G</td>
+<td>1&#x5206;55&#x79D2;</td>
+<td>6&#x5206;11&#x79D2;</td>
+<td>8&#x5206;10&#x79D2;</td>
+</tr>
+<tr>
+<td>&#x6BD4;&#x7387;</td>
+<td>6.14%</td>
+<td>5.64%</td>
+<td>18.95%</td>
+<td>20.05%</td>
+<td>92.74%</td>
+<td>60.33%</td>
+<td>65.86%</td>
+</tr>
+</tbody>
+</table>
+<h2 id="&#x5982;&#x4F55;&#x4F7F;&#x7528;lzo"><a href="#&#x5982;&#x4F55;&#x4F7F;&#x7528;lzo" class="headerlink" title="&#x5982;&#x4F55;&#x4F7F;&#x7528;lzo"></a>&#x5982;&#x4F55;&#x4F7F;&#x7528;lzo</h2><h3 id="java"><a href="#java" class="headerlink" title="java"></a>java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">compress</span><span class="params">(String codecClassName)</span> <span class="keyword">throws</span> Exception </span>{</div><div class="line">    Class&lt;?&gt; codecClass = Class.forName(codecClassName);</div><div class="line">    Configuration conf = <span class="keyword">new</span> Configuration();</div><div class="line">    FileSystem fs = FileSystem.get(conf);</div><div class="line">    CompressionCodec codec = (CompressionCodec)ReflectionUtils.newInstance(codecClass, conf);</div><div class="line">    <span class="comment">//&#x6307;&#x5B9A;&#x538B;&#x7F29;&#x6587;&#x4EF6;&#x8DEF;&#x5F84;</span></div><div class="line">    FSDataOutputStream outputStream = fs.create(<span class="keyword">new</span> Path(/user/hadoop/text.gz));</div><div class="line">    <span class="comment">//&#x6307;&#x5B9A;&#x8981;&#x88AB;&#x538B;&#x7F29;&#x7684;&#x6587;&#x4EF6;&#x8DEF;&#x5F84;</span></div><div class="line">    FSDataInputStream in = fs.open(<span class="keyword">new</span> Path(/user/hadoop/aa.txt));</div><div class="line">    <span class="comment">//&#x521B;&#x5EFA;&#x538B;&#x7F29;&#x8F93;&#x51FA;&#x6D41;</span></div><div class="line">    CompressionOutputStream out = codec.createOutputStream(outputStream);</div><div class="line">    IOUtils.copyBytes(in, out, conf);</div><div class="line">    IOUtils.closeStream(in);</div><div class="line">    IOUtils.closeStream(out);</div><div class="line">}</div></pre></td></tr></table></figure>
+<h3 id="mapreduce"><a href="#MapReduce" class="headerlink" title="MapReduce"></a>MapReduce</h3><h4 id="&#x8BFB;&#x53D6;lzo&#x6587;&#x4EF6;"><a href="#&#x8BFB;&#x53D6;lzo&#x6587;&#x4EF6;" class="headerlink" title="&#x8BFB;&#x53D6;lzo&#x6587;&#x4EF6;"></a>&#x8BFB;&#x53D6;lzo&#x6587;&#x4EF6;</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">job.setInputFormatClass(LzoTextInputFormat.class);</div></pre></td></tr></table></figure>
+<h4 id="map&#x4E2D;&#x95F4;&#x7ED3;&#x679C;&#x4F7F;&#x7528;lzo&#x538B;&#x7F29;"><a href="#map&#x4E2D;&#x95F4;&#x7ED3;&#x679C;&#x4F7F;&#x7528;lzo&#x538B;&#x7F29;" class="headerlink" title="map&#x4E2D;&#x95F4;&#x7ED3;&#x679C;&#x4F7F;&#x7528;lzo&#x538B;&#x7F29;"></a>map&#x4E2D;&#x95F4;&#x7ED3;&#x679C;&#x4F7F;&#x7528;lzo&#x538B;&#x7F29;</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">conf.set(<span class="string">&quot;mapreduce.map.output.compress&quot;</span>, <span class="string">&quot;true&quot;</span>);</div><div class="line">conf.set(<span class="string">&quot;mapreduce.map.output.compress.codec&quot;</span>, <span class="string">&quot;com.hadoop.compression.lzo.LzoCodec&quot;</span>);</div></pre></td></tr></table></figure>
+<h4 id="&#x8F93;&#x51FA;lzo&#x6587;&#x4EF6;"><a href="#&#x8F93;&#x51FA;lzo&#x6587;&#x4EF6;" class="headerlink" title="&#x8F93;&#x51FA;lzo&#x6587;&#x4EF6;"></a>&#x8F93;&#x51FA;lzo&#x6587;&#x4EF6;</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">FileOutputFormat.setCompressOutput(job, <span class="keyword">true</span>);</div><div class="line">FileOutputFormat.setOutputCompressorClass(job, LzopCodec.class);</div><div class="line"><span class="keyword">int</span> result = job.waitForCompletion(<span class="keyword">true</span>) ? <span class="number">0</span> : <span class="number">1</span>;</div><div class="line"><span class="comment">// &#x4E0A;&#x9762;&#x7684;&#x8BED;&#x53E5;&#x6267;&#x884C;&#x5B8C;&#x6210;&#x540E;&#xFF0C;&#x4F1A;&#x751F;&#x6210;&#x6700;&#x540E;&#x7684;&#x8F93;&#x51FA;&#x6587;&#x4EF6;&#xFF0C;&#x9700;&#x8981;&#x5728;&#x6B64;&#x57FA;&#x7840;&#x4E0A;&#x6DFB;&#x52A0;lzo&#x7684;&#x7D22;&#x5F15;</span></div><div class="line"><span class="comment">// &#x4F7F;&#x7528;lzo&#x7D22;&#x5F15;&#x751F;&#x6210;&#x5668;</span></div><div class="line">LzoIndexer lzoIndexer = <span class="keyword">new</span> LzoIndexer(conf);</div><div class="line">lzoIndexer.index(<span class="keyword">new</span> Path(outputPath));</div><div class="line"><span class="comment">// &#x6216;&#x8005;&#x4F7F;&#x7528;&#x5206;&#x5E03;&#x5F0F;&#x7D22;&#x5F15;&#x751F;&#x6210;&#x5668;</span></div><div class="line"><span class="comment">// DistributedLzoIndexer lzoIndexer = new DistributedLzoIndexer();</span></div><div class="line"><span class="comment">// lzoIndexer.setConf(conf);</span></div><div class="line"><span class="comment">// lzoIndexer.run(new String[]{outputPath});</span></div></pre></td></tr></table></figure>
+<h3 id="spark"><a href="#Spark" class="headerlink" title="Spark"></a>Spark</h3><h4 id="&#x8BFB;&#x53D6;lzo&#x6587;&#x4EF6;"><a href="#&#x8BFB;&#x53D6;lzo&#x6587;&#x4EF6;-1" class="headerlink" title="&#x8BFB;&#x53D6;lzo&#x6587;&#x4EF6;"></a>&#x8BFB;&#x53D6;lzo&#x6587;&#x4EF6;</h4><p>spark&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x8BFB;&#x53D6;lzo&#x6587;&#x4EF6;&#x3002;</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">scala&gt; <span class="keyword">val</span> lzoFile = sc.textFile(<span class="string">&quot;/path/to/lzo/*.lzo&quot;</span>)</div><div class="line">scala&gt; <span class="keyword">val</span> lzoWordCounts = lzoFile.flatMap(line =&gt; line.split(<span class="string">&quot; &quot;</span>)).map(word =&gt; (word, <span class="number">1</span>)).reduceByKey((a,b) =&gt; a + b)</div><div class="line">scala&gt; lzoWordCounts.collect()</div></pre></td></tr></table></figure>
+<h4 id="&#x8F93;&#x51FA;lzo&#x6587;&#x4EF6;"><a href="#&#x8F93;&#x51FA;lzo&#x6587;&#x4EF6;-1" class="headerlink" title="&#x8F93;&#x51FA;lzo&#x6587;&#x4EF6;"></a>&#x8F93;&#x51FA;lzo&#x6587;&#x4EF6;</h4><p>save&#x65F6;&#x6307;&#x5B9A;&#x8F93;&#x51FA;&#x683C;&#x5F0F;&#xFF0C;<code>classOf[com.hadoop.compression.lzo.LzopCodec]</code>&#x3002;</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> textFile = sc.textFile(<span class="string">&quot;/xxx/in&quot;</span>)</div><div class="line">textFile.saveAsTextFile(<span class="string">&quot;/xxx/out/&quot;</span>, classOf[com.hadoop.compression.lzo.<span class="type">LzopCodec</span>])</div></pre></td></tr></table></figure>
+<h3 id="hive"><a href="#Hive" class="headerlink" title="Hive"></a>Hive</h3><h4 id="&#x521B;&#x5EFA;&#x8868;&#x65F6;&#x6307;&#x5B9A;&#x4E3A;lzo&#x5B58;&#x50A8;&#x683C;&#x5F0F;"><a href="#&#x521B;&#x5EFA;&#x8868;&#x65F6;&#x6307;&#x5B9A;&#x4E3A;lzo&#x5B58;&#x50A8;&#x683C;&#x5F0F;" class="headerlink" title="&#x521B;&#x5EFA;&#x8868;&#x65F6;&#x6307;&#x5B9A;&#x4E3A;lzo&#x5B58;&#x50A8;&#x683C;&#x5F0F;"></a>&#x521B;&#x5EFA;&#x8868;&#x65F6;&#x6307;&#x5B9A;&#x4E3A;lzo&#x5B58;&#x50A8;&#x683C;&#x5F0F;</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> foo (</div><div class="line">     columnA <span class="keyword">string</span>,</div><div class="line">     columnB <span class="keyword">string</span></div><div class="line">) PARTITIONED <span class="keyword">BY</span> (<span class="built_in">date</span> <span class="keyword">string</span>)</div><div class="line"><span class="keyword">ROW</span> <span class="keyword">FORMAT</span> <span class="keyword">DELIMITED</span></div><div class="line"><span class="keyword">FIELDS</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">&quot;\t&quot;</span></div><div class="line"><span class="keyword">STORED</span> <span class="keyword">AS</span></div><div class="line">INPUTFORMAT <span class="string">&quot;com.hadoop.mapred.DeprecatedLzoTextInputFormat&quot;</span></div><div class="line">OUTPUTFORMAT <span class="string">&quot;org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat&quot;</span></div><div class="line">LOCATION <span class="string">&apos;/path/to/hive/tables/foo&apos;</span>;</div></pre></td></tr></table></figure>
+<h4 id="&#x4FEE;&#x6539;&#x8868;&#x4E3A;lzo&#x5B58;&#x50A8;&#x683C;&#x5F0F;"><a href="#&#x4FEE;&#x6539;&#x8868;&#x4E3A;lzo&#x5B58;&#x50A8;&#x683C;&#x5F0F;" class="headerlink" title="&#x4FEE;&#x6539;&#x8868;&#x4E3A;lzo&#x5B58;&#x50A8;&#x683C;&#x5F0F;"></a>&#x4FEE;&#x6539;&#x8868;&#x4E3A;lzo&#x5B58;&#x50A8;&#x683C;&#x5F0F;</h4><p>&#x5BF9;&#x4E8E;&#x5DF2;&#x7ECF;&#x521B;&#x5EFA;&#x597D;&#x7684;&#x8868;&#xFF0C;&#x4F7F;&#x7528;alter&#x8BED;&#x53E5;&#xFF0C;&#x5C06;&#x5176;&#x4FEE;&#x6539;&#x4E3A;lzo&#x5B58;&#x50A8;&#x683C;&#x5F0F;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> foo</div><div class="line"><span class="keyword">SET</span> FILEFORMAT</div><div class="line">INPUTFORMAT <span class="string">&quot;com.hadoop.mapred.DeprecatedLzoTextInputFormat&quot;</span></div><div class="line">OUTPUTFORMAT <span class="string">&quot;org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat&quot;</span>;</div></pre></td></tr></table></figure>
+<h4 id="&#x63D2;&#x5165;&#x6570;&#x636E;"><a href="#&#x63D2;&#x5165;&#x6570;&#x636E;" class="headerlink" title="&#x63D2;&#x5165;&#x6570;&#x636E;"></a>&#x63D2;&#x5165;&#x6570;&#x636E;</h4><p>&#x9700;&#x8981;&#x6DFB;&#x52A0;&#x4E0B;&#x9762;&#x4E24;&#x4E2A;&#x53C2;&#x6570;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SET</span> hive.exec.compress.output=<span class="literal">true</span>;</div><div class="line"><span class="keyword">SET</span> mapred.output.compression.codec=com.hadoop.compression.lzo.LzopCodec;</div></pre></td></tr></table></figure>
+<h2 id="hadoop&#x538B;&#x7F29;&#x65B9;&#x6848;"><a href="#hadoop&#x538B;&#x7F29;&#x65B9;&#x6848;" class="headerlink" title="hadoop&#x538B;&#x7F29;&#x65B9;&#x6848;"></a>hadoop&#x538B;&#x7F29;&#x65B9;&#x6848;</h2><ol>
+<li>&#x5355;&#x7EAF;hdfs&#x6587;&#x4EF6;&#xFF0C;&#x63A8;&#x8350;&#x4F7F;&#x7528;lzo&#x683C;&#x5F0F;&#xFF0C;&#x89E3;&#x538B;&#x7F29;&#x548C;&#x538B;&#x7F29;&#x6BD4;&#x90FD;&#x6BD4;&#x8F83;&#x5747;&#x8861;&#xFF0C;&#x8FD8;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x4F7F;&#x7528;hadoop fs -text xx.log &#x67E5;&#x770B;&#x6587;&#x4EF6;&#x5185;&#x5BB9;</li>
+<li>hive&#x63A8;&#x8350;&#x4F7F;&#x7528;ORCfile</li>
+<li>Hbase&#x63A8;&#x8350;&#x4F7F;&#x7528;snappy&#x8FDB;&#x884C;&#x538B;&#x7F29;</li>
+<li>spark sql&#x548C;impala&#xFF0C;&#x63A8;&#x8350;&#x4F7F;&#x7528;parquet</li>
+</ol>
+<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ol>
+<li><a href="http://blog.cloudera.com/blog/2009/11/hadoop-at-twitter-part-1-splittable-lzo-compression/" target="_blank" rel="external">Hadoop at Twitter (part 1): Splittable LZO Compression</a></li>
+<li><a href="http://stackoverflow.com/questions/23560281/do-we-need-to-create-an-index-file-with-lzop-if-compression-type-is-record-ins" target="_blank" rel="external">Do we need to create an index file (with lzop) if compression type is RECORD instead of block?</a></li>
+<li><a href="https://www.quora.com/Whats-the-difference-between-the-LzoCodec-and-the-LzopCodec-in-Hadoop-LZO" target="_blank" rel="external">What&#x2019;s the difference between the LzoCodec and the LzopCodec in Hadoop-LZO?</a></li>
+<li><a href="http://www.cnblogs.com/liuling/p/2013-6-19-01.html" target="_blank" rel="external">HDFS&#x4E2D;&#x6587;&#x4EF6;&#x7684;&#x538B;&#x7F29;&#x4E0E;&#x89E3;&#x538B;</a></li>
+<li><a href="http://stackoverflow.com/questions/5571156/hadoop-how-to-compress-mapper-output-but-not-the-reducer-output" target="_blank" rel="external">Hadoop, how to compress mapper output but not the reducer output</a></li>
+<li><a href="http://blog.csdn.net/lastsweetop/article/details/9187721" target="_blank" rel="external">mapreduce&#x4E2D;&#x7684;&#x538B;&#x7F29;</a></li>
+<li><a href="https://hadoop.apache.org/docs/r2.6.0/hadoop-mapreduce-client/hadoop-mapreduce-client-core/mapred-default.xml" target="_blank" rel="external">mapred-default.xml</a></li>
+<li><a href="http://www.itweet.cn/2016/03/15/columnar-storage-parquet-and-orc/" target="_blank" rel="external">Hadoop&#x5217;&#x5F0F;&#x5B58;&#x50A8;&#x5F15;&#x64CE;Parquet/ORC&#x548C;snappy&#x538B;&#x7F29;</a></li>
+<li><a href="https://www.ibm.com/developerworks/cn/opensource/os-cn-hadoop-compression-analysis/" target="_blank" rel="external">IBM Developerworks: Hadoop &#x538B;&#x7F29;&#x5B9E;&#x73B0;&#x5206;&#x6790;</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/09/19/hadoop-lzo/" data-id="cit9f7gty002zsa9kp8kgoauf" class="article-share-link" data-share="baidu" data-title="hadoop lzo介绍和使用">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/09/19/hadoop-lzo/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+        <span id="busuanzi_container_page_pv" style='display:none;float:right;margin-right:20px;color:#999;'>view <span id="busuanzi_value_page_pv"></span> times</span>
+      
+  
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/09/12/hbase-meta-repair/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">HBase数据丢失恢复</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/09/19/hadoop-lzo/" data-title="hadoop lzo介绍和使用" data-url="http://wzktravel.github.io/2016/09/19/hadoop-lzo/"></div>
+  </section>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hbase/">hbase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jodatime/">jodatime</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postgres/">postgres</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/schedule/">schedule</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread/">thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 15.71px;">cdh</a> <a href="/tags/elasticsearch/" style="font-size: 12.86px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.43px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.43px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hbase/" style="font-size: 11.43px;">hbase</a> <a href="/tags/hdfs/" style="font-size: 12.86px;">hdfs</a> <a href="/tags/hive/" style="font-size: 12.86px;">hive</a> <a href="/tags/java/" style="font-size: 14.29px;">java</a> <a href="/tags/jodatime/" style="font-size: 10px;">jodatime</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 12.86px;">kerberos</a> <a href="/tags/linux/" style="font-size: 18.57px;">linux</a> <a href="/tags/mac/" style="font-size: 10px;">mac</a> <a href="/tags/postgres/" style="font-size: 10px;">postgres</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/scala/" style="font-size: 12.86px;">scala</a> <a href="/tags/schedule/" style="font-size: 11.43px;">schedule</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 17.14px;">shell</a> <a href="/tags/spark/" style="font-size: 12.86px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/thread/" style="font-size: 10px;">thread</a> <a href="/tags/vim/" style="font-size: 11.43px;">vim</a> <a href="/tags/yarn/" style="font-size: 12.86px;">yarn</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/09/19/hadoop-lzo/">hadoop lzo介绍和使用</a>
+          </li>
+        
+          <li>
+            <a href="/2016/09/12/hbase-meta-repair/">HBase数据丢失恢复</a>
+          </li>
+        
+          <li>
+            <a href="/2016/09/09/how-to-rename-hbase-table/">Hbase修改表名</a>
+          </li>
+        
+          <li>
+            <a href="/2016/09/01/elasticsearch-upgrade/">elasticsearch升级过程</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/24/auto-login-using-ssh/">自动登录到linux机器</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="" target="_blank">作者</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+      .
+      <span id="busuanzi_container_site_pv" style="display:none">view <span id="busuanzi_value_site_pv"></span> times</span>
+    </div>
+  </div>
+</footer>
+
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>
