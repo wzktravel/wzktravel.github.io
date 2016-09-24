@@ -4,21 +4,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Cloudera中配置hadoop_lzo | wzktravel</title>
+  <title>mac隐藏dock上的程序图标 | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Hadoop经常用于处理大量的数据，如果期间的输出数据、中间数据能压缩存储，对系统的I/O性能会有提升。综合考虑压缩、解压速度、是否支持split，目前lzo是最好的选择。下面主要介绍在Cloudera中如何配置lzo。">
+  <meta name="description" content="&amp;#x53F3;&amp;#x51FB;&amp;#x7A0B;&amp;#x5E8F;&amp;#x663E;&amp;#x793A;&amp;#x5305;&amp;#x5185;&amp;#x5BB9;&amp;#x3002;
+&amp;#x5728; Contents &amp;#x6587;&amp;#x4EF6;&amp;#x5939;&amp;#x4E2D;&amp;#x627E;&amp;#x5230; Info.plist &amp;#x6587;&amp;#x4EF6;&amp;#xFF0C;&amp;#x4F7F;&amp;#x7528;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Cloudera中配置hadoop_lzo">
-<meta property="og:url" content="http://wzktravel.github.io/2015/12/10/hadoop-lzo/index.html">
+<meta property="og:title" content="mac隐藏dock上的程序图标">
+<meta property="og:url" content="http://wzktravel.github.io/2016/09/23/how-to-hide-application-icon/index.html">
 <meta property="og:site_name" content="wzktravel">
-<meta property="og:description" content="Hadoop经常用于处理大量的数据，如果期间的输出数据、中间数据能压缩存储，对系统的I/O性能会有提升。综合考虑压缩、解压速度、是否支持split，目前lzo是最好的选择。下面主要介绍在Cloudera中如何配置lzo。">
-<meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/lzo_classpath.png">
-<meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/lzo_env.png">
-<meta property="og:updated_time" content="2016-08-17T11:28:43.000Z">
+<meta property="og:description" content="&amp;#x53F3;&amp;#x51FB;&amp;#x7A0B;&amp;#x5E8F;&amp;#x663E;&amp;#x793A;&amp;#x5305;&amp;#x5185;&amp;#x5BB9;&amp;#x3002;
+&amp;#x5728; Contents &amp;#x6587;&amp;#x4EF6;&amp;#x5939;&amp;#x4E2D;&amp;#x627E;&amp;#x5230; Info.plist &amp;#x6587;&amp;#x4EF6;&amp;#xFF0C;&amp;#x4F7F;&amp;#x7528;">
+<meta property="og:updated_time" content="2016-09-24T12:08:00.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Cloudera中配置hadoop_lzo">
-<meta name="twitter:description" content="Hadoop经常用于处理大量的数据，如果期间的输出数据、中间数据能压缩存储，对系统的I/O性能会有提升。综合考虑压缩、解压速度、是否支持split，目前lzo是最好的选择。下面主要介绍在Cloudera中如何配置lzo。">
-<meta name="twitter:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/lzo_classpath.png">
+<meta name="twitter:title" content="mac隐藏dock上的程序图标">
+<meta name="twitter:description" content="&amp;#x53F3;&amp;#x51FB;&amp;#x7A0B;&amp;#x5E8F;&amp;#x663E;&amp;#x793A;&amp;#x5305;&amp;#x5185;&amp;#x5BB9;&amp;#x3002;
+&amp;#x5728; Contents &amp;#x6587;&amp;#x4EF6;&amp;#x5939;&amp;#x4E2D;&amp;#x627E;&amp;#x5230; Info.plist &amp;#x6587;&amp;#x4EF6;&amp;#xFF0C;&amp;#x4F7F;&amp;#x7528;">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -74,10 +74,10 @@
   </div>
 </header>
     <div class="outer">
-      <section id="main"><article id="post-hadoop-lzo" class="article article-type-post" itemscope itemprop="blogPost">
+      <section id="main"><article id="post-how-to-hide-application-icon" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2015/12/10/hadoop-lzo/" class="article-date">
-  <time datetime="2015-12-10T13:09:53.000Z" itemprop="datePublished">2015-12-10</time>
+    <a href="/2016/09/23/how-to-hide-application-icon/" class="article-date">
+  <time datetime="2016-09-23T11:31:38.000Z" itemprop="datePublished">2016-09-23</time>
 </a>
     
   </div>
@@ -88,7 +88,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Cloudera中配置hadoop_lzo
+      mac隐藏dock上的程序图标
     </h1>
   
 
@@ -96,37 +96,21 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Hadoop&#x7ECF;&#x5E38;&#x7528;&#x4E8E;&#x5904;&#x7406;&#x5927;&#x91CF;&#x7684;&#x6570;&#x636E;&#xFF0C;&#x5982;&#x679C;&#x671F;&#x95F4;&#x7684;&#x8F93;&#x51FA;&#x6570;&#x636E;&#x3001;&#x4E2D;&#x95F4;&#x6570;&#x636E;&#x80FD;&#x538B;&#x7F29;&#x5B58;&#x50A8;&#xFF0C;&#x5BF9;&#x7CFB;&#x7EDF;&#x7684;I/O&#x6027;&#x80FD;&#x4F1A;&#x6709;&#x63D0;&#x5347;&#x3002;&#x7EFC;&#x5408;&#x8003;&#x8651;&#x538B;&#x7F29;&#x3001;&#x89E3;&#x538B;&#x901F;&#x5EA6;&#x3001;&#x662F;&#x5426;&#x652F;&#x6301;split&#xFF0C;&#x76EE;&#x524D;lzo&#x662F;&#x6700;&#x597D;&#x7684;&#x9009;&#x62E9;&#x3002;&#x4E0B;&#x9762;&#x4E3B;&#x8981;&#x4ECB;&#x7ECD;&#x5728;Cloudera&#x4E2D;&#x5982;&#x4F55;&#x914D;&#x7F6E;lzo&#x3002;<br><a id="more"></a></p>
-<h2 id="&#x624B;&#x5DE5;&#x7F16;&#x8BD1;&#x914D;&#x7F6E;"><a href="#&#x624B;&#x5DE5;&#x7F16;&#x8BD1;&#x914D;&#x7F6E;" class="headerlink" title="&#x624B;&#x5DE5;&#x7F16;&#x8BD1;&#x914D;&#x7F6E;"></a>&#x624B;&#x5DE5;&#x7F16;&#x8BD1;&#x914D;&#x7F6E;</h2><p>&#x624B;&#x5DE5;&#x5BF9;lzo&#x8FDB;&#x884C;&#x7F16;&#x8BD1;&#x548C;&#x5BF9;&#x96C6;&#x7FA4;&#x8FDB;&#x884C;&#x914D;&#x7F6E;&#x7684;&#xFF0C;&#x53EF;&#x4EE5;&#x53C2;&#x8003;<a href="http://www.iteblog.com/archives/992" target="_blank" rel="external">Hadoop 2.2.0&#x5B89;&#x88C5;&#x548C;&#x914D;&#x7F6E;lzo</a>&#x3002;</p>
-<h2 id="cloudera&#x4E2D;&#x914D;&#x7F6E;"><a href="#Cloudera&#x4E2D;&#x914D;&#x7F6E;" class="headerlink" title="Cloudera&#x4E2D;&#x914D;&#x7F6E;"></a>Cloudera&#x4E2D;&#x914D;&#x7F6E;</h2><h3 id="&#x6DFB;&#x52A0;parcel&#x6E90;&#x4E0B;&#x8F7D;&#x5206;&#x914D;&#x6FC0;&#x6D3B;"><a href="#&#x6DFB;&#x52A0;parcel&#x6E90;&#xFF0C;&#x4E0B;&#x8F7D;&#xFF0C;&#x5206;&#x914D;&#xFF0C;&#x6FC0;&#x6D3B;" class="headerlink" title="&#x6DFB;&#x52A0;parcel&#x6E90;&#xFF0C;&#x4E0B;&#x8F7D;&#xFF0C;&#x5206;&#x914D;&#xFF0C;&#x6FC0;&#x6D3B;"></a>&#x6DFB;&#x52A0;parcel&#x6E90;&#xFF0C;&#x4E0B;&#x8F7D;&#xFF0C;&#x5206;&#x914D;&#xFF0C;&#x6FC0;&#x6D3B;</h3><ol>
-<li>&#x5728;cloudera manager&#x4E2D;&#x4FEE;&#x6539;<code>&#x8FDC;&#x7A0B; Parcel &#x5B58;&#x50A8;&#x5E93; URL</code>&#xFF0C;&#x6DFB;&#x52A0;<code>http://archive.cloudera.com/gplextras/parcels/latest</code>&#x3002;</li>
-<li>&#x5728;<code>&#x4E3B;&#x673A;--Parcel</code>tab&#x4E0B;&#xFF0C;&#x70B9;&#x51FB;<code>&#x68C0;&#x67E5;&#x65B0;parcel</code>&#x6309;&#x94AE;&#xFF0C;&#x5DE6;&#x4FA7;<code>&#x7B5B;&#x9009;&#x5668;</code>&#x4F1A;&#x51FA;&#x73B0;<code>HADOOP_LZO</code>&#xFF0C;&#x7136;&#x540E;&#x4E0B;&#x8F7D;&#x3001;&#x5206;&#x914D;&#x3001;&#x6FC0;&#x6D3B;&#x3002;&#x5206;&#x914D;&#x662F;&#x5C06;&#x6B64;parcel&#x5206;&#x53D1;&#x5230;&#x5404;&#x4E2A;&#x673A;&#x5668;&#x4E2D;&#xFF0C;&#x6FC0;&#x6D3B;&#x662F;&#x5728; <code>cloudera/parcels/</code>&#x76EE;&#x5F55;&#x4E0B;&#x5EFA;&#x7ACB;&#x5BF9;&#x76F8;&#x5173;parcel&#x7684;&#x8F6F;&#x94FE;&#x63A5;&#x3002;</li>
+        <ol>
+<li>&#x53F3;&#x51FB;&#x7A0B;&#x5E8F;&#x663E;&#x793A;&#x5305;&#x5185;&#x5BB9;&#x3002;</li>
+<li>&#x5728; Contents &#x6587;&#x4EF6;&#x5939;&#x4E2D;&#x627E;&#x5230; Info.plist &#x6587;&#x4EF6;&#xFF0C;&#x4F7F;&#x7528;&#x7F16;&#x8F91;&#x5668;&#x6253;&#x5F00;&#x3002;</li>
+<li>&#x6DFB;&#x52A0;<code>LSUIElement</code>&#x9879;&#xFF0C;&#x503C;&#x4E3A;1&#xFF0C;&#x91CD;&#x542F;&#x7A0B;&#x5E8F;&#x5373;&#x53EF;&#x3002;</li>
 </ol>
-<h3 id="hdfs&#x914D;&#x7F6E;"><a href="#HDFS&#x914D;&#x7F6E;" class="headerlink" title="HDFS&#x914D;&#x7F6E;"></a>HDFS&#x914D;&#x7F6E;</h3><p>&#x5728;<code>io.compression.codecs</code>&#x4E2D;&#x6DFB;&#x52A0;<code>com.hadoop.compression.lzo.LzoCodec</code>, <code>com.hadoop.compression.lzo.LzopCodec</code>&#x3002;</p>
-<h3 id="yarn&#x914D;&#x7F6E;"><a href="#yarn&#x914D;&#x7F6E;" class="headerlink" title="yarn&#x914D;&#x7F6E;"></a>yarn&#x914D;&#x7F6E;</h3><ol>
-<li><code>mapreduce.admin.user.env</code>&#x4E2D;&#x6DFB;&#x52A0;hadoop_lzo&#x94FE;&#x63A5;&#xFF1A; <code>/opt/cloudera/parcels/HADOOP_LZO/lib/hadoop/lib/native</code>&#x3002;</li>
-<li><code>yarn.app.mapreduce.am.admin.user.env</code>&#x4E2D;&#x6DFB;&#x52A0;hadoop_lzo&#x94FE;&#x63A5;&#xFF1A; <code>/opt/cloudera/parcels/HADOOP_LZO/lib/hadoop/lib/native</code>&#x3002;</li>
-<li><code>mapreduce.application.classpath</code>&#x4E2D;&#x6DFB;&#x52A0;hadoop_lzo lib&#xFF1A; <code>/opt/cloudera/parcels/HADOOP_LZO/lib/hadoop/lib/*</code>&#x3002;</li>
-<li><code>yarn.application.classpath</code>&#x4E2D;&#x6DFB;&#x52A0;hadoop_lzo lib&#xFF1A; <code>/opt/cloudera/parcels/HADOOP_LZO/lib/hadoop/lib/*</code>&#x3002;<br><img src="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/lzo_classpath.png" alt="classpath&#x914D;&#x7F6E;"><br><img src="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/lzo_env.png" alt="env&#x914D;&#x7F6E;"></li>
-</ol>
-<h3 id="oozie"><a href="#oozie" class="headerlink" title="oozie"></a>oozie</h3><p>oozie libpath&#x4E2D;&#x53EF;&#x80FD;&#x9700;&#x8981;&#x6DFB;&#x52A0;hadoop_lzo.jar&#x3002;</p>
-<h3 id="&#x5176;&#x4ED6;&#x6A21;&#x5757;"><a href="#&#x5176;&#x4ED6;&#x6A21;&#x5757;" class="headerlink" title="&#x5176;&#x4ED6;&#x6A21;&#x5757;"></a>&#x5176;&#x4ED6;&#x6A21;&#x5757;</h3><p>&#x5176;&#x4ED6;&#x8DD1;&#x5728;yarn&#x4E2D;&#x7684;&#x670D;&#x52A1;&#xFF0C;&#x53EA;&#x8981;&#x8DDF;&#x968F;&#x96C6;&#x7FA4;&#x91CD;&#x542F;&#x5373;&#x53EF;&#x3002;</p>
-<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;&#xFF1A;" class="headerlink" title="&#x53C2;&#x8003;&#xFF1A;"></a>&#x53C2;&#x8003;&#xFF1A;</h2><ul>
-<li>Hadoop 2.2.0&#x5B89;&#x88C5;&#x548C;&#x914D;&#x7F6E;lzo&#xFF1A;<a href="http://www.iteblog.com/archives/992" target="_blank" rel="external">http://www.iteblog.com/archives/992</a></li>
-<li>Cloudera Using the LZO Parcel:<br><a href="http://www.cloudera.com/content/www/en-us/documentation/archive/manager/4-x/4-8-3/Cloudera-Manager-Installation-Guide/cmig_install_LZO_Compression.html" target="_blank" rel="external">http://www.cloudera.com/content/www/en-us/documentation/archive/manager/4-x/4-8-3/Cloudera-Manager-Installation-Guide/cmig_install_LZO_Compression.html</a></li>
-<li>&#x53E6;&#x5916;&#x6709;lz4&#x538B;&#x7F29;&#x7B97;&#x6CD5;&#xFF0C;&#x5728;&#x538B;&#x7F29;&#x7387;&#x8FD1;&#x4F3C;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x6548;&#x7387;&#x66F4;&#x9AD8;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x8003;&#x8651;&#x3002;<br><a href="https://code.google.com/p/lz4/" target="_blank" rel="external">https://code.google.com/p/lz4/</a></li>
-<li>hadoop-lzo.jar&#x548C;hadoop-gpl-compression.jar&#x533A;&#x522B;&#xFF1A;<a href="http://guoyunsky.iteye.com/blog/1289475" target="_blank" rel="external">http://guoyunsky.iteye.com/blog/1289475</a></li>
-</ul>
-
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dict</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>LSUIElement<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>1<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">    ....</div><div class="line"><span class="tag">&lt;/<span class="name">dict</span>&gt;</span></div></pre></td></tr></table></figure>
       
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2015/12/10/hadoop-lzo/" data-id="cith5ibie0013k49kyb7v6cyn" class="article-share-link" data-share="baidu" data-title="Cloudera中配置hadoop_lzo">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/09/23/how-to-hide-application-icon/" data-id="cith5ibjv0030k49k3vhgjh8s" class="article-share-link" data-share="baidu" data-title="mac隐藏dock上的程序图标">分享到</a>
       
 
       
-        <a href="http://wzktravel.github.io/2015/12/10/hadoop-lzo/#ds-thread" class="article-comment-link">评论</a>
+        <a href="http://wzktravel.github.io/2016/09/23/how-to-hide-application-icon/#ds-thread" class="article-comment-link">评论</a>
       
 
       
@@ -134,7 +118,7 @@
       
   
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cdh/">cdh</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mac/">mac</a></li></ul>
 
     </footer>
   </div>
@@ -142,19 +126,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2015/12/11/flume-ng/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">
-        
-          flume-ng配置以及使用lzo
-        
-      </div>
-    </a>
   
-  
-    <a href="/2015/11/21/SimpleDateFormat/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2016/09/19/hadoop-lzo/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">SimpleDateFormat时区和语言环境</div>
+      <div class="article-nav-title">hadoop lzo介绍和使用</div>
     </a>
   
 </nav>
@@ -164,7 +139,7 @@
 
 
   <section id="comments">
-    <div id="ds-thread" class="ds-thread" data-thread-key="2015/12/10/hadoop-lzo/" data-title="Cloudera中配置hadoop_lzo" data-url="http://wzktravel.github.io/2015/12/10/hadoop-lzo/"></div>
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/09/23/how-to-hide-application-icon/" data-title="mac隐藏dock上的程序图标" data-url="http://wzktravel.github.io/2016/09/23/how-to-hide-application-icon/"></div>
   </section>
 
 </section>
