@@ -108,32 +108,32 @@
 <ul>
 <li>&#x4F7F;&#x7528;&#x5BC6;&#x7801;&#x5207;&#x6362;&#x7528;&#x6237;</li>
 </ul>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">kinit</span> username</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kinit username</div></pre></td></tr></table></figure>
 <p>&#x6B64;&#x547D;&#x4EE4;&#x9700;&#x8981;&#x8F93;&#x5165;&#x4F60;&#x5728;kerberos&#x4E2D;&#x7684;&#x5BC6;&#x7801;</p>
 <ul>
 <li>&#x4FEE;&#x6539;&#x5BC6;&#x7801;</li>
 </ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kpassword</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kpassword</div></pre></td></tr></table></figure>
 <ul>
 <li>&#x66F4;&#x65B0;credentials</li>
 </ul>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">kinit</span> -R</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kinit -R</div></pre></td></tr></table></figure>
 <ul>
 <li>&#x9500;&#x6BC1;credentials</li>
 </ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kdestroy</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kdestroy</div></pre></td></tr></table></figure>
 <ul>
 <li>&#x4F7F;&#x7528;keytab</li>
 </ul>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kinit -k -t user<span class="selector-class">.keytab</span> username</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kinit -k -t user.keytab username</div></pre></td></tr></table></figure>
 <p>&#x514D;&#x5BC6;&#x7801;&#x5207;&#x6362;&#x7528;&#x6237;&#xFF0C;&#x4F46;&#x662F;&#x9700;&#x8981;&#x63D0;&#x524D;&#x751F;&#x6210;&#x597D;keytab&#xFF0C;&#x5E76;&#x4FDD;&#x8BC1;&#x53EA;&#x6709;&#x81EA;&#x5DF1;&#x6709;&#x8BFB;&#x5199;&#x6743;&#x9650;&#x3002;</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">klist</span> <span class="selector-tag">-k</span> <span class="selector-tag">user</span><span class="selector-class">.keytab</span></div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">klist -k user.keytab</div></pre></td></tr></table></figure>
 <p>&#x67E5;&#x770B;&#x6B64;keytab&#x4E2D;&#x6240;&#x6709;principal</p>
 <h2 id="&#x7BA1;&#x7406;&#x5458;"><a href="#&#x7BA1;&#x7406;&#x5458;" class="headerlink" title="&#x7BA1;&#x7406;&#x5458;"></a>&#x7BA1;&#x7406;&#x5458;</h2><p>&#x53C2;&#x8003;<a href="http://web.mit.edu/kerberos/krb5-latest/doc/admin/database.html" target="_blank" rel="external">http://web.mit.edu/kerberos/krb5-latest/doc/admin/database.html</a></p>
 <p>&#x8FDB;&#x5165;kerberos&#x7BA1;&#x7406;&#x9875;&#x9762;&#xFF0C;&#x6709;&#x4E24;&#x79CD;&#x65B9;&#x5F0F;&#xFF1A;<br>&#x5728;Krb5 server&#x6240;&#x5728;&#x673A;&#x5668;&#x5E76;&#x4E14;&#x5F53;&#x524D;&#x7528;&#x6237;&#x662F;root&#x7684;&#x8BDD;&#xFF0C;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;<code>kadmin.local</code>&#x514D;&#x5BC6;&#x7801;&#x8FDB;&#x5165;&#xFF1B;&#x5F53;&#x524D;&#x7528;&#x6237;&#x662F;&#x975E;root&#x7528;&#x6237;&#x6216;&#x5728;&#x5176;&#x4ED6;&#x673A;&#x5668;&#x4E0A;&#x65F6;&#xFF0C;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;<code>kadmin $admin_user</code>&#x8FDB;&#x5165;&#xFF0C;&#x9700;&#x8981;&#x8F93;&#x5165;&#x6B64;admin&#x7528;&#x6237;&#x7684;&#x5BC6;&#x7801;&#x3002;<br>&#x5982;&#x679C;&#x9700;&#x8981;&#x76F4;&#x63A5;&#x6267;&#x884C;&#x547D;&#x4EE4;&#xFF0C;&#x4F7F;&#x7528;<code>-q</code>&#x53C2;&#x6570;</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kadmin<span class="selector-class">.local</span> -<span class="selector-tag">q</span> <span class="string">&quot;listprincs&quot;</span></div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kadmin.local -q &quot;listprincs&quot;</div></pre></td></tr></table></figure>
 <h3 id="&#x5217;&#x51FA;&#x6240;&#x6709;principal-list_principals-listprincs"><a href="#&#x5217;&#x51FA;&#x6240;&#x6709;principal-list-principals-listprincs" class="headerlink" title="&#x5217;&#x51FA;&#x6240;&#x6709;principal: list_principals, listprincs"></a>&#x5217;&#x51FA;&#x6240;&#x6709;principal: list_principals, listprincs</h3><p><strong> listprincs [expression] </strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">listprincs *<span class="built_in">test</span>*</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">listprincs *test*</div></pre></td></tr></table></figure>
 <h3 id="&#x67E5;&#x770B;principal&#x4FE1;&#x606F;-get_principal-getprinc"><a href="#&#x67E5;&#x770B;principal&#x4FE1;&#x606F;-get-principal-getprinc" class="headerlink" title="&#x67E5;&#x770B;principal&#x4FE1;&#x606F;: get_principal, getprinc"></a>&#x67E5;&#x770B;principal&#x4FE1;&#x606F;: get_principal, getprinc</h3><p><strong> getprinc [-terse] principal </strong></p>
 <ul>
 <li><code>-terse</code>&#x8F93;&#x51FA;&#x66F4;&#x52A0;&#x7B80;&#x6D01;&#xFF0C;&#x5404;&#x4FE1;&#x606F;&#x4E4B;&#x95F4;&#x4EE5;tab&#x4F5C;&#x4E3A;&#x5206;&#x9694;&#x7B26;&#x3002;</li>
@@ -144,7 +144,7 @@
 <li><code>-pw</code><br>&#x8BBE;&#x7F6E;&#x5BC6;&#x7801;&#xFF0C;&#x6B64;&#x9009;&#x9879;&#x4E00;&#x822C;&#x7528;&#x5728;&#x811A;&#x672C;&#x4E2D;&#x3002;</li>
 <li>&#x793A;&#x4F8B;</li>
 </ul>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">addprinc -pw password user<span class="variable">@DOMAIN</span>.COM</div><div class="line">addprinc -randkey user<span class="variable">@DOMAIN</span>.COM</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">addprinc -pw password user@DOMAIN.COM</div><div class="line">addprinc -randkey user@DOMAIN.COM</div></pre></td></tr></table></figure>
 <ul>
 <li>&#x53E6;&#x5916;&#x53EF;&#x4EE5;&#x5BF9;principal&#x8BBE;&#x7F6E;&#x8FC7;&#x671F;&#x65F6;&#x95F4;&#x7B49;&#xFF0C;&#x5177;&#x4F53;&#x53C2;&#x8003;&#x4E0A;&#x65B9;&#x94FE;&#x63A5;&#x3002;</li>
 </ul>
@@ -156,18 +156,18 @@
 <li><code>-pw</code><br>&#x8BBE;&#x7F6E;&#x5BC6;&#x7801;&#xFF0C;&#x6B64;&#x9009;&#x9879;&#x4E00;&#x822C;&#x7528;&#x5728;&#x811A;&#x672C;&#x4E2D;&#x3002;</li>
 <li>&#x793A;&#x4F8B;</li>
 </ul>
-<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cpw <span class="keyword">user</span></div><div class="line"><span class="title">cpw</span> -pw password user</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cpw user</div><div class="line">cpw -pw password user</div></pre></td></tr></table></figure>
 <h3 id="&#x751F;&#x6210;keytab"><a href="#&#x751F;&#x6210;keytab" class="headerlink" title="&#x751F;&#x6210;keytab"></a>&#x751F;&#x6210;keytab</h3><ul>
 <li>&#x751F;&#x6210;&#x5355;&#x4E00;&#x7684;keytab: <code>xst -k ${USERNAME}.keytab ${USERNAME}@DOMAIN.COM</code></li>
 <li>&#x5408;&#x5E76;&#x591A;&#x4E2A;keytab</li>
 </ul>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ ktutil</div><div class="line">ktutil: rkt <span class="selector-tag">a</span><span class="selector-class">.keytab</span></div><div class="line">ktutil: rkt <span class="selector-tag">b</span><span class="selector-class">.keytab</span></div><div class="line">ktutil: wkt merge<span class="selector-class">.keytab</span></div><div class="line">ktutil: exit</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ ktutil</div><div class="line">ktutil: rkt a.keytab</div><div class="line">ktutil: rkt b.keytab</div><div class="line">ktutil: wkt merge.keytab</div><div class="line">ktutil: exit</div></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/03/01/how-to-use-kerberos-in-CDH/" data-id="cith5ibj3001vk49kwqzdgog3" class="article-share-link" data-share="baidu" data-title="kerberos使用手册">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/03/01/how-to-use-kerberos-in-CDH/" data-id="citmabyf7001ni09kky7kx5w0" class="article-share-link" data-share="baidu" data-title="kerberos使用手册">分享到</a>
       
 
       

@@ -179,11 +179,11 @@
  <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo service cloudera-scm-server-db stop</div></pre></td></tr></table></figure>
 <blockquote>
 <p>==<strong>Important:</strong>== If you are not running the embedded database service and you attempt to stop it, you receive a message indicating that the service cannot be found. If instead you get a message that the shutdown failed, the embedded database is still running, probably because services are connected to the Hive metastore. If the database shutdown fails due to connected services, issue the following command:<br> RHEL-compatible 7 and higher:</p>
- <figure class="highlight vbscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ sudo service cloudera-scm-<span class="built_in">server</span>-db next_stop_fast</div><div class="line">$ sudo service cloudera-scm-<span class="built_in">server</span>-db <span class="keyword">stop</span></div></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ sudo service cloudera-scm-server-db next_stop_fast</div><div class="line">$ sudo service cloudera-scm-server-db stop</div></pre></td></tr></table></figure>
 </blockquote>
 <p> All other Linux distributions:</p>
 <blockquote>
- <figure class="highlight axapta"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo service cloudera-scm-<span class="keyword">server</span>-db fast_stop</div></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo service cloudera-scm-server-db fast_stop</div></pre></td></tr></table></figure>
 </blockquote>
 </li>
 </ol>
@@ -193,7 +193,7 @@
 </li>
 </ol>
 <h4 id="&#x8BBE;&#x7F6E;repo"><a href="#&#x8BBE;&#x7F6E;repo" class="headerlink" title="&#x8BBE;&#x7F6E;repo"></a>&#x8BBE;&#x7F6E;repo</h4><h5 id="&#x5728;&#x7EBF;&#x5347;&#x7EA7;&#x4F7F;&#x7528;cloudera&#x6E90;"><a href="#&#x5728;&#x7EBF;&#x5347;&#x7EA7;&#xFF0C;&#x4F7F;&#x7528;cloudera&#x6E90;" class="headerlink" title="&#x5728;&#x7EBF;&#x5347;&#x7EA7;&#xFF0C;&#x4F7F;&#x7528;cloudera&#x6E90;"></a>&#x5728;&#x7EBF;&#x5347;&#x7EA7;&#xFF0C;&#x4F7F;&#x7528;cloudera&#x6E90;</h5><p>&#x5982;&#x679C;&#x7F51;&#x7EDC;&#x901F;&#x5EA6;&#x6BD4;&#x8F83;&#x5FEB;&#xFF0C;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x65B0;&#x5EFA;<code>cloudera-manager.repo</code>:</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="section">[cloudera-manager]</span></div><div class="line"><span class="comment"># Packages for Cloudera Manager, Version 5, on RHEL or CentOS 6 x86_64</span></div><div class="line"><span class="attr">name</span> = Cloudera Manager</div><div class="line"><span class="attr">baseurl</span> = https://archive.cloudera.com/cm5/redhat/<span class="number">6</span>/x<span class="number">86_64</span>/cm/<span class="number">5</span>/</div><div class="line"><span class="attr">gpgkey</span> = https://archive.cloudera.com/cm5/redhat/<span class="number">6</span>/x<span class="number">86_64</span>/cm/RPM-GPG-KEY-cloudera </div><div class="line"><span class="attr">gpgcheck</span> = <span class="number">1</span></div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[cloudera-manager]</div><div class="line"># Packages for Cloudera Manager, Version 5, on RHEL or CentOS 6 x86_64</div><div class="line">name = Cloudera Manager</div><div class="line">baseurl = https://archive.cloudera.com/cm5/redhat/6/x86_64/cm/5/</div><div class="line">gpgkey = https://archive.cloudera.com/cm5/redhat/6/x86_64/cm/RPM-GPG-KEY-cloudera </div><div class="line">gpgcheck = 1</div></pre></td></tr></table></figure>
 <h5 id="&#x642D;&#x5EFA;&#x672C;&#x5730;&#x6E90;"><a href="#&#x642D;&#x5EFA;&#x672C;&#x5730;&#x6E90;" class="headerlink" title="&#x642D;&#x5EFA;&#x672C;&#x5730;&#x6E90;"></a>&#x642D;&#x5EFA;&#x672C;&#x5730;&#x6E90;</h5><p>&#x5982;&#x679C;&#x8BBF;&#x95EE;cloudera&#x6E90;&#x4E0D;&#x592A;&#x7A33;&#x5B9A;&#xFF0C;&#x53EF;&#x4EE5;&#x642D;&#x5EFA;&#x672C;&#x5730;&#x7684;repo&#x6E90;&#x3002;</p>
 <ol>
 <li><p>&#x5B89;&#x88C5;vsftp</p>
@@ -207,7 +207,7 @@
 </ol>
 <ol>
 <li><p>&#x65B0;&#x5EFA;&#x672C;&#x5730;repo<code>cloudera-manager.repo</code>&#x5982;&#x4E0B;:</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="section">[cloudera-manager]</span></div><div class="line"><span class="attr">name</span> = Cloudera Manager, Version <span class="number">5.7</span>.<span class="number">0</span></div><div class="line"><span class="attr">baseurl</span> = ftp://<span class="variable">${local-repo-ip}</span>/pub/cloudera-repo</div><div class="line"><span class="attr">gpgcheck</span> = <span class="number">0</span></div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[cloudera-manager]</div><div class="line">name = Cloudera Manager, Version 5.7.0</div><div class="line">baseurl = ftp://${local-repo-ip}/pub/cloudera-repo</div><div class="line">gpgcheck = 0</div></pre></td></tr></table></figure>
 <ul>
 <li>&#x5982;&#x679C;&#x624B;&#x52A8;&#x5347;&#x7EA7;&#x5404;&#x673A;&#x5668;&#x7684;cloudera-manager-agent&#xFF0C;&#x9700;&#x8981;&#x5C06;cloudera-manager.repo&#x66F4;&#x65B0;&#x5230;&#x6240;&#x6709;&#x8282;&#x70B9;&#x4E0A;</li>
 <li>&#x5982;&#x679C;&#x4F7F;&#x7528;cloudera&#x5347;&#x7EA7;&#x5404;&#x673A;&#x5668;&#x7684;cloudera-manager-agent&#xFF0C;&#x5728;&#x5347;&#x7EA7;&#x65F6;&#x6CE8;&#x610F;&#x9009;&#x62E9;<strong><code>Custom Repository</code></strong>&#xFF0C;&#x586B;&#x5199;repository&#x5730;&#x5740;&#x4E3A;<code>ftp://${local-repo-ip}/pub/cloudera-repo</code>&#x3002;</li>
@@ -309,7 +309,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/05/24/upgrade-cdh-to-5-7-0/" data-id="cith5ibj70020k49k58qdfkey" class="article-share-link" data-share="baidu" data-title="升级CDH到5.7.0">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/05/24/upgrade-cdh-to-5-7-0/" data-id="citmabyfk0025i09k5dmsmus0" class="article-share-link" data-share="baidu" data-title="升级CDH到5.7.0">分享到</a>
       
 
       
