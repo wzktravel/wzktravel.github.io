@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://wzktravel.github.io/2015/12/31/kafka-reassign/index.html">
 <meta property="og:site_name" content="wzktravel">
 <meta property="og:description" content="今天kafka测试环境中机器磁盘告警，占用率超过了80%，原来是某一个topic的partition为1，只往一台机器上写数据，造成kafka集群空间使用不均。下面主要使用kafka-topics.sh和kafka-reassign-partitions.sh来解决问题。">
-<meta property="og:updated_time" content="2016-09-28T02:22:52.000Z">
+<meta property="og:updated_time" content="2016-09-28T02:28:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kafka reassign">
 <meta name="twitter:description" content="今天kafka测试环境中机器磁盘告警，占用率超过了80%，原来是某一个topic的partition为1，只往一台机器上写数据，造成kafka集群空间使用不均。下面主要使用kafka-topics.sh和kafka-reassign-partitions.sh来解决问题。">
@@ -123,6 +123,7 @@
 <li><a href="http://kafka.apache.org/082/documentation.html#basic_ops_modify_topic" target="_blank" rel="external">http://kafka.apache.org/082/documentation.html#basic_ops_modify_topic</a></li>
 <li><a href="http://www.confluent.io/blog/how-to-choose-the-number-of-topicspartitions-in-a-kafka-cluster/" target="_blank" rel="external">How to choose the number of topics/partitions in a Kafka cluster?</a></li>
 <li><a href="https://community.hortonworks.com/articles/49789/kafka-best-practices.html" target="_blank" rel="external">Kafka 0.9 Configuration Best Practices</a></li>
+<li><a href="http://www.cnblogs.com/fxjwind/p/4972244.html" target="_blank" rel="external">Apche Kafka &#x7684;&#x751F;&#x4E0E;&#x6B7B; &#x2013; failover &#x673A;&#x5236;&#x8BE6;&#x89E3;</a></li>
 </ul>
 
       
