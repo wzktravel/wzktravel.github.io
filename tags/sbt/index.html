@@ -4,18 +4,14 @@
 <head>
   <meta charset="utf-8">
   
-  <title>搭建proxy伺服器 | wzktravel</title>
+  <title>Tag: sbt | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="近期使用爬虫爬取数据，需要使用代理，记录一下搭建proxy伺服器的过程，这里使用的是squid.">
-<meta property="og:type" content="article">
-<meta property="og:title" content="搭建proxy伺服器">
-<meta property="og:url" content="http://wzktravel.github.io/2016/07/15/proxy-server/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="wzktravel">
+<meta property="og:url" content="http://wzktravel.github.io/tags/sbt/index.html">
 <meta property="og:site_name" content="wzktravel">
-<meta property="og:description" content="近期使用爬虫爬取数据，需要使用代理，记录一下搭建proxy伺服器的过程，这里使用的是squid.">
-<meta property="og:updated_time" content="2016-08-17T11:29:54.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="搭建proxy伺服器">
-<meta name="twitter:description" content="近期使用爬虫爬取数据，需要使用代理，记录一下搭建proxy伺服器的过程，这里使用的是squid.">
+<meta name="twitter:title" content="wzktravel">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -71,95 +67,39 @@
   </div>
 </header>
     <div class="outer">
-      <section id="main"><article id="post-proxy-server" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/07/15/proxy-server/" class="article-date">
-  <time datetime="2016-07-15T10:08:23.000Z" itemprop="datePublished">2016-07-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+      <section id="main">
   
-    <h1 class="article-title" itemprop="name">
-      搭建proxy伺服器
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2016" class="archive-year">2016</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2016/10/20/use-local-maven-repository-faster-sbt/" class="archive-article-date">
+  <time datetime="2016-10-20T12:24:39.000Z" itemprop="datePublished">10月 20</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2016/10/20/use-local-maven-repository-faster-sbt/">使用本地maven私服加速sbt下载</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>&#x8FD1;&#x671F;&#x4F7F;&#x7528;&#x722C;&#x866B;&#x722C;&#x53D6;&#x6570;&#x636E;&#xFF0C;&#x9700;&#x8981;&#x4F7F;&#x7528;&#x4EE3;&#x7406;&#xFF0C;&#x8BB0;&#x5F55;&#x4E00;&#x4E0B;&#x642D;&#x5EFA;proxy&#x4F3A;&#x670D;&#x5668;&#x7684;&#x8FC7;&#x7A0B;&#xFF0C;&#x8FD9;&#x91CC;&#x4F7F;&#x7528;&#x7684;&#x662F;<code>squid</code>.<br><a id="more"></a></p>
-<h2 id="&#x642D;&#x5EFA;proxy&#x4F3A;&#x670D;&#x5668;"><a href="#&#x642D;&#x5EFA;proxy&#x4F3A;&#x670D;&#x5668;" class="headerlink" title="&#x642D;&#x5EFA;proxy&#x4F3A;&#x670D;&#x5668;"></a>&#x642D;&#x5EFA;proxy&#x4F3A;&#x670D;&#x5668;</h2><p>&#x8FD9;&#x91CC;&#x4F7F;&#x7528;&#x7684;&#x662F;<code>squid</code>.</p>
-<h3 id="&#x5B89;&#x88C5;"><a href="#&#x5B89;&#x88C5;" class="headerlink" title="&#x5B89;&#x88C5;"></a>&#x5B89;&#x88C5;</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install -y squid</div></pre></td></tr></table></figure>
-<h3 id="&#x914D;&#x7F6E;"><a href="#&#x914D;&#x7F6E;" class="headerlink" title="&#x914D;&#x7F6E;"></a>&#x914D;&#x7F6E;</h3><p>&#x56E0;&#x4E3A;&#x662F;&#x5728;&#x5185;&#x7F51;&#x73AF;&#x5883;&#x4E2D;&#xFF0C;&#x6240;&#x4EE5;&#x53EA;&#x5BF9;squid&#x8FDB;&#x884C;&#x4E86;&#x7B80;&#x5355;&#x7684;&#x914D;&#x7F6E;&#x3002;&#x5404;&#x914D;&#x7F6E;&#x9879;&#x542B;&#x4E49;&#x548C;&#x5176;&#x4ED6;&#x914D;&#x7F6E;&#x53EF;&#x4EE5;&#x53C2;&#x8003;<a href="http://linux.vbird.org/linux_server/0420squid.php" target="_blank" rel="external">&#x9CE5;&#x54E5;&#x7684; Linux &#x79C1;&#x623F;&#x83DC;: Proxy &#x4F3A;&#x670D;&#x5668;</a>&#x3002;</p>
-<p>&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x4E3A;<code>/etc/squid/squid.conf</code>, &#x7B80;&#x5355;&#x4FEE;&#x6539;&#x4EE5;&#x4E0B;&#x51E0;&#x4E2A;&#x65B9;&#x9762;:</p>
-<ol>
-<li>&#x589E;&#x52A0;&#x4E00;&#x884C;<code>http_access allow all</code>&#x3002; <code>http_access</code>&#x548C;<code>http_deny</code>&#x662F;&#x6709;&#x987A;&#x5E8F;&#x7684;, &#x5339;&#x914D;&#x5230;&#x7B2C;&#x4E00;&#x4E2A;&#x540E;&#x5C31;&#x4E0D;&#x518D;&#x7EE7;&#x7EED;&#x5339;&#x914D;, &#x6240;&#x4EE5;&#x7279;&#x522B;&#x9700;&#x8981;&#x6CE8;&#x610F;&#x987A;&#x5E8F;.</li>
-<li>&#x4FEE;&#x6539;<code>http_port</code>&#x4E3A;<code>8999</code>&#xFF0C;&#x4E0D;&#x8981;&#x4F7F;&#x7528;&#x9ED8;&#x8BA4;&#x7684;<code>3128</code>&#xFF0C;&#x4F1A;&#x88AB;&#x5F88;&#x591A;&#x7F51;&#x7AD9;&#x5C4F;&#x853D;&#x3002;</li>
-</ol>
-<h3 id="&#x542F;&#x52A8;"><a href="#&#x542F;&#x52A8;" class="headerlink" title="&#x542F;&#x52A8;"></a>&#x542F;&#x52A8;</h3><ol>
-<li>&#x542F;&#x52A8;&#x524D;&#x6267;&#x884C;<code>squid -z</code>&#xFF0C;&#x6839;&#x636E;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x91CD;&#x5EFA;&#x7F13;&#x5B58;&#x3002;</li>
-<li><code>/etc/init.d/squid start</code>&#x542F;&#x52A8;&#x3002;</li>
-<li>&#x5982;&#x679C;&#x60F3;&#x5F00;&#x542F;&#x542F;&#x52A8;squid&#xFF0C;&#x6267;&#x884C;<code>chkconfig squid on</code>&#x3002;</li>
-</ol>
-<h2 id="java&#x4E2D;&#x4F7F;&#x7528;"><a href="#java&#x4E2D;&#x4F7F;&#x7528;" class="headerlink" title="java&#x4E2D;&#x4F7F;&#x7528;"></a>java&#x4E2D;&#x4F7F;&#x7528;</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> org.apache.http.HttpHost;</div><div class="line"><span class="keyword">import</span> org.apache.http.client.config.RequestConfig;</div><div class="line"><span class="keyword">import</span> org.apache.http.client.methods.CloseableHttpResponse;</div><div class="line"><span class="keyword">import</span> org.apache.http.client.methods.HttpGet;</div><div class="line"><span class="keyword">import</span> org.apache.http.impl.client.CloseableHttpClient;</div><div class="line"><span class="keyword">import</span> org.apache.http.impl.client.HttpClients;</div><div class="line"><span class="keyword">import</span> org.apache.http.util.EntityUtils;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpClientTest</span> </span>{</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> <span class="keyword">throws</span> Exception </span>{</div><div class="line"></div><div class="line">    CloseableHttpClient httpclient = HttpClients.createDefault();</div><div class="line">    <span class="keyword">try</span> {</div><div class="line">      HttpHost target = <span class="keyword">new</span> HttpHost(<span class="string">&quot;www.baidu.com&quot;</span>);</div><div class="line">      HttpHost proxy = <span class="keyword">new</span> HttpHost(<span class="string">&quot;myproxy.server&quot;</span>, <span class="number">8999</span>, <span class="string">&quot;http&quot;</span>);</div><div class="line"></div><div class="line">      RequestConfig config = RequestConfig.custom()</div><div class="line">          .setProxy(proxy)</div><div class="line">          .build();</div><div class="line">      HttpGet request = <span class="keyword">new</span> HttpGet(<span class="string">&quot;/&quot;</span>);</div><div class="line">      request.setConfig(config);</div><div class="line"></div><div class="line">      System.out.println(<span class="string">&quot;Executing request &quot;</span> + request.getRequestLine() + <span class="string">&quot; to &quot;</span> + target + <span class="string">&quot; via &quot;</span> + proxy);</div><div class="line"></div><div class="line">      CloseableHttpResponse response = httpclient.execute(target, request);</div><div class="line">      <span class="keyword">try</span> {</div><div class="line">        System.out.println(<span class="string">&quot;----------------------------------------&quot;</span>);</div><div class="line">        System.out.println(response.getStatusLine());</div><div class="line">        System.out.println(EntityUtils.toString(response.getEntity()));</div><div class="line">      } <span class="keyword">finally</span> {</div><div class="line">        response.close();</div><div class="line">      }</div><div class="line">    } <span class="keyword">finally</span> {</div><div class="line">      httpclient.close();</div><div class="line">    }</div><div class="line">  }</div><div class="line">}</div></pre></td></tr></table></figure>
-<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ol>
-<li><a href="http://linux.vbird.org/linux_server/0420squid.php" target="_blank" rel="external">&#x9CE5;&#x54E5;&#x7684; Linux &#x79C1;&#x623F;&#x83DC;: Proxy &#x4F3A;&#x670D;&#x5668;</a></li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/07/15/proxy-server/" data-id="ciuig0wzj0022ct9k5a9n9kp4" class="article-share-link" data-share="baidu" data-title="搭建proxy伺服器">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/07/15/proxy-server/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-        <span id="busuanzi_container_page_pv" style='display:none;float:right;margin-right:20px;color:#999;'>view <span id="busuanzi_value_page_pv"></span> times</span>
-      
-  
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
-
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2016/07/18/yarn-history/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">
-        
-          使用Python获取yarn任务状态
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2016/05/24/upgrade-cdh-to-5-7-0/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">升级CDH到5.7.0</div>
-    </a>
-  
-</nav>
-
-  
 </article>
-
-
-  <section id="comments">
-    <div id="ds-thread" class="ds-thread" data-thread-key="2016/07/15/proxy-server/" data-title="搭建proxy伺服器" data-url="http://wzktravel.github.io/2016/07/15/proxy-server/"></div>
-  </section>
+  
+  
+    </div></section>
+  
 
 </section>
       
