@@ -301,7 +301,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>flume-ng配置以及使用过程中遇到的问题和解决办法。重点说一下hdfs.codeC使用lzo的问题。<br>以下都基于flume ng 1.6.0版本，最后附上flume上报到hdfs的配置。<br>
+        <p>flume-ng配置以及使用过程中遇到的问题和解决办法。重点说一下hdfs.codeC使用lzo的问题。另外附上自己实现的flume插件，<a href="https://github.com/wzktravel/flume-agent">https://github.com/wzktravel/flume-agent</a>，当前有一个interceptor，两个source：</p>
+<ol>
+<li>HDFSInterceptor，在header中加入时间,文件名,ip等</li>
+<li>SpoolDirectoryHourlySource，收集按小时进行切片的日志</li>
+<li>DirTailPollableSource2, 动态tail目录下最后修改的文件</li>
+</ol>
+<p>以下都基于flume ng 1.6.0版本，最后附上flume上报到hdfs的配置。<br>
         
           <p class="article-more-link">
             <a href="/2015/12/11/flume-ng/#more">Read More</a>

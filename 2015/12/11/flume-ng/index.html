@@ -6,19 +6,28 @@
   
   <title>flume-ng配置以及使用lzo | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="flume-ng配置以及使用过程中遇到的问题和解决办法。重点说一下hdfs.codeC使用lzo的问题。以下都基于flume ng 1.6.0版本，最后附上flume上报到hdfs的配置。">
+  <meta name="description" content="flume-ng配置以及使用过程中遇到的问题和解决办法。重点说一下hdfs.codeC使用lzo的问题。另外附上自己实现的flume插件，https://github.com/wzktravel/flume-agent，当前有一个interceptor，两个source：
+
+HDFSInterceptor，在header中加入时间,文件名,ip等
+SpoolDirectoryHourlySourc">
 <meta property="og:type" content="article">
 <meta property="og:title" content="flume-ng配置以及使用lzo">
 <meta property="og:url" content="http://wzktravel.github.io/2015/12/11/flume-ng/index.html">
 <meta property="og:site_name" content="wzktravel">
-<meta property="og:description" content="flume-ng配置以及使用过程中遇到的问题和解决办法。重点说一下hdfs.codeC使用lzo的问题。以下都基于flume ng 1.6.0版本，最后附上flume上报到hdfs的配置。">
+<meta property="og:description" content="flume-ng配置以及使用过程中遇到的问题和解决办法。重点说一下hdfs.codeC使用lzo的问题。另外附上自己实现的flume插件，https://github.com/wzktravel/flume-agent，当前有一个interceptor，两个source：
+
+HDFSInterceptor，在header中加入时间,文件名,ip等
+SpoolDirectoryHourlySourc">
 <meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/flume_getCodec.png">
 <meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/CompressionCodecFactory_getCodecClasses.png">
 <meta property="og:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/IO_COMPRESSION_CODECS_KEY.png">
-<meta property="og:updated_time" content="2016-07-14T03:16:31.000Z">
+<meta property="og:updated_time" content="2016-10-24T11:41:18.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="flume-ng配置以及使用lzo">
-<meta name="twitter:description" content="flume-ng配置以及使用过程中遇到的问题和解决办法。重点说一下hdfs.codeC使用lzo的问题。以下都基于flume ng 1.6.0版本，最后附上flume上报到hdfs的配置。">
+<meta name="twitter:description" content="flume-ng配置以及使用过程中遇到的问题和解决办法。重点说一下hdfs.codeC使用lzo的问题。另外附上自己实现的flume插件，https://github.com/wzktravel/flume-agent，当前有一个interceptor，两个source：
+
+HDFSInterceptor，在header中加入时间,文件名,ip等
+SpoolDirectoryHourlySourc">
 <meta name="twitter:image" content="http://7xlgd1.com1.z0.glb.clouddn.com/images/io/flume_getCodec.png">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
@@ -97,7 +106,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>flume-ng&#x914D;&#x7F6E;&#x4EE5;&#x53CA;&#x4F7F;&#x7528;&#x8FC7;&#x7A0B;&#x4E2D;&#x9047;&#x5230;&#x7684;&#x95EE;&#x9898;&#x548C;&#x89E3;&#x51B3;&#x529E;&#x6CD5;&#x3002;&#x91CD;&#x70B9;&#x8BF4;&#x4E00;&#x4E0B;hdfs.codeC&#x4F7F;&#x7528;lzo&#x7684;&#x95EE;&#x9898;&#x3002;<br>&#x4EE5;&#x4E0B;&#x90FD;&#x57FA;&#x4E8E;flume ng 1.6.0&#x7248;&#x672C;&#xFF0C;&#x6700;&#x540E;&#x9644;&#x4E0A;flume&#x4E0A;&#x62A5;&#x5230;hdfs&#x7684;&#x914D;&#x7F6E;&#x3002;<br><a id="more"></a></p>
+        <p>flume-ng&#x914D;&#x7F6E;&#x4EE5;&#x53CA;&#x4F7F;&#x7528;&#x8FC7;&#x7A0B;&#x4E2D;&#x9047;&#x5230;&#x7684;&#x95EE;&#x9898;&#x548C;&#x89E3;&#x51B3;&#x529E;&#x6CD5;&#x3002;&#x91CD;&#x70B9;&#x8BF4;&#x4E00;&#x4E0B;hdfs.codeC&#x4F7F;&#x7528;lzo&#x7684;&#x95EE;&#x9898;&#x3002;&#x53E6;&#x5916;&#x9644;&#x4E0A;&#x81EA;&#x5DF1;&#x5B9E;&#x73B0;&#x7684;flume&#x63D2;&#x4EF6;&#xFF0C;<a href="https://github.com/wzktravel/flume-agent" target="_blank" rel="external">https://github.com/wzktravel/flume-agent</a>&#xFF0C;&#x5F53;&#x524D;&#x6709;&#x4E00;&#x4E2A;interceptor&#xFF0C;&#x4E24;&#x4E2A;source&#xFF1A;</p>
+<ol>
+<li>HDFSInterceptor&#xFF0C;&#x5728;header&#x4E2D;&#x52A0;&#x5165;&#x65F6;&#x95F4;,&#x6587;&#x4EF6;&#x540D;,ip&#x7B49;</li>
+<li>SpoolDirectoryHourlySource&#xFF0C;&#x6536;&#x96C6;&#x6309;&#x5C0F;&#x65F6;&#x8FDB;&#x884C;&#x5207;&#x7247;&#x7684;&#x65E5;&#x5FD7;</li>
+<li>DirTailPollableSource2, &#x52A8;&#x6001;tail&#x76EE;&#x5F55;&#x4E0B;&#x6700;&#x540E;&#x4FEE;&#x6539;&#x7684;&#x6587;&#x4EF6;</li>
+</ol>
+<p>&#x4EE5;&#x4E0B;&#x90FD;&#x57FA;&#x4E8E;flume ng 1.6.0&#x7248;&#x672C;&#xFF0C;&#x6700;&#x540E;&#x9644;&#x4E0A;flume&#x4E0A;&#x62A5;&#x5230;hdfs&#x7684;&#x914D;&#x7F6E;&#x3002;<br><a id="more"></a></p>
 <h2 id="&#x5F15;&#x7528;&#x7B2C;&#x4E09;&#x65B9;jar&#x5305;"><a href="#&#x5F15;&#x7528;&#x7B2C;&#x4E09;&#x65B9;jar&#x5305;" class="headerlink" title="&#x5F15;&#x7528;&#x7B2C;&#x4E09;&#x65B9;jar&#x5305;"></a>&#x5F15;&#x7528;&#x7B2C;&#x4E09;&#x65B9;jar&#x5305;</h2><p>&#x4E0D;&#x5FC5;&#x653E;&#x5728;flume&#x7684;lib&#x76EE;&#x5F55;&#x4E0B;&#xFF0C;&#x53C2;&#x8003;<a href="http://flume.apache.org/FlumeUserGuide.html#installing-third-party-plugins" target="_blank" rel="external">http://flume.apache.org/FlumeUserGuide.html#installing-third-party-plugins</a><br>&#x5728;flume&#x76EE;&#x5F55;&#x4E0B;&#x65B0;&#x5EFA;<code>plugins.d</code>&#x76EE;&#x5F55;&#xFF0C;&#x6B64;&#x76EE;&#x5F55;&#x4E0B;&#x6BCF;&#x4E2A;&#x63D2;&#x4EF6;&#x5355;&#x72EC;&#x4E00;&#x4E2A;&#x76EE;&#x5F55;&#xFF0C;&#x6BCF;&#x4E2A;&#x63D2;&#x4EF6;&#x76EE;&#x5F55;&#x4E0B;&#x53EF;&#x4EE5;&#x6709;lib,libext,native&#x3002;</p>
 <ul>
 <li>lib: &#x653E;&#x7F6E;&#x63D2;&#x4EF6;jar&#x5305;</li>
