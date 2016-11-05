@@ -4,18 +4,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>kafka reassign | wzktravel</title>
+  <title>kafka重新分配partition | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="今天kafka测试环境中机器磁盘告警，占用率超过了80%，原来是某一个topic的partition为1，只往一台机器上写数据，造成kafka集群空间使用不均。下面主要使用kafka-topics.sh和kafka-reassign-partitions.sh来解决问题。">
+  <meta name="description" content="今天kafka测试环境中机器磁盘告警，占用率超过了80%，原来是某一个topic的partition为1，只往一台机器上写数据，造成kafka集群空间使用不均。下面主要使用kafka-topics.sh和kafka-reassign-partitions.sh来解决问题。推荐使用kafka manager来管理kafka集群。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="kafka reassign">
+<meta property="og:title" content="kafka重新分配partition">
 <meta property="og:url" content="http://wzktravel.github.io/2015/12/31/kafka-reassign/index.html">
 <meta property="og:site_name" content="wzktravel">
-<meta property="og:description" content="今天kafka测试环境中机器磁盘告警，占用率超过了80%，原来是某一个topic的partition为1，只往一台机器上写数据，造成kafka集群空间使用不均。下面主要使用kafka-topics.sh和kafka-reassign-partitions.sh来解决问题。">
-<meta property="og:updated_time" content="2016-09-28T02:28:02.000Z">
+<meta property="og:description" content="今天kafka测试环境中机器磁盘告警，占用率超过了80%，原来是某一个topic的partition为1，只往一台机器上写数据，造成kafka集群空间使用不均。下面主要使用kafka-topics.sh和kafka-reassign-partitions.sh来解决问题。推荐使用kafka manager来管理kafka集群。">
+<meta property="og:updated_time" content="2016-10-26T12:16:06.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="kafka reassign">
-<meta name="twitter:description" content="今天kafka测试环境中机器磁盘告警，占用率超过了80%，原来是某一个topic的partition为1，只往一台机器上写数据，造成kafka集群空间使用不均。下面主要使用kafka-topics.sh和kafka-reassign-partitions.sh来解决问题。">
+<meta name="twitter:title" content="kafka重新分配partition">
+<meta name="twitter:description" content="今天kafka测试环境中机器磁盘告警，占用率超过了80%，原来是某一个topic的partition为1，只往一台机器上写数据，造成kafka集群空间使用不均。下面主要使用kafka-topics.sh和kafka-reassign-partitions.sh来解决问题。推荐使用kafka manager来管理kafka集群。">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -85,7 +85,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      kafka reassign
+      kafka重新分配partition
     </h1>
   
 
@@ -93,8 +93,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>&#x4ECA;&#x5929;kafka&#x6D4B;&#x8BD5;&#x73AF;&#x5883;&#x4E2D;&#x673A;&#x5668;&#x78C1;&#x76D8;&#x544A;&#x8B66;&#xFF0C;&#x5360;&#x7528;&#x7387;&#x8D85;&#x8FC7;&#x4E86;80%&#xFF0C;&#x539F;&#x6765;&#x662F;&#x67D0;&#x4E00;&#x4E2A;<code>topic</code>&#x7684;<code>partition</code>&#x4E3A;1&#xFF0C;&#x53EA;&#x5F80;&#x4E00;&#x53F0;&#x673A;&#x5668;&#x4E0A;&#x5199;&#x6570;&#x636E;&#xFF0C;&#x9020;&#x6210;kafka&#x96C6;&#x7FA4;&#x7A7A;&#x95F4;&#x4F7F;&#x7528;&#x4E0D;&#x5747;&#x3002;<br>&#x4E0B;&#x9762;&#x4E3B;&#x8981;&#x4F7F;&#x7528;<code>kafka-topics.sh</code>&#x548C;<code>kafka-reassign-partitions.sh</code>&#x6765;&#x89E3;&#x51B3;&#x95EE;&#x9898;&#x3002;</p>
-<a id="more"></a>
+        <p>&#x4ECA;&#x5929;kafka&#x6D4B;&#x8BD5;&#x73AF;&#x5883;&#x4E2D;&#x673A;&#x5668;&#x78C1;&#x76D8;&#x544A;&#x8B66;&#xFF0C;&#x5360;&#x7528;&#x7387;&#x8D85;&#x8FC7;&#x4E86;80%&#xFF0C;&#x539F;&#x6765;&#x662F;&#x67D0;&#x4E00;&#x4E2A;<code>topic</code>&#x7684;<code>partition</code>&#x4E3A;1&#xFF0C;&#x53EA;&#x5F80;&#x4E00;&#x53F0;&#x673A;&#x5668;&#x4E0A;&#x5199;&#x6570;&#x636E;&#xFF0C;&#x9020;&#x6210;kafka&#x96C6;&#x7FA4;&#x7A7A;&#x95F4;&#x4F7F;&#x7528;&#x4E0D;&#x5747;&#x3002;<br>&#x4E0B;&#x9762;&#x4E3B;&#x8981;&#x4F7F;&#x7528;<code>kafka-topics.sh</code>&#x548C;<code>kafka-reassign-partitions.sh</code>&#x6765;&#x89E3;&#x51B3;&#x95EE;&#x9898;&#x3002;<br>&#x63A8;&#x8350;&#x4F7F;&#x7528;<a href="https://github.com/yahoo/kafka-manager" target="_blank" rel="external">kafka manager</a>&#x6765;&#x7BA1;&#x7406;kafka&#x96C6;&#x7FA4;&#x3002;<br><a id="more"></a></p>
 <h2 id="&#x4FEE;&#x6539;topic&#x7684;partitions"><a href="#&#x4FEE;&#x6539;topic&#x7684;partitions" class="headerlink" title="&#x4FEE;&#x6539;topic&#x7684;partitions"></a>&#x4FEE;&#x6539;topic&#x7684;partitions</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./bin/kafka-topics.sh --zookeeper vlnx111122:2181 --alter --topic <span class="built_in">test</span> --partitions 6</div></pre></td></tr></table></figure>
 <p>&#x6B64;&#x547D;&#x4EE4;&#x6267;&#x884C;&#x5B8C;&#x4E4B;&#x540E;&#x5373;&#x53EF;&#x518D;kafka&#x96C6;&#x7FA4;&#x5176;&#x4ED6;&#x673A;&#x5668;&#x4E2D;&#x627E;&#x5230;&#x6B64;topic&#x7684;&#x76EE;&#x5F55;</p>
 <h2 id="&#x6269;&#x5BB9;-&#x5220;&#x9664;&#x673A;&#x5668;"><a href="#&#x6269;&#x5BB9;&#x3001;&#x5220;&#x9664;&#x673A;&#x5668;" class="headerlink" title="&#x6269;&#x5BB9;&#x3001;&#x5220;&#x9664;&#x673A;&#x5668;"></a>&#x6269;&#x5BB9;&#x3001;&#x5220;&#x9664;&#x673A;&#x5668;</h2><p>&#x53EA;&#x8981;&#x914D;&#x7F6E;zookeeper.connect&#x4E3A;&#x8981;&#x52A0;&#x5165;&#x7684;&#x96C6;&#x7FA4;&#xFF0C;&#x518D;&#x542F;&#x52A8;Kafka&#x8FDB;&#x7A0B;&#xFF0C;&#x5C31;&#x53EF;&#x4EE5;&#x8BA9;&#x65B0;&#x7684;&#x673A;&#x5668;&#x52A0;&#x5165;&#x5230;Kafka&#x96C6;&#x7FA4;&#x3002;&#x4F46;&#x662F;&#x65B0;&#x7684;&#x673A;&#x5668;&#x53EA;&#x9488;&#x5BF9;&#x65B0;&#x7684;Topic&#x624D;&#x4F1A;&#x8D77;&#x4F5C;&#x7528;&#xFF0C;&#x5728;&#x4E4B;&#x524D;&#x5C31;&#x5DF2;&#x7ECF;&#x5B58;&#x5728;&#x7684;Topic&#x7684;&#x5206;&#x533A;&#xFF0C;&#x4E0D;&#x4F1A;&#x81EA;&#x52A8;&#x7684;&#x5206;&#x914D;&#x5230;&#x65B0;&#x589E;&#x52A0;&#x7684;&#x7269;&#x7406;&#x673A;&#x4E2D;&#x3002;&#x4E3A;&#x4E86;&#x4F7F;&#x65B0;&#x589E;&#x52A0;&#x7684;&#x673A;&#x5668;&#x53EF;&#x4EE5;&#x5206;&#x62C5;&#x7CFB;&#x7EDF;&#x538B;&#x529B;&#xFF0C;&#x5FC5;&#x987B;&#x8FDB;&#x884C;&#x6D88;&#x606F;&#x6570;&#x636E;&#x8FC1;&#x79FB;&#x3002;Kafka&#x63D0;&#x4F9B;&#x4E86;<code>kafka-reassign-partitions.sh</code>&#x8FDB;&#x884C;&#x6570;&#x636E;&#x8FC1;&#x79FB;&#x3002;</p>
@@ -118,6 +117,7 @@
 <li><code>./bin/kafka-topics.sh --zookeeper vlnx111122:2181 --list</code></li>
 <li><code>./bin/kafka-topics.sh --zookeeper vlnx111122:2181 --create --replication-factor 2 --partition 6 --topic test</code></li>
 <li><code>./bin/kafka-topics.sh --zookeeper vlnx111122:2181 --delete --topic test</code></li>
+<li><code>./bin/kafka-topics.sh --zookeeper vlnx111122:2181 --describe --topic test</code></li>
 </ol>
 <h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ul>
 <li><a href="http://kafka.apache.org/082/documentation.html#basic_ops_modify_topic" target="_blank" rel="external">http://kafka.apache.org/082/documentation.html#basic_ops_modify_topic</a></li>
@@ -130,7 +130,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2015/12/31/kafka-reassign/" data-id="ciuqbsqrc0019029ku8yohn3y" class="article-share-link" data-share="baidu" data-title="kafka reassign">分享到</a>
+        <a data-url="http://wzktravel.github.io/2015/12/31/kafka-reassign/" data-id="civ4zp1w30015ml9kqjnql721" class="article-share-link" data-share="baidu" data-title="kafka重新分配partition">分享到</a>
       
 
       
@@ -172,7 +172,7 @@
 
 
   <section id="comments">
-    <div id="ds-thread" class="ds-thread" data-thread-key="2015/12/31/kafka-reassign/" data-title="kafka reassign" data-url="http://wzktravel.github.io/2015/12/31/kafka-reassign/"></div>
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/12/31/kafka-reassign/" data-title="kafka重新分配partition" data-url="http://wzktravel.github.io/2015/12/31/kafka-reassign/"></div>
   </section>
 
 </section>
@@ -185,7 +185,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hbase/">hbase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jodatime/">jodatime</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongo/">mongo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postgres/">postgres</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sbt/">sbt</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/schedule/">schedule</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread/">thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">3</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hbase/">hbase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jodatime/">jodatime</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongo/">mongo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postgres/">postgres</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sbt/">sbt</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/schedule/">schedule</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread/">thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -194,7 +194,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 15.71px;">cdh</a> <a href="/tags/elasticsearch/" style="font-size: 12.86px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.43px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.43px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hbase/" style="font-size: 11.43px;">hbase</a> <a href="/tags/hdfs/" style="font-size: 12.86px;">hdfs</a> <a href="/tags/hive/" style="font-size: 12.86px;">hive</a> <a href="/tags/java/" style="font-size: 14.29px;">java</a> <a href="/tags/jodatime/" style="font-size: 10px;">jodatime</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 12.86px;">kerberos</a> <a href="/tags/linux/" style="font-size: 18.57px;">linux</a> <a href="/tags/mac/" style="font-size: 11.43px;">mac</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/mongo/" style="font-size: 10px;">mongo</a> <a href="/tags/postgres/" style="font-size: 10px;">postgres</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/sbt/" style="font-size: 10px;">sbt</a> <a href="/tags/scala/" style="font-size: 12.86px;">scala</a> <a href="/tags/schedule/" style="font-size: 11.43px;">schedule</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 17.14px;">shell</a> <a href="/tags/spark/" style="font-size: 14.29px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/thread/" style="font-size: 10px;">thread</a> <a href="/tags/vim/" style="font-size: 11.43px;">vim</a> <a href="/tags/yarn/" style="font-size: 12.86px;">yarn</a>
+      <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 15.71px;">cdh</a> <a href="/tags/elasticsearch/" style="font-size: 12.86px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.43px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.43px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hbase/" style="font-size: 11.43px;">hbase</a> <a href="/tags/hdfs/" style="font-size: 12.86px;">hdfs</a> <a href="/tags/hive/" style="font-size: 12.86px;">hive</a> <a href="/tags/java/" style="font-size: 14.29px;">java</a> <a href="/tags/jodatime/" style="font-size: 10px;">jodatime</a> <a href="/tags/kafka/" style="font-size: 11.43px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 12.86px;">kerberos</a> <a href="/tags/linux/" style="font-size: 18.57px;">linux</a> <a href="/tags/mac/" style="font-size: 11.43px;">mac</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/mongo/" style="font-size: 10px;">mongo</a> <a href="/tags/postgres/" style="font-size: 10px;">postgres</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/sbt/" style="font-size: 10px;">sbt</a> <a href="/tags/scala/" style="font-size: 12.86px;">scala</a> <a href="/tags/schedule/" style="font-size: 11.43px;">schedule</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 17.14px;">shell</a> <a href="/tags/spark/" style="font-size: 14.29px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/thread/" style="font-size: 10px;">thread</a> <a href="/tags/vim/" style="font-size: 11.43px;">vim</a> <a href="/tags/yarn/" style="font-size: 12.86px;">yarn</a>
     </div>
   </div>
 
@@ -203,7 +203,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -213,6 +213,10 @@
     <h3 class="widget-title">近期文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/10/26/shudown-kafka-broker/">主动下线kafka broker</a>
+          </li>
         
           <li>
             <a href="/2016/10/26/spark-job-server/">Spark jobserver的安装和使用</a>
@@ -228,10 +232,6 @@
         
           <li>
             <a href="/2016/09/29/check-linux-and-kernel-version/">查看linux发行版本和kernel版本</a>
-          </li>
-        
-          <li>
-            <a href="/2016/09/29/release-versions/">发行版本释义</a>
           </li>
         
       </ul>
