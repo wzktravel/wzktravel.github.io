@@ -69,6 +69,63 @@
     <div class="outer">
       <section id="main">
   
+    <article id="post-oozie-sqoop" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/11/17/oozie-sqoop/" class="article-date">
+  <time datetime="2016-11-17T07:26:34.000Z" itemprop="datePublished">2016-11-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/17/oozie-sqoop/">Oozie中添加sqoop用到的jdbc包</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>CDH5&#x4E2D;&#xFF0C;&#x5728;oozie&#x4E2D;&#x6267;&#x884C;sqoop&#x547D;&#x4EE4;&#x65F6;&#xFF0C;&#x53EF;&#x80FD;&#x9700;&#x8981;&#x624B;&#x52A8;&#x6DFB;&#x52A0;&#x4E00;&#x4E9B;jdbc&#x5305;&#x3002;</p>
+<p>&#x5C06;jar&#x5305;&#x653E;&#x7F6E;&#x5230;hdfs&#x4E2D;lib&#x76EE;&#x5F55;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/user/oozie/share/lib/lib_${timestamp}/sqoop</div></pre></td></tr></table></figure>
+<p>&#x7136;&#x540E;&#x4F7F;&#x7528;oozie&#x7684;<code>sharelibupdate</code>&#x547D;&#x4EE4;&#x66F4;&#x65B0;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ oozie admin -oozie http://192.168.0.100:11000/oozie -sharelibupdate</div><div class="line">[ShareLib update status]</div><div class="line">	sharelibDirOld = hdfs://nameservice/user/oozie/share/lib/lib_20160801151935</div><div class="line">	host = http://192.168.0.100:11000/oozie</div><div class="line">	sharelibDirNew = hdfs://nameservice/user/oozie/share/lib/lib_20160801151935</div><div class="line">	status = Successful</div></pre></td></tr></table></figure>
+<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ol>
+<li><a href="http://blog.cloudera.com/blog/2014/05/how-to-use-the-sharelib-in-apache-oozie-cdh-5/?utm_source=tuicool&amp;utm_medium=referral" target="_blank" rel="external">cloudera: How-to: Use the ShareLib in Apache Oozie (CDH 5)</a></li>
+<li><a href="https://oozie.apache.org/docs/4.2.0/DG_CommandLineTool.html" target="_blank" rel="external">Oozie: Command Line Interface Utilities</a></li>
+<li><a href="https://stackoverflow.com/questions/15978156/oozie-sqoop-jdbc-driver-jar-location/40649298#40649298" target="_blank" rel="external">StackOverflow: Oozie + Sqoop: JDBC Driver Jar Location</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/11/17/oozie-sqoop/" data-id="civrjwp3h0045v59kgen03uba" class="article-share-link" data-share="baidu" data-title="Oozie中添加sqoop用到的jdbc包">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/11/17/oozie-sqoop/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cdh/">cdh</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-iostat" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/11/17/iostat/" class="article-date">
@@ -102,7 +159,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/11/17/iostat/" data-id="civlrz2dx003odt9kor3inj5i" class="article-share-link" data-share="baidu" data-title="Linux iostat监测IO状态">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/11/17/iostat/" data-id="civrjwp3i0047v59kawc3tap7" class="article-share-link" data-share="baidu" data-title="Linux iostat监测IO状态">分享到</a>
       
 
       
@@ -150,7 +207,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/11/06/read-file-in-jar/" data-id="civlrz2du003jdt9klid76tha" class="article-share-link" data-share="baidu" data-title="读取jar包中文件">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/11/06/read-file-in-jar/" data-id="civrjwp3f0040v59kwrrza1hv" class="article-share-link" data-share="baidu" data-title="读取jar包中文件">分享到</a>
       
 
       
@@ -207,7 +264,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/10/26/shudown-kafka-broker/" data-id="civlrz2dq003bdt9kkr4u0n72" class="article-share-link" data-share="baidu" data-title="主动下线kafka broker">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/10/26/shudown-kafka-broker/" data-id="civrjwp3a003vv59kmhxfwpms" class="article-share-link" data-share="baidu" data-title="主动下线kafka broker">分享到</a>
       
 
       
@@ -265,7 +322,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/10/26/spark-job-server/" data-id="civlrz2dy003qdt9kvgov7qzo" class="article-share-link" data-share="baidu" data-title="Spark jobserver的安装和使用">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/10/26/spark-job-server/" data-id="civrjwp3g0042v59kp04l8exd" class="article-share-link" data-share="baidu" data-title="Spark jobserver的安装和使用">分享到</a>
       
 
       
@@ -320,7 +377,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/10/20/use-local-maven-repository-faster-sbt/" data-id="civlrz2ds003edt9kurwker2n" class="article-share-link" data-share="baidu" data-title="使用本地maven私服加速sbt下载">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/10/20/use-local-maven-repository-faster-sbt/" data-id="civrjwp37003sv59kuv5ri0jm" class="article-share-link" data-share="baidu" data-title="使用本地maven私服加速sbt下载">分享到</a>
       
 
       
@@ -372,7 +429,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/10/20/use-mongo-spark-connector/" data-id="civlrz2dv003ldt9kqu0wih0i" class="article-share-link" data-share="baidu" data-title="mongo-spark-connector使用说明">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/10/20/use-mongo-spark-connector/" data-id="civrjwp3c003xv59kknfl17t2" class="article-share-link" data-share="baidu" data-title="mongo-spark-connector使用说明">分享到</a>
       
 
       
@@ -421,7 +478,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/09/29/check-linux-and-kernel-version/" data-id="civlrz2dg0032dt9kljyvd5pt" class="article-share-link" data-share="baidu" data-title="查看linux发行版本和kernel版本">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/09/29/check-linux-and-kernel-version/" data-id="civrjwp32003ov59ku3jg1hvc" class="article-share-link" data-share="baidu" data-title="查看linux发行版本和kernel版本">分享到</a>
       
 
       
@@ -474,7 +531,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/09/29/release-versions/" data-id="civlrz2dj0036dt9knq3z7dm9" class="article-share-link" data-share="baidu" data-title="发行版本释义">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/09/29/release-versions/" data-id="civrjwp35003qv59k35q6bln6" class="article-share-link" data-share="baidu" data-title="发行版本释义">分享到</a>
       
 
       
@@ -526,7 +583,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/09/23/how-to-hide-application-icon/" data-id="civlrz2di0034dt9ku3hmkzim" class="article-share-link" data-share="baidu" data-title="mac隐藏dock上的程序图标">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/09/23/how-to-hide-application-icon/" data-id="civrjwp31003lv59km9btvozr" class="article-share-link" data-share="baidu" data-title="mac隐藏dock上的程序图标">分享到</a>
       
 
       
@@ -546,62 +603,10 @@
 
 
   
-    <article id="post-hadoop-lzo" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/09/19/hadoop-lzo/" class="article-date">
-  <time datetime="2016-09-19T01:59:25.000Z" itemprop="datePublished">2016-09-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/09/19/hadoop-lzo/">hadoop lzo介绍和使用</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>整理一下lzo相关知识和一些使用方法。<br>附上对指定目录下日志进行lzo压缩的代码：<a href="https://github.com/wzktravel/hadoop-codec">https://github.com/wzktravel/hadoop-codec</a><br>
-        
-          <p class="article-more-link">
-            <a href="/2016/09/19/hadoop-lzo/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/09/19/hadoop-lzo/" data-id="civlrz2dl0039dt9k4j2sl22t" class="article-share-link" data-share="baidu" data-title="hadoop lzo介绍和使用">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/09/19/hadoop-lzo/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/">下一页 &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/">下一页 &raquo;</a>
   </nav>
 </section>
       
@@ -613,7 +618,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hbase/">hbase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jodatime/">jodatime</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongo/">mongo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postgres/">postgres</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sbt/">sbt</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/schedule/">schedule</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread/">thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">3</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hbase/">hbase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jodatime/">jodatime</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongo/">mongo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postgres/">postgres</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sbt/">sbt</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/schedule/">schedule</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread/">thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -631,7 +636,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -641,6 +646,10 @@
     <h3 class="widget-title">近期文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/11/17/oozie-sqoop/">Oozie中添加sqoop用到的jdbc包</a>
+          </li>
         
           <li>
             <a href="/2016/11/17/iostat/">Linux iostat监测IO状态</a>
@@ -656,10 +665,6 @@
         
           <li>
             <a href="/2016/10/26/spark-job-server/">Spark jobserver的安装和使用</a>
-          </li>
-        
-          <li>
-            <a href="/2016/10/20/use-local-maven-repository-faster-sbt/">使用本地maven私服加速sbt下载</a>
           </li>
         
       </ul>

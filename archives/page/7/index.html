@@ -4,18 +4,14 @@
 <head>
   <meta charset="utf-8">
   
-  <title>读取jar包中文件 | wzktravel</title>
+  <title>Archives | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="&amp;#x63D0;&amp;#x4F9B;jar&amp;#x7ED9;&amp;#x5916;&amp;#x754C;&amp;#x4F7F;&amp;#x7528;&amp;#x65F6;&amp;#xFF0C;&amp;#x7ECF;&amp;#x5E38;&amp;#x4F1A;&amp;#x8BFB;&amp;#x53D6;&amp;#x81EA;&amp;#x8EAB;&amp;#x7684;&amp;#x914D;&amp;#x7F6E;&amp;#x6587;&amp;#x4EF6;&amp;#x7B49;&amp;#x3002;&amp;#x8FD9;&amp;#x4E">
-<meta property="og:type" content="article">
-<meta property="og:title" content="读取jar包中文件">
-<meta property="og:url" content="http://wzktravel.github.io/2016/11/06/read-file-in-jar/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="wzktravel">
+<meta property="og:url" content="http://wzktravel.github.io/archives/page/7/index.html">
 <meta property="og:site_name" content="wzktravel">
-<meta property="og:description" content="&amp;#x63D0;&amp;#x4F9B;jar&amp;#x7ED9;&amp;#x5916;&amp;#x754C;&amp;#x4F7F;&amp;#x7528;&amp;#x65F6;&amp;#xFF0C;&amp;#x7ECF;&amp;#x5E38;&amp;#x4F1A;&amp;#x8BFB;&amp;#x53D6;&amp;#x81EA;&amp;#x8EAB;&amp;#x7684;&amp;#x914D;&amp;#x7F6E;&amp;#x6587;&amp;#x4EF6;&amp;#x7B49;&amp;#x3002;&amp;#x8FD9;&amp;#x4E">
-<meta property="og:updated_time" content="2016-11-07T10:44:23.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="读取jar包中文件">
-<meta name="twitter:description" content="&amp;#x63D0;&amp;#x4F9B;jar&amp;#x7ED9;&amp;#x5916;&amp;#x754C;&amp;#x4F7F;&amp;#x7528;&amp;#x65F6;&amp;#xFF0C;&amp;#x7ECF;&amp;#x5E38;&amp;#x4F1A;&amp;#x8BFB;&amp;#x53D6;&amp;#x81EA;&amp;#x8EAB;&amp;#x7684;&amp;#x914D;&amp;#x7F6E;&amp;#x6587;&amp;#x4EF6;&amp;#x7B49;&amp;#x3002;&amp;#x8FD9;&amp;#x4E">
+<meta name="twitter:title" content="wzktravel">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -71,79 +67,44 @@
   </div>
 </header>
     <div class="outer">
-      <section id="main"><article id="post-read-file-in-jar" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/11/06/read-file-in-jar/" class="article-date">
-  <time datetime="2016-11-06T03:51:55.000Z" itemprop="datePublished">2016-11-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+      <section id="main">
   
-    <h1 class="article-title" itemprop="name">
-      读取jar包中文件
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2015" class="archive-year">2015</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2015/06/15/how-to-build-your-own-blog-on-github/" class="archive-article-date">
+  <time datetime="2015-06-15T11:56:58.000Z" itemprop="datePublished">6月 15</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2015/06/15/how-to-build-your-own-blog-on-github/">在github搭建自己的blog</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>&#x63D0;&#x4F9B;jar&#x7ED9;&#x5916;&#x754C;&#x4F7F;&#x7528;&#x65F6;&#xFF0C;&#x7ECF;&#x5E38;&#x4F1A;&#x8BFB;&#x53D6;&#x81EA;&#x8EAB;&#x7684;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x7B49;&#x3002;&#x8FD9;&#x4E9B;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x5728;&#x6253;&#x5305;&#x540E;&#x5DF2;&#x7ECF;&#x5728;jar&#x4E2D;&#x4E86;&#xFF0C;&#x6240;&#x4EE5;&#x4E0D;&#x80FD;&#x4F7F;&#x7528;&#x666E;&#x901A;&#x7684;&#x8BFB;&#x53D6;&#x6587;&#x4EF6;&#x65B9;&#x5F0F;&#x8BFB;&#x53D6;&#xFF0C;&#x53EA;&#x80FD;&#x4EE5;ClassLoader&#x7684;&#x65B9;&#x5F0F;&#x8BFB;&#x53D6;&#x4E8C;&#x8FDB;&#x5236;&#x6587;&#x4EF6;&#x3002;</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BufferedReader <span class="title">getReader</span><span class="params">(String name)</span> </span>{</div><div class="line">  <span class="keyword">try</span> {</div><div class="line">    InputStream in = DicReader.class.getResourceAsStream(<span class="string">&quot;/&quot;</span> + name);</div><div class="line">    <span class="keyword">if</span> (in != <span class="keyword">null</span>) {</div><div class="line">      <span class="keyword">return</span> <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(in, <span class="string">&quot;UTF-8&quot;</span>));</div><div class="line">    }</div><div class="line">  } <span class="keyword">catch</span> (UnsupportedEncodingException e) {</div><div class="line">    log.error(<span class="string">&quot;Cannot create BufferedReader for {}&quot;</span>, name, e);</div><div class="line">  }</div><div class="line">  log.error(<span class="string">&quot;Cannot read dic: {} &quot;</span>, name);</div><div class="line">  <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">}</div></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2016/11/06/read-file-in-jar/" data-id="civrjwp3f0040v59kwrrza1hv" class="article-share-link" data-share="baidu" data-title="读取jar包中文件">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2016/11/06/read-file-in-jar/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-        <span id="busuanzi_container_page_pv" style='display:none;float:right;margin-right:20px;color:#999;'>view <span id="busuanzi_value_page_pv"></span> times</span>
-      
-  
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li></ul>
-
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2016/11/17/iostat/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">
-        
-          Linux iostat监测IO状态
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2016/10/26/shudown-kafka-broker/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">主动下线kafka broker</div>
-    </a>
-  
-</nav>
-
-  
 </article>
+  
+  
+    </div></section>
+  
 
 
-  <section id="comments">
-    <div id="ds-thread" class="ds-thread" data-thread-key="2016/11/06/read-file-in-jar/" data-title="读取jar包中文件" data-url="http://wzktravel.github.io/2016/11/06/read-file-in-jar/"></div>
-  </section>
-
+  <nav id="page-nav">
+    <a class="extend prev" rel="prev" href="/archives/page/6/">&laquo; 上一页</a><a class="page-number" href="/archives/">1</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/5/">5</a><a class="page-number" href="/archives/page/6/">6</a><span class="page-number current">7</span>
+  </nav>
 </section>
       
       <aside id="sidebar">
