@@ -1,0 +1,338 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>kafka系统工具 | wzktravel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Kafka内部提供了许多管理脚本，这些脚本都放在$KAFKA_HOME/bin目录下，而这些类的实现都是放在源码的kafka/core/src/main/Scala/kafka/tools/路径下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kafka系统工具">
+<meta property="og:url" content="http://wzktravel.github.io/2016/11/23/kafka-system-tools/index.html">
+<meta property="og:site_name" content="wzktravel">
+<meta property="og:description" content="Kafka内部提供了许多管理脚本，这些脚本都放在$KAFKA_HOME/bin目录下，而这些类的实现都是放在源码的kafka/core/src/main/Scala/kafka/tools/路径下。">
+<meta property="og:updated_time" content="2016-12-13T14:46:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kafka系统工具">
+<meta name="twitter:description" content="Kafka内部提供了许多管理脚本，这些脚本都放在$KAFKA_HOME/bin目录下，而这些类的实现都是放在源码的kafka/core/src/main/Scala/kafka/tools/路径下。">
+  
+    <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--<link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">-->
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  <!-- -->
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">wzktravel</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="wzktravel.github.io">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-kafka-system-tools" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/11/23/kafka-system-tools/" class="article-date">
+  <time datetime="2016-11-23T03:58:02.000Z" itemprop="datePublished">2016-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      kafka系统工具
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Kafka&#x5185;&#x90E8;&#x63D0;&#x4F9B;&#x4E86;&#x8BB8;&#x591A;&#x7BA1;&#x7406;&#x811A;&#x672C;&#xFF0C;&#x8FD9;&#x4E9B;&#x811A;&#x672C;&#x90FD;&#x653E;&#x5728;$KAFKA_HOME/bin&#x76EE;&#x5F55;&#x4E0B;&#xFF0C;&#x800C;&#x8FD9;&#x4E9B;&#x7C7B;&#x7684;&#x5B9E;&#x73B0;&#x90FD;&#x662F;&#x653E;&#x5728;&#x6E90;&#x7801;&#x7684;kafka/core/src/main/Scala/kafka/tools/&#x8DEF;&#x5F84;&#x4E0B;&#x3002;<br><a id="more"></a></p>
+<h2 id="consumer-offset-checker"><a href="#consumer-offset-checker" class="headerlink" title="consumer offset checker"></a>consumer offset checker</h2><p>Consumer Offset Checker&#x4E3B;&#x8981;&#x662F;&#x8FD0;&#x884C;kafka.tools.ConsumerOffsetChecker&#x7C7B;&#xFF0C;&#x5BF9;&#x5E94;&#x7684;&#x811A;&#x672C;&#x662F;kafka-consumer-offset-checker.sh&#xFF0C;&#x4F1A;&#x663E;&#x793A;&#x51FA;Consumer&#x7684;Group&#x3001;Topic&#x3001;&#x5206;&#x533A;ID&#x3001;&#x5206;&#x533A;&#x5BF9;&#x5E94;&#x5DF2;&#x7ECF;&#x6D88;&#x8D39;&#x7684;Offset&#x3001;logSize&#x5927;&#x5C0F;&#xFF0C;Lag&#x4EE5;&#x53CA;Owner&#x7B49;&#x4FE1;&#x606F;&#x3002;</p>
+<p>&#x5982;&#x679C;&#x8FD0;&#x884C;kafka-consumer-offset-checker.sh&#x811A;&#x672C;&#x7684;&#x65F6;&#x5019;&#x4EC0;&#x4E48;&#x4FE1;&#x606F;&#x90FD;&#x4E0D;&#x8F93;&#x5165;&#xFF0C;&#x90A3;&#x4E48;&#x4F1A;&#x663E;&#x793A;&#x4EE5;&#x4E0B;&#x4FE1;&#x606F;&#xFF1A;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">[iteblog@www.iteblog.com /]$ bin/kafka-consumer-offset-checker.sh</div><div class="line">Check the offset of your consumers.</div><div class="line">Option                                  Description                            </div><div class="line">------                                  -----------                            </div><div class="line">--broker-info                           Print broker info                      </div><div class="line">--group                                 Consumer group.                        </div><div class="line">--help                                  Print this message.                    </div><div class="line">--retry.backoff.ms &lt;Integer&gt;            Retry back-off to use for failed       </div><div class="line">                                          offset queries. (default: 3000)      </div><div class="line">--socket.timeout.ms &lt;Integer&gt;           Socket timeout to use when querying    </div><div class="line">                                          for offsets. (default: 6000)         </div><div class="line">--topic                                 Comma-separated list of consumer       </div><div class="line">                                          topics (all topics if absent).       </div><div class="line">--zookeeper                             ZooKeeper connect string. (default:    </div><div class="line">                                          localhost:2181)</div></pre></td></tr></table></figure></p>
+<p>&#x6211;&#x4EEC;&#x6839;&#x636E;&#x63D0;&#x793A;&#xFF0C;&#x8F93;&#x5165;&#x7684;&#x547D;&#x4EE4;&#x5982;&#x4E0B;&#xFF1A;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">[iteblog@www.iteblog.com /]$ bin/kafka-consumer-offset-checker.sh --zookeeper www.iteblog.com:2181 --topic test --group spark --broker-info</div><div class="line">Group           Topic      Pid Offset          logSize         Lag             Owner</div><div class="line">spark    test       0   34666914        34674392        7478            none</div><div class="line">spark    test       1   34670481        34678029        7548            none</div><div class="line">spark    test       2   34670547        34678002        7455            none</div><div class="line">spark    test       3   34664512        34671961        7449            none</div><div class="line">spark    test       4   34680143        34687562        7419            none</div><div class="line">spark    test       5   34672309        34679823        7514            none</div><div class="line">spark    test       6   34674660        34682220        7560            none</div><div class="line">BROKER INFO</div><div class="line">2 -&gt; www.iteblog.com:9092</div><div class="line">5 -&gt; www.iteblog.com:9093</div><div class="line">4 -&gt; www.iteblog.com:9094</div><div class="line">7 -&gt; www.iteblog.com:9095</div><div class="line">1 -&gt; www.iteblog.com:9096</div><div class="line">3 -&gt; www.iteblog.com:9097</div><div class="line">6 -&gt; www.iteblog.com:9098</div></pre></td></tr></table></figure></p>
+<h2 id="dump-log-segment"><a href="#Dump-Log-Segment" class="headerlink" title="Dump Log Segment"></a>Dump Log Segment</h2><p>&#x6709;&#x65F6;&#x5019;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x9A8C;&#x8BC1;&#x65E5;&#x5FD7;&#x7D22;&#x5F15;&#x662F;&#x5426;&#x6B63;&#x786E;&#xFF0C;&#x6216;&#x8005;&#x4EC5;&#x4EC5;&#x60F3;&#x4ECE;log&#x6587;&#x4EF6;&#x4E2D;&#x76F4;&#x63A5;&#x6253;&#x5370;&#x6D88;&#x606F;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;<code>kafka.tools.DumpLogSegments</code>&#x7C7B;&#x6765;&#x5B9E;&#x73B0;&#xFF0C;&#x5148;&#x6765;&#x770B;&#x770B;&#x5B83;&#x9700;&#x8981;&#x7684;&#x53C2;&#x6570;&#xFF1A;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">[iteblog@www.iteblog.com /]$ bin/kafka-run-class.sh kafka.tools.DumpLogSegments</div><div class="line">Parse a log file and dump its contents to the console, useful for debugging a seemingly corrupt log segment.</div><div class="line">Option                                  Description                            </div><div class="line">------                                  -----------                            </div><div class="line">--deep-iteration                        if set, uses deep instead of shallow   </div><div class="line">                                          iteration                            </div><div class="line">--files &lt;file1, file2, ...&gt;             REQUIRED: The comma separated list of  </div><div class="line">                                          data and index log files to be dumped</div><div class="line">--key-decoder-class                     if set, used to deserialize the keys.  </div><div class="line">                                          This class should implement kafka.   </div><div class="line">                                          serializer.Decoder trait. Custom jar</div><div class="line">                                          should be available in kafka/libs    </div><div class="line">                                          directory. (default: kafka.          </div><div class="line">                                          serializer.StringDecoder)            </div><div class="line">--max-message-size &lt;Integer: size&gt;      Size of largest message. (default:     </div><div class="line">                                          5242880)                             </div><div class="line">--print-data-log                        if set, printing the messages content  </div><div class="line">                                          when dumping data logs               </div><div class="line">--value-decoder-class                   if set, used to deserialize the        </div><div class="line">                                          messages. This class should          </div><div class="line">                                          implement kafka.serializer.Decoder   </div><div class="line">                                          trait. Custom jar should be          </div><div class="line">                                          available in kafka/libs directory.   </div><div class="line">                                          (default: kafka.serializer.          </div><div class="line">                                          StringDecoder)                       </div><div class="line">--verify-index-only                     if set, just verify the index log      </div><div class="line">                                          without printing its content</div></pre></td></tr></table></figure></p>
+<p>&#x5F88;&#x660E;&#x663E;&#xFF0C;&#x6211;&#x4EEC;&#x5728;&#x4F7F;&#x7528;kafka.tools.DumpLogSegments&#x7684;&#x65F6;&#x5019;&#x5FC5;&#x987B;&#x8F93;&#x5165;&#x2013;files&#xFF0C;&#x8FD9;&#x4E2A;&#x53C2;&#x6570;&#x6307;&#x7684;&#x5C31;&#x662F;Kafka&#x4E2D;Topic&#x5206;&#x533A;&#x6240;&#x5728;&#x7684;&#x7EDD;&#x5BF9;&#x8DEF;&#x5F84;&#x3002;&#x5206;&#x533A;&#x6240;&#x5728;&#x7684;&#x76EE;&#x5F55;&#x7531;config/server.properties&#x6587;&#x4EF6;&#x4E2D;log.dirs&#x53C2;&#x6570;&#x51B3;&#x5B9A;&#x3002;&#x6BD4;&#x5982;&#x6211;&#x4EEC;&#x60F3;&#x770B;/home/q/kafka/kafka_2.10-0.8.2.1/data/test-4/00000000000034245135.log&#x65E5;&#x5FD7;&#x6587;&#x4EF6;&#x7684;&#x76F8;&#x5173;&#x60C5;&#x51B5;&#x53EF;&#x4EE5; &#x4F7F;&#x7528;&#x4E0B;&#x9762;&#x7684;&#x547D;&#x4EE4;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">[iteblog@www.iteblog.com /]$ bin/kafka-run-class.sh kafka.tools.DumpLogSegments --files /iteblog/data/test-4/00000000000034245135.log</div><div class="line">Dumping /home/q/kafka/kafka_2.10-0.8.2.1/data/test-4/00000000000034245135.log</div><div class="line">Starting offset: 34245135</div><div class="line">offset: 34245135 position: 0 isvalid: true payloadsize: 4213 magic: 0 compresscodec: NoCompressionCodec crc: 865449274 keysize: 4213</div><div class="line">offset: 34245136 position: 8452 isvalid: true payloadsize: 4657 magic: 0 compresscodec: NoCompressionCodec crc: 4123037760 keysize: 4657</div><div class="line">offset: 34245137 position: 17792 isvalid: true payloadsize: 3921 magic: 0 compresscodec: NoCompressionCodec crc: 541297511 keysize: 3921</div><div class="line">offset: 34245138 position: 25660 isvalid: true payloadsize: 2290 magic: 0 compresscodec: NoCompressionCodec crc: 1346104996 keysize: 2290</div><div class="line">offset: 34245139 position: 30266 isvalid: true payloadsize: 2284 magic: 0 compresscodec: NoCompressionCodec crc: 1930558677 keysize: 2284</div><div class="line">offset: 34245140 position: 34860 isvalid: true payloadsize: 268 magic: 0 compresscodec: NoCompressionCodec crc: 57847488 keysize: 268</div><div class="line">offset: 34245141 position: 35422 isvalid: true payloadsize: 263 magic: 0 compresscodec: NoCompressionCodec crc: 2964399224 keysize: 263</div><div class="line">offset: 34245142 position: 35974 isvalid: true payloadsize: 1875 magic: 0 compresscodec: NoCompressionCodec crc: 647039113 keysize: 1875</div><div class="line">offset: 34245143 position: 39750 isvalid: true payloadsize: 648 magic: 0 compresscodec: NoCompressionCodec crc: 865445580 keysize: 648</div><div class="line">offset: 34245144 position: 41072 isvalid: true payloadsize: 556 magic: 0 compresscodec: NoCompressionCodec crc: 1174686061 keysize: 556</div><div class="line">offset: 34245145 position: 42210 isvalid: true payloadsize: 4211 magic: 0 compresscodec: NoCompressionCodec crc: 3691302513 keysize: 4211</div><div class="line">offset: 34245146 position: 50658 isvalid: true payloadsize: 2299 magic: 0 compresscodec: NoCompressionCodec crc: 2367114411 keysize: 2299</div><div class="line">offset: 34245147 position: 55282 isvalid: true payloadsize: 642 magic: 0 compresscodec: NoCompressionCodec crc: 4122061921 keysize: 642</div><div class="line">offset: 34245148 position: 56592 isvalid: true payloadsize: 4211 magic: 0 compresscodec: NoCompressionCodec crc: 3257991653 keysize: 4211</div><div class="line">offset: 34245149 position: 65040 isvalid: true payloadsize: 2278 magic: 0 compresscodec: NoCompressionCodec crc: 2103489307 keysize: 2278</div><div class="line">offset: 34245150 position: 69622 isvalid: true payloadsize: 269 magic: 0 compresscodec: NoCompressionCodec crc: 792857391 keysize: 269</div><div class="line">offset: 34245151 position: 70186 isvalid: true payloadsize: 640 magic: 0 compresscodec: NoCompressionCodec crc: 791599616 keysize: 640</div></pre></td></tr></table></figure>
+<p>&#x53EF;&#x4EE5;&#x770B;&#x51FA;&#xFF0C;&#x8FD9;&#x4E2A;&#x547D;&#x4EE4;&#x5C06;Kafka&#x4E2D;Message&#x4E2D;Header&#x7684;&#x76F8;&#x5173;&#x4FE1;&#x606F;&#x548C;&#x504F;&#x79FB;&#x91CF;&#x90FD;&#x663E;&#x793A;&#x51FA;&#x6765;&#x4E86;&#xFF0C;&#x4F46;&#x662F;&#x6CA1;&#x6709;&#x770B;&#x5230;&#x65E5;&#x5FD7;&#x7684;&#x5185;&#x5BB9;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x2013;print-data-log&#x6765;&#x8BBE;&#x7F6E;&#x3002;&#x5982;&#x679C;&#x9700;&#x8981;&#x67E5;&#x770B;&#x591A;&#x4E2A;&#x65E5;&#x5FD7;&#x6587;&#x4EF6;&#xFF0C;&#x53EF;&#x4EE5;&#x4EE5;&#x9017;&#x53F7;&#x5206;&#x5272;&#x3002;</p>
+<h2 id="&#x5BFC;&#x51FA;zookeeper&#x4E2D;group&#x76F8;&#x5173;&#x7684;&#x504F;&#x79FB;&#x91CF;"><a href="#&#x5BFC;&#x51FA;Zookeeper&#x4E2D;Group&#x76F8;&#x5173;&#x7684;&#x504F;&#x79FB;&#x91CF;" class="headerlink" title="&#x5BFC;&#x51FA;Zookeeper&#x4E2D;Group&#x76F8;&#x5173;&#x7684;&#x504F;&#x79FB;&#x91CF;"></a>&#x5BFC;&#x51FA;Zookeeper&#x4E2D;Group&#x76F8;&#x5173;&#x7684;&#x504F;&#x79FB;&#x91CF;</h2><p>&#x6709;&#x65F6;&#x5019;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x5BFC;&#x51FA;&#x67D0;&#x4E2A;Consumer group&#x5404;&#x4E2A;&#x5206;&#x533A;&#x7684;&#x504F;&#x79FB;&#x91CF;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x4F7F;&#x7528;Kafka&#x7684;<code>kafka.tools.ExportZkOffsets</code>&#x7C7B;&#x6765;&#x6EE1;&#x8DB3;&#x3002;&#x6765;&#x770B;&#x770B;&#x8FD9;&#x4E2A;&#x7C7B;&#x9700;&#x8981;&#x7684;&#x53C2;&#x6570;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">[iteblog@www.iteblog.com /]$ bin/kafka-run-class.sh kafka.tools.ExportZkOffsets</div><div class="line">Export consumer offsets to an output file.</div><div class="line">Option                                  Description                            </div><div class="line">------                                  -----------                            </div><div class="line">--group                                 Consumer group.                        </div><div class="line">--help                                  Print this message.                    </div><div class="line">--output-file                           Output file                            </div><div class="line">--zkconnect                             ZooKeeper connect string. (default:    </div><div class="line">                                          localhost:2181)</div></pre></td></tr></table></figure>
+<p>&#x6211;&#x4EEC;&#x9700;&#x8981;&#x8F93;&#x5165;Consumer group&#xFF0C;Zookeeper&#x7684;&#x5730;&#x5740;&#x4EE5;&#x53CA;&#x4FDD;&#x5B58;&#x6587;&#x4EF6;&#x8DEF;&#x5F84;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">[iteblog@www.iteblog.com /]$ bin/kafka-run-class.sh kafka.tools.ExportZkOffsets --group spark --zkconnect www.iteblog.com:2181 --output-file ~/offset</div><div class="line"></div><div class="line">[iteblog@www.iteblog.com /]$ vim ~/offset</div><div class="line">/consumers/spark/offsets/test/3:34846274</div><div class="line">/consumers/spark/offsets/test/2:34852378</div><div class="line">/consumers/spark/offsets/test/1:34852360</div><div class="line">/consumers/spark/offsets/test/0:34848170</div><div class="line">/consumers/spark/offsets/test/6:34857010</div><div class="line">/consumers/spark/offsets/test/5:34854268</div><div class="line">/consumers/spark/offsets/test/4:34861572</div></pre></td></tr></table></figure>
+<p>&#x6CE8;&#x610F;&#xFF0C;<code>--output-file</code>&#x53C2;&#x6570;&#x5FC5;&#x987B;&#x5728;&#x6307;&#x5B9A;&#xFF0C;&#x5426;&#x5219;&#x4F1A;&#x51FA;&#x9519;&#x3002;</p>
+<h2 id="&#x901A;&#x8FC7;jmx&#x83B7;&#x53D6;metrics&#x4FE1;&#x606F;"><a href="#&#x901A;&#x8FC7;JMX&#x83B7;&#x53D6;metrics&#x4FE1;&#x606F;" class="headerlink" title="&#x901A;&#x8FC7;JMX&#x83B7;&#x53D6;metrics&#x4FE1;&#x606F;"></a>&#x901A;&#x8FC7;JMX&#x83B7;&#x53D6;metrics&#x4FE1;&#x606F;</h2><p>&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;kafka.tools.JmxTool&#x7C7B;&#x6253;&#x5370;&#x51FA;Kafka&#x76F8;&#x5173;&#x7684;metrics&#x4FE1;&#x606F;&#x3002;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">[iteblog@www.iteblog.com /]$ bin/kafka-run-class.sh kafka.tools.JmxTool</div><div class="line">Dump JMX values to standard output.</div><div class="line">Option                                  Description                            </div><div class="line">------                                  -----------                            </div><div class="line">--attributes &lt;name&gt;                     The whitelist of attributes to query.  </div><div class="line">                                          This is a comma-separated list. If   </div><div class="line">                                          no attributes are specified all      </div><div class="line">                                          objects will be queried.             </div><div class="line">--date-format &lt;format&gt;                  The date format to use for formatting  </div><div class="line">                                          the time field. See java.text.       </div><div class="line">                                          SimpleDateFormat for options.        </div><div class="line">--help                                  Print usage information.               </div><div class="line">--jmx-url &lt;service-url&gt;                 The url to connect to to poll JMX      </div><div class="line">                                          data. See Oracle javadoc for         </div><div class="line">                                          JMXServiceURL for details. (default:</div><div class="line">                                          service:jmx:rmi:///jndi/rmi://:      </div><div class="line">                                          9999/jmxrmi)                         </div><div class="line">--object-name &lt;name&gt;                    A JMX object name to use as a query.   </div><div class="line">                                          This can contain wild cards, and     </div><div class="line">                                          this option can be given multiple    </div><div class="line">                                          times to specify more than one       </div><div class="line">                                          query. If no objects are specified   </div><div class="line">                                          all objects will be queried.         </div><div class="line">--reporting-interval &lt;Integer: ms&gt;      Interval in MS with which to poll jmx  </div><div class="line">                                          stats. (default: 2000)</div></pre></td></tr></table></figure>
+<p>&#x53EF;&#x4EE5;&#x8FD9;&#x4E48;&#x4F7F;&#x7528;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[iteblog@www.iteblog.com /]$ bin/kafka-run-class.sh kafka.tools.JmxTool --jmx-url service:jmx:rmi:///jndi/rmi://www.iteblog.com:1099/jmxrmi</div></pre></td></tr></table></figure>
+<p>&#x8FD0;&#x884C;&#x4E0A;&#x9762;&#x547D;&#x4EE4;&#x524D;&#x63D0;&#x662F;&#x5728;&#x542F;&#x52A8;kafka&#x96C6;&#x7FA4;&#x7684;&#x65F6;&#x5019;&#x6307;&#x5B9A;<code>export JMX_PORT=</code>&#xFF0C;&#x8FD9;&#x6837;&#x624D;&#x4F1A;&#x5F00;&#x542F;JMX&#x3002;&#x7136;&#x540E;&#x5C31;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x4E0A;&#x9762;&#x547D;&#x4EE4;&#x6253;&#x5370;&#x51FA;Kafka&#x6240;&#x6709;&#x7684;metrics&#x4FE1;&#x606F;&#x3002;</p>
+<h2 id="kafka&#x6570;&#x636E;&#x8FC1;&#x79FB;&#x5DE5;&#x5177;"><a href="#Kafka&#x6570;&#x636E;&#x8FC1;&#x79FB;&#x5DE5;&#x5177;" class="headerlink" title="Kafka&#x6570;&#x636E;&#x8FC1;&#x79FB;&#x5DE5;&#x5177;"></a>Kafka&#x6570;&#x636E;&#x8FC1;&#x79FB;&#x5DE5;&#x5177;</h2><p>&#x8FD9;&#x4E2A;&#x5DE5;&#x5177;&#x4E3B;&#x8981;&#x6709;&#x4E24;&#x4E2A;&#xFF1A;<code>kafka.tools.KafkaMigrationTool&#x548C;kafka.tools.MirrorMaker</code>&#x3002;&#x7B2C;&#x4E00;&#x4E2A;&#x4E3B;&#x8981;&#x662F;&#x7528;&#x4E8E;&#x5C06;Kafka 0.7&#x4E0A;&#x9762;&#x7684;&#x6570;&#x636E;&#x8FC1;&#x79FB;&#x5230;Kafka 0.8&#xFF08;<a href="https://cwiki.apache.org/confluence/display/KAFKA/Migrating+from+0.7+to+0.8&#xFF09;&#xFF1B;&#x800C;&#x540E;&#x8005;&#x53EF;&#x4EE5;&#x540C;&#x6B65;&#x4E24;&#x4E2A;Kafka&#x96C6;&#x7FA4;&#x7684;&#x6570;&#x636E;&#xFF08;https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=27846330&#xFF09;&#x3002;&#x90FD;&#x662F;&#x4ECE;&#x539F;&#x7AEF;&#x6D88;&#x8D39;Messages&#xFF0C;&#x7136;&#x540E;&#x53D1;&#x5E03;&#x5230;&#x76EE;&#x6807;&#x7AEF;&#x3002;" target="_blank" rel="external">https://cwiki.apache.org/confluence/display/KAFKA/Migrating+from+0.7+to+0.8&#xFF09;&#xFF1B;&#x800C;&#x540E;&#x8005;&#x53EF;&#x4EE5;&#x540C;&#x6B65;&#x4E24;&#x4E2A;Kafka&#x96C6;&#x7FA4;&#x7684;&#x6570;&#x636E;&#xFF08;https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=27846330&#xFF09;&#x3002;&#x90FD;&#x662F;&#x4ECE;&#x539F;&#x7AEF;&#x6D88;&#x8D39;Messages&#xFF0C;&#x7136;&#x540E;&#x53D1;&#x5E03;&#x5230;&#x76EE;&#x6807;&#x7AEF;&#x3002;</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[iteblog@www.iteblog.com /]$ bin/kafka-run-class.sh kafka.tools.KafkaMigrationTool --kafka.07.jar kafka-0.7.19.jar --zkclient.01.jar zkclient-0.2.0.jar --num.producers 16 --consumer.config=sourceCluster2Consumer.config --producer.config=targetClusterProducer.config --whitelist=.*</div><div class="line"></div><div class="line">[iteblog@www.iteblog.com /]$ bin/kafka-run-class.sh kafka.tools.MirrorMaker --consumer.config sourceCluster1Consumer.config --consumer.config sourceCluster2Consumer.config --num.streams 2 --producer.config targetClusterProducer.config --whitelist=&quot;.*&quot;</div></pre></td></tr></table></figure>
+<h2 id="&#x65E5;&#x5FD7;&#x91CD;&#x653E;&#x5DE5;&#x5177;"><a href="#&#x65E5;&#x5FD7;&#x91CD;&#x653E;&#x5DE5;&#x5177;" class="headerlink" title="&#x65E5;&#x5FD7;&#x91CD;&#x653E;&#x5DE5;&#x5177;"></a>&#x65E5;&#x5FD7;&#x91CD;&#x653E;&#x5DE5;&#x5177;</h2><p>&#x8FD9;&#x4E2A;&#x5DE5;&#x5177;&#x4E3B;&#x8981;&#x4F5C;&#x7528;&#x662F;&#x4ECE;&#x4E00;&#x4E2A;Kafka&#x96C6;&#x7FA4;&#x91CC;&#x9762;&#x8BFB;&#x53D6;&#x6307;&#x5B9A;Topic&#x7684;&#x6D88;&#x606F;&#xFF0C;&#x5E76;&#x5C06;&#x8FD9;&#x4E9B;&#x6D88;&#x606F;&#x53D1;&#x9001;&#x5230;&#x5176;&#x4ED6;&#x96C6;&#x7FA4;&#x7684;&#x6307;&#x5B9A;topic&#x4E2D;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">[iteblog@www.iteblog.com /]$ bin/kafka-replay-log-producer.sh</div><div class="line">Missing required argument &quot;[broker-list]&quot;</div><div class="line">Option                                  Description                            </div><div class="line">------                                  -----------                            </div><div class="line">--broker-list &lt;hostname:port&gt;           REQUIRED: the broker list must be      </div><div class="line">                                          specified.                           </div><div class="line">--inputtopic &lt;input-topic&gt;              REQUIRED: The topic to consume from.   </div><div class="line">--messages &lt;Integer: count&gt;             The number of messages to send.        </div><div class="line">                                          (default: -1)                        </div><div class="line">--outputtopic &lt;output-topic&gt;            REQUIRED: The topic to produce to      </div><div class="line">--property &lt;producer properties&gt;        A mechanism to pass properties in the  </div><div class="line">                                          form key=value to the producer. This</div><div class="line">                                          allows the user to override producer</div><div class="line">                                          properties that are not exposed by   </div><div class="line">                                          the existing command line arguments  </div><div class="line">--reporting-interval &lt;Integer: size&gt;    Interval at which to print progress    </div><div class="line">                                          info. (default: 5000)                </div><div class="line">--sync                                  If set message send requests to the    </div><div class="line">                                          brokers are synchronously, one at a  </div><div class="line">                                          time as they arrive.                 </div><div class="line">--threads &lt;Integer: threads&gt;            Number of sending threads. (default: 1)</div><div class="line">--zookeeper &lt;zookeeper url&gt;             REQUIRED: The connection string for    </div><div class="line">                                          the zookeeper connection in the form</div><div class="line">                                          host:port. Multiple URLS can be      </div><div class="line">                                          given to allow fail-over. (default:  </div><div class="line">                                          127.0.0.1:2181)</div><div class="line">```                                          </div><div class="line"></div><div class="line">## Simple Consume&#x811A;&#x672C;</div><div class="line"></div><div class="line">`kafka-simple-consumer-shell.sh`&#x5DE5;&#x5177;&#x4E3B;&#x8981;&#x662F;&#x4F7F;&#x7528;Simple Consumer API&#x4ECE;&#x6307;&#x5B9A;Topic&#x7684;&#x5206;&#x533A;&#x8BFB;&#x53D6;&#x6570;&#x636E;&#x5E76;&#x6253;&#x5370;&#x5728;&#x7EC8;&#x7AEF;&#xFF1A;</div></pre></td></tr></table></figure>
+<p>bin/kafka-simple-consumer-shell.sh &#x2013;broker-list www.iteblog.com:9092 &#x2013;topic test &#x2013;partition 0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">## &#x66F4;&#x65B0;Zookeeper&#x4E2D;&#x7684;&#x504F;&#x79FB;&#x91CF;</div><div class="line"></div><div class="line">`kafka.tools.UpdateOffsetsInZK`&#x5DE5;&#x5177;&#x53EF;&#x4EE5;&#x66F4;&#x65B0;Zookeeper&#x4E2D;&#x6307;&#x5B9A;Topic&#x6240;&#x6709;&#x5206;&#x533A;&#x7684;&#x504F;&#x79FB;&#x91CF;&#xFF0C;&#x53EF;&#x4EE5;&#x6307;&#x5B9A;&#x6210; earliest&#x6216;&#x8005;latest&#xFF1A;</div></pre></td></tr></table></figure></p>
+<p>[iteblog@www.iteblog.com /]$ bin/kafka-run-class.sh kafka.tools.UpdateOffsetsInZK<br>USAGE: kafka.tools.UpdateOffsetsInZK$ [earliest | latest] consumer.properties topic<br>```<br>&#x9700;&#x8981;&#x6307;&#x5B9A;&#x662F;&#x66F4;&#x65B0;&#x6210;earliest&#x6216;&#x8005;latest&#xFF0C;consumer.properties&#x6587;&#x4EF6;&#x7684;&#x8DEF;&#x5F84;&#x4EE5;&#x53CA;topic&#x7684;&#x540D;&#x79F0;</p>
+<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ol>
+<li><a href="https://cwiki.apache.org/confluence/display/KAFKA/System+Tools" target="_blank" rel="external">kafka: System Tools</a></li>
+<li><a href="https://cwiki.apache.org/confluence/display/KAFKA/Replication+tools" target="_blank" rel="external">kafka: Replication tools</a></li>
+<li><a href="https://www.iteblog.com/archives/1605" target="_blank" rel="external">kafka&#x7BA1;&#x7406;&#x5DE5;&#x5177;&#x4ECB;&#x7ECD;</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/11/23/kafka-system-tools/" data-id="ciwnn1hhr003qm09k6ptart57" class="article-share-link" data-share="baidu" data-title="kafka系统工具">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/11/23/kafka-system-tools/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+        <span id="busuanzi_container_page_pv" style='display:none;float:right;margin-right:20px;color:#999;'>view <span id="busuanzi_value_page_pv"></span> times</span>
+      
+  
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/12/01/kafka-manager/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          kafka manager
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/11/17/oozie-sqoop/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Oozie中添加sqoop用到的jdbc包</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/11/23/kafka-system-tools/" data-title="kafka系统工具" data-url="http://wzktravel.github.io/2016/11/23/kafka-system-tools/"></div>
+  </section>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hbase/">hbase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jodatime/">jodatime</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongo/">mongo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postgres/">postgres</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sbt/">sbt</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/schedule/">schedule</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread/">thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 16.25px;">cdh</a> <a href="/tags/elasticsearch/" style="font-size: 12.5px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.25px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.25px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hbase/" style="font-size: 11.25px;">hbase</a> <a href="/tags/hdfs/" style="font-size: 12.5px;">hdfs</a> <a href="/tags/hive/" style="font-size: 12.5px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jodatime/" style="font-size: 10px;">jodatime</a> <a href="/tags/kafka/" style="font-size: 13.75px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 12.5px;">kerberos</a> <a href="/tags/linux/" style="font-size: 18.75px;">linux</a> <a href="/tags/mac/" style="font-size: 11.25px;">mac</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/mongo/" style="font-size: 10px;">mongo</a> <a href="/tags/postgres/" style="font-size: 10px;">postgres</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/sbt/" style="font-size: 10px;">sbt</a> <a href="/tags/scala/" style="font-size: 12.5px;">scala</a> <a href="/tags/schedule/" style="font-size: 11.25px;">schedule</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 17.5px;">shell</a> <a href="/tags/spark/" style="font-size: 15px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/thread/" style="font-size: 10px;">thread</a> <a href="/tags/vim/" style="font-size: 11.25px;">vim</a> <a href="/tags/yarn/" style="font-size: 12.5px;">yarn</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/12/12/jdbc-spark-connector/">spark使用jdbc connector连接数据库</a>
+          </li>
+        
+          <li>
+            <a href="/2016/12/01/kafka-manager/">kafka manager</a>
+          </li>
+        
+          <li>
+            <a href="/2016/11/23/kafka-system-tools/">kafka系统工具</a>
+          </li>
+        
+          <li>
+            <a href="/2016/11/17/oozie-sqoop/">Oozie中添加sqoop用到的jdbc包</a>
+          </li>
+        
+          <li>
+            <a href="/2016/11/17/iostat/">Linux iostat监测IO状态</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="" target="_blank">作者</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 wzktravel<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+      .
+      <span id="busuanzi_container_site_pv" style="display:none">view <span id="busuanzi_value_site_pv"></span> times</span>
+    </div>
+  </div>
+</footer>
+
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wzktravel"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

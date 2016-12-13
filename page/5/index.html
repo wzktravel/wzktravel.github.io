@@ -69,6 +69,168 @@
     <div class="outer">
       <section id="main">
   
+    <article id="post-ntp-server" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/01/15/ntp-server/" class="article-date">
+  <time datetime="2016-01-15T10:25:41.000Z" itemprop="datePublished">2016-01-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/01/15/ntp-server/">ntp server搭建</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>NTP（Network Time Protocol）是用来使计算机时间同步化的一种协议，它可以使计算机对其服务器或时钟源做同步化，它可以提供高精准度的时间校正。<br>在CDH集群中，要求服务器之间时钟尽量保持同步，本例讲解如何在CentOS6.5上配置NTP服务器和NTP客户端，可使多台客户机的时间与指定的NTP服务器的时间保持一致。从而保证多台服务器的时间同步。<br>
+        
+          <p class="article-more-link">
+            <a href="/2016/01/15/ntp-server/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2016/01/15/ntp-server/" data-id="ciwnn1hfp0019m09kp8aakzjk" class="article-share-link" data-share="baidu" data-title="ntp server搭建">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2016/01/15/ntp-server/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cdh/">cdh</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-kafka-reassign" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/12/31/kafka-reassign/" class="article-date">
+  <time datetime="2015-12-31T09:29:51.000Z" itemprop="datePublished">2015-12-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/12/31/kafka-reassign/">kafka重新分配partition</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天kafka测试环境中机器磁盘告警，占用率超过了80%，原来是某一个<code>topic</code>的<code>partition</code>为1，只往一台机器上写数据，造成kafka集群空间使用不均。<br>下面主要使用<code>kafka-topics.sh</code>和<code>kafka-reassign-partitions.sh</code>来解决问题。<br>推荐使用<a href="https://github.com/yahoo/kafka-manager">kafka manager</a>来管理kafka集群。<br>
+        
+          <p class="article-more-link">
+            <a href="/2015/12/31/kafka-reassign/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2015/12/31/kafka-reassign/" data-id="ciwnn1hfr001bm09kqw4saj33" class="article-share-link" data-share="baidu" data-title="kafka重新分配partition">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2015/12/31/kafka-reassign/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-flume-ng" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/12/11/flume-ng/" class="article-date">
+  <time datetime="2015-12-11T08:11:55.000Z" itemprop="datePublished">2015-12-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/12/11/flume-ng/">flume-ng配置以及使用lzo</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>flume-ng配置以及使用过程中遇到的问题和解决办法。重点说一下hdfs.codeC使用lzo的问题。另外附上自己实现的flume插件，<a href="https://github.com/wzktravel/flume-agent">https://github.com/wzktravel/flume-agent</a>，当前有一个interceptor，两个source：</p>
+<ol>
+<li>HDFSInterceptor，在header中加入时间,文件名,ip等</li>
+<li>SpoolDirectoryHourlySource，收集按小时进行切片的日志</li>
+<li>DirTailPollableSource2, 动态tail目录下最后修改的文件</li>
+</ol>
+<p>以下都基于flume ng 1.6.0版本，最后附上flume上报到hdfs的配置。<br>
+        
+          <p class="article-more-link">
+            <a href="/2015/12/11/flume-ng/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://wzktravel.github.io/2015/12/11/flume-ng/" data-id="ciwnn1hfs001em09k3oxzohoa" class="article-share-link" data-share="baidu" data-title="flume-ng配置以及使用lzo">分享到</a>
+      
+
+      
+        <a href="http://wzktravel.github.io/2015/12/11/flume-ng/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/flume/">flume</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-hadoop-lzo" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2015/12/10/hadoop-lzo/" class="article-date">
@@ -101,7 +263,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2015/12/10/hadoop-lzo/" data-id="civrjwp1c001jv59kranml01d" class="article-share-link" data-share="baidu" data-title="Cloudera中配置hadoop_lzo">分享到</a>
+        <a data-url="http://wzktravel.github.io/2015/12/10/hadoop-lzo/" data-id="ciwnn1hfi0014m09kz8ezmv8g" class="article-share-link" data-share="baidu" data-title="Cloudera中配置hadoop_lzo">分享到</a>
       
 
       
@@ -153,7 +315,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2015/11/21/SimpleDateFormat/" data-id="civrjwp1a001fv59kk7i4r73b" class="article-share-link" data-share="baidu" data-title="SimpleDateFormat时区和语言环境">分享到</a>
+        <a data-url="http://wzktravel.github.io/2015/11/21/SimpleDateFormat/" data-id="ciwnn1hfh0011m09k86w324pe" class="article-share-link" data-share="baidu" data-title="SimpleDateFormat时区和语言环境">分享到</a>
       
 
       
@@ -205,7 +367,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2015/09/25/java8-lambda/" data-id="civrjwp17001bv59k4bjlsgup" class="article-share-link" data-share="baidu" data-title="java8 lambda">分享到</a>
+        <a data-url="http://wzktravel.github.io/2015/09/25/java8-lambda/" data-id="ciwnn1hff000zm09kxl0tbrpo" class="article-share-link" data-share="baidu" data-title="java8 lambda">分享到</a>
       
 
       
@@ -257,7 +419,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2015/09/24/linux-kick-user/" data-id="civrjwp130018v59kw16uby8h" class="article-share-link" data-share="baidu" data-title="如何查看Linux中登陆的用户/踢出用户">分享到</a>
+        <a data-url="http://wzktravel.github.io/2015/09/24/linux-kick-user/" data-id="ciwnn1hfb000um09k54fo3o0p" class="article-share-link" data-share="baidu" data-title="如何查看Linux中登陆的用户/踢出用户">分享到</a>
       
 
       
@@ -309,7 +471,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2015/09/21/linux-awk/" data-id="civrjwp0w0014v59kjvdxzia6" class="article-share-link" data-share="baidu" data-title="linux awk命令">分享到</a>
+        <a data-url="http://wzktravel.github.io/2015/09/21/linux-awk/" data-id="ciwnn1hfa000sm09kgo6eotk5" class="article-share-link" data-share="baidu" data-title="linux awk命令">分享到</a>
       
 
       
@@ -361,7 +523,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2015/09/19/linux-sed/" data-id="civrjwp100016v59kqfh6l3jc" class="article-share-link" data-share="baidu" data-title="linux sed命令">分享到</a>
+        <a data-url="http://wzktravel.github.io/2015/09/19/linux-sed/" data-id="ciwnn1hfc000wm09kutqlthc9" class="article-share-link" data-share="baidu" data-title="linux sed命令">分享到</a>
       
 
       
@@ -413,7 +575,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2015/09/14/java-queue/" data-id="civrjwp0w0013v59kb7h1tkmn" class="article-share-link" data-share="baidu" data-title="java多线程中的Queue">分享到</a>
+        <a data-url="http://wzktravel.github.io/2015/09/14/java-queue/" data-id="ciwnn1hf4000pm09kcad1bm1a" class="article-share-link" data-share="baidu" data-title="java多线程中的Queue">分享到</a>
       
 
       
@@ -424,162 +586,6 @@
   
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/thread/">thread</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-shell-command" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/09/13/shell-command/" class="article-date">
-  <time datetime="2015-09-13T08:23:13.000Z" itemprop="datePublished">2015-09-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/09/13/shell-command/">shell常用命令整理</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>只整理一些平时想用，可能又突然记不起来的命令和用法。都是基于bash。<br>如果不想在命令行使用<code>man</code>来阅读手册，可以在这个网站查看 <a href="http://explainshell.com/">http://explainshell.com/</a><br>
-        
-          <p class="article-more-link">
-            <a href="/2015/09/13/shell-command/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2015/09/13/shell-command/" data-id="civrjwp18001dv59k52p5ndbu" class="article-share-link" data-share="baidu" data-title="shell常用命令整理">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2015/09/13/shell-command/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell/">shell</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-log" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/09/10/log/" class="article-date">
-  <time datetime="2015-09-10T12:03:00.000Z" itemprop="datePublished">2015-09-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/09/10/log/">日志追查总结</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天想统计一下无线的resin日志中rtype的数量和比例，然后看一个月以来的趋势，分析resin代码是否有异常。本来只要在统计平台中写hive脚本，很快就可以跑出来，但是hive仓库中resin日志竟然没有入库，更没有进行解析。于是乎，只能手动从hdfs上拉数据然后分析。<br>在这个过程中，遇到一些问题，在这总结一下，也把解决方法贴出来。<br>从日志中总是能发现各种各样的问题，任重而道远，还需要一一进行解决。<br>
-        
-          <p class="article-more-link">
-            <a href="/2015/09/10/log/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2015/09/10/log/" data-id="civrjwp1w0025v59k7cxag8wr" class="article-share-link" data-share="baidu" data-title="日志追查总结">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2015/09/10/log/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hive/">hive</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell/">shell</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-spark-rdd" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/09/01/spark-rdd/" class="article-date">
-  <time datetime="2015-08-31T16:12:43.000Z" itemprop="datePublished">2015-09-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/09/01/spark-rdd/">Spark RDD学习</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>RDD(resilient distributed dataset)是spark核心概念之一，spark中数据的处理过程其实是rdd之间的互相转换，在此对rdd的一些东西进行整理。<br>
-        
-          <p class="article-more-link">
-            <a href="/2015/09/01/spark-rdd/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://wzktravel.github.io/2015/09/01/spark-rdd/" data-id="civrjwp0u0011v59ku4cz4nyq" class="article-share-link" data-share="baidu" data-title="Spark RDD学习">分享到</a>
-      
-
-      
-        <a href="http://wzktravel.github.io/2015/09/01/spark-rdd/#ds-thread" class="article-comment-link">评论</a>
-      
-
-      
-  
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scala/">scala</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spark/">spark</a></li></ul>
 
     </footer>
   </div>
@@ -604,7 +610,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hbase/">hbase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jodatime/">jodatime</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongo/">mongo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postgres/">postgres</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sbt/">sbt</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/schedule/">schedule</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread/">thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">3</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/azkaban/">azkaban</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cdh/">cdh</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flume/">flume</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/github/">github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hadoop/">hadoop</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hbase/">hbase</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hdfs/">hdfs</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hive/">hive</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/">java</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jodatime/">jodatime</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kafka/">kafka</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kerberos/">kerberos</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/">mac</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/">maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mongo/">mongo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postgres/">postgres</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/quartz/">quartz</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sbt/">sbt</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/">scala</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/schedule/">schedule</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sentry/">sentry</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/">shell</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spark/">spark</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sql/">sql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thread/">thread</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/">vim</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yarn/">yarn</a><span class="tag-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -613,7 +619,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 16.25px;">cdh</a> <a href="/tags/elasticsearch/" style="font-size: 12.5px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.25px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.25px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hbase/" style="font-size: 11.25px;">hbase</a> <a href="/tags/hdfs/" style="font-size: 12.5px;">hdfs</a> <a href="/tags/hive/" style="font-size: 12.5px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jodatime/" style="font-size: 10px;">jodatime</a> <a href="/tags/kafka/" style="font-size: 11.25px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 12.5px;">kerberos</a> <a href="/tags/linux/" style="font-size: 18.75px;">linux</a> <a href="/tags/mac/" style="font-size: 11.25px;">mac</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/mongo/" style="font-size: 10px;">mongo</a> <a href="/tags/postgres/" style="font-size: 10px;">postgres</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/sbt/" style="font-size: 10px;">sbt</a> <a href="/tags/scala/" style="font-size: 12.5px;">scala</a> <a href="/tags/schedule/" style="font-size: 11.25px;">schedule</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 17.5px;">shell</a> <a href="/tags/spark/" style="font-size: 13.75px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/thread/" style="font-size: 10px;">thread</a> <a href="/tags/vim/" style="font-size: 11.25px;">vim</a> <a href="/tags/yarn/" style="font-size: 12.5px;">yarn</a>
+      <a href="/tags/azkaban/" style="font-size: 10px;">azkaban</a> <a href="/tags/cdh/" style="font-size: 16.25px;">cdh</a> <a href="/tags/elasticsearch/" style="font-size: 12.5px;">elasticsearch</a> <a href="/tags/flume/" style="font-size: 11.25px;">flume</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 11.25px;">github</a> <a href="/tags/hadoop/" style="font-size: 20px;">hadoop</a> <a href="/tags/hbase/" style="font-size: 11.25px;">hbase</a> <a href="/tags/hdfs/" style="font-size: 12.5px;">hdfs</a> <a href="/tags/hive/" style="font-size: 12.5px;">hive</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/jodatime/" style="font-size: 10px;">jodatime</a> <a href="/tags/kafka/" style="font-size: 13.75px;">kafka</a> <a href="/tags/kerberos/" style="font-size: 12.5px;">kerberos</a> <a href="/tags/linux/" style="font-size: 18.75px;">linux</a> <a href="/tags/mac/" style="font-size: 11.25px;">mac</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/mongo/" style="font-size: 10px;">mongo</a> <a href="/tags/postgres/" style="font-size: 10px;">postgres</a> <a href="/tags/quartz/" style="font-size: 10px;">quartz</a> <a href="/tags/sbt/" style="font-size: 10px;">sbt</a> <a href="/tags/scala/" style="font-size: 12.5px;">scala</a> <a href="/tags/schedule/" style="font-size: 11.25px;">schedule</a> <a href="/tags/sentry/" style="font-size: 10px;">sentry</a> <a href="/tags/shell/" style="font-size: 17.5px;">shell</a> <a href="/tags/spark/" style="font-size: 15px;">spark</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/thread/" style="font-size: 10px;">thread</a> <a href="/tags/vim/" style="font-size: 11.25px;">vim</a> <a href="/tags/yarn/" style="font-size: 12.5px;">yarn</a>
     </div>
   </div>
 
@@ -622,7 +628,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -634,23 +640,23 @@
       <ul>
         
           <li>
+            <a href="/2016/12/12/jdbc-spark-connector/">spark使用jdbc connector连接数据库</a>
+          </li>
+        
+          <li>
+            <a href="/2016/12/01/kafka-manager/">kafka manager</a>
+          </li>
+        
+          <li>
+            <a href="/2016/11/23/kafka-system-tools/">kafka系统工具</a>
+          </li>
+        
+          <li>
             <a href="/2016/11/17/oozie-sqoop/">Oozie中添加sqoop用到的jdbc包</a>
           </li>
         
           <li>
             <a href="/2016/11/17/iostat/">Linux iostat监测IO状态</a>
-          </li>
-        
-          <li>
-            <a href="/2016/11/06/read-file-in-jar/">读取jar包中文件</a>
-          </li>
-        
-          <li>
-            <a href="/2016/10/26/shudown-kafka-broker/">主动下线kafka broker</a>
-          </li>
-        
-          <li>
-            <a href="/2016/10/26/spark-job-server/">Spark jobserver的安装和使用</a>
           </li>
         
       </ul>
