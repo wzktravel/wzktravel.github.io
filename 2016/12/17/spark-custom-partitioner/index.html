@@ -4,21 +4,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>查看修复HDFS中丢失的块 | wzktravel</title>
+  <title>spark自定义分区策略(partitioner) | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="&amp;#x68C0;&amp;#x6D4B;&amp;#x7F3A;&amp;#x5931;&amp;#x5757;12hdfs fsck -list-corruptfileblockshdfs fsck / | egrep -v &amp;apos;^\.+$&amp;apos; | grep -v eplica
-&amp;#x67E5;&amp;#x770B;&amp;#x4E0A;&amp;#x9762;&amp;#x67D0;&amp;#x4E00;&amp;#x4E2A;&amp;#x6587;&amp;#x">
+  <meta name="description" content="Spark内部提供了HashPartitioner和RangePartitioner两种分区策略，但有些场景下，我们希望能够根据业务需求自定义分区策略。只需要继承Partitioner，然后实现其方法即可。
+12345678/** * An object that defines how the elements in a key-value pair RDD are partitioned by">
 <meta property="og:type" content="article">
-<meta property="og:title" content="查看修复HDFS中丢失的块">
-<meta property="og:url" content="http://wzktravel.github.io/2016/03/31/Fix-Corrupt-Blocks-on-HDFS/index.html">
+<meta property="og:title" content="spark自定义分区策略(partitioner)">
+<meta property="og:url" content="http://wzktravel.github.io/2016/12/17/spark-custom-partitioner/index.html">
 <meta property="og:site_name" content="wzktravel">
-<meta property="og:description" content="&amp;#x68C0;&amp;#x6D4B;&amp;#x7F3A;&amp;#x5931;&amp;#x5757;12hdfs fsck -list-corruptfileblockshdfs fsck / | egrep -v &amp;apos;^\.+$&amp;apos; | grep -v eplica
-&amp;#x67E5;&amp;#x770B;&amp;#x4E0A;&amp;#x9762;&amp;#x67D0;&amp;#x4E00;&amp;#x4E2A;&amp;#x6587;&amp;#x">
-<meta property="og:updated_time" content="2016-08-17T11:32:35.000Z">
+<meta property="og:description" content="Spark内部提供了HashPartitioner和RangePartitioner两种分区策略，但有些场景下，我们希望能够根据业务需求自定义分区策略。只需要继承Partitioner，然后实现其方法即可。
+12345678/** * An object that defines how the elements in a key-value pair RDD are partitioned by">
+<meta property="og:updated_time" content="2016-12-17T10:50:58.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="查看修复HDFS中丢失的块">
-<meta name="twitter:description" content="&amp;#x68C0;&amp;#x6D4B;&amp;#x7F3A;&amp;#x5931;&amp;#x5757;12hdfs fsck -list-corruptfileblockshdfs fsck / | egrep -v &amp;apos;^\.+$&amp;apos; | grep -v eplica
-&amp;#x67E5;&amp;#x770B;&amp;#x4E0A;&amp;#x9762;&amp;#x67D0;&amp;#x4E00;&amp;#x4E2A;&amp;#x6587;&amp;#x">
+<meta name="twitter:title" content="spark自定义分区策略(partitioner)">
+<meta name="twitter:description" content="Spark内部提供了HashPartitioner和RangePartitioner两种分区策略，但有些场景下，我们希望能够根据业务需求自定义分区策略。只需要继承Partitioner，然后实现其方法即可。
+12345678/** * An object that defines how the elements in a key-value pair RDD are partitioned by">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -74,10 +74,10 @@
   </div>
 </header>
     <div class="outer">
-      <section id="main"><article id="post-Fix-Corrupt-Blocks-on-HDFS" class="article article-type-post" itemscope itemprop="blogPost">
+      <section id="main"><article id="post-spark-custom-partitioner" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/03/31/Fix-Corrupt-Blocks-on-HDFS/" class="article-date">
-  <time datetime="2016-03-31T05:53:20.000Z" itemprop="datePublished">2016-03-31</time>
+    <a href="/2016/12/17/spark-custom-partitioner/" class="article-date">
+  <time datetime="2016-12-17T09:23:00.000Z" itemprop="datePublished">2016-12-17</time>
 </a>
     
   </div>
@@ -88,7 +88,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      查看修复HDFS中丢失的块
+      spark自定义分区策略(partitioner)
     </h1>
   
 
@@ -96,26 +96,28 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="&#x68C0;&#x6D4B;&#x7F3A;&#x5931;&#x5757;"><a href="#&#x68C0;&#x6D4B;&#x7F3A;&#x5931;&#x5757;" class="headerlink" title="&#x68C0;&#x6D4B;&#x7F3A;&#x5931;&#x5757;"></a>&#x68C0;&#x6D4B;&#x7F3A;&#x5931;&#x5757;</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">hdfs fsck -list-corruptfileblocks</div><div class="line">hdfs fsck / | egrep -v <span class="string">&apos;^\.+$&apos;</span> | grep -v eplica</div></pre></td></tr></table></figure>
-<p>&#x67E5;&#x770B;&#x4E0A;&#x9762;&#x67D0;&#x4E00;&#x4E2A;&#x6587;&#x4EF6;&#x7684;&#x60C5;&#x51B5;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hdfs fsck /path/to/corrupt/file -locations -blocks -files</div></pre></td></tr></table></figure></p>
-<h3 id="&#x89E3;&#x51B3;&#x65B9;&#x6CD5;"><a href="#&#x89E3;&#x51B3;&#x65B9;&#x6CD5;" class="headerlink" title="&#x89E3;&#x51B3;&#x65B9;&#x6CD5;"></a>&#x89E3;&#x51B3;&#x65B9;&#x6CD5;</h3><ol>
-<li>&#x5982;&#x679C;&#x6587;&#x4EF6;&#x4E0D;&#x91CD;&#x8981;&#xFF0C;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x5220;&#x9664;&#x6B64;&#x6587;&#x4EF6;&#xFF1B;&#x6216;&#x5220;&#x9664;&#x540E;&#x91CD;&#x65B0;&#x590D;&#x5236;&#x4E00;&#x4EFD;&#x5230;&#x96C6;&#x7FA4;&#x4E2D;</li>
-<li>&#x5982;&#x679C;&#x4E0D;&#x80FD;&#x5220;&#x9664;&#xFF0C;&#x9700;&#x8981;&#x4ECE;&#x4E0A;&#x9762;&#x547D;&#x4EE4;&#x4E2D;&#x627E;&#x5230;&#x53D1;&#x751F;&#x5728;&#x54EA;&#x53F0;&#x673A;&#x5668;&#x4E0A;&#xFF0C;&#x7136;&#x540E;&#x5230;&#x6B64;&#x673A;&#x5668;&#x4E0A;&#x67E5;&#x770B;&#x65E5;&#x5FD7;&#x3002;</li>
-</ol>
-<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ul>
-<li><a href="http://centoshowtos.org/hadoop/fix-corrupt-blocks-on-hdfs/" target="_blank" rel="external">http://centoshowtos.org/hadoop/fix-corrupt-blocks-on-hdfs/</a></li>
-<li><a href="http://stackoverflow.com/questions/19205057/how-to-fix-corrupt-hadoop-hdfs" target="_blank" rel="external">http://stackoverflow.com/questions/19205057/how-to-fix-corrupt-hadoop-hdfs</a></li>
-</ul>
+        <p>Spark&#x5185;&#x90E8;&#x63D0;&#x4F9B;&#x4E86;<code>HashPartitioner</code>&#x548C;<code>RangePartitioner</code>&#x4E24;&#x79CD;&#x5206;&#x533A;&#x7B56;&#x7565;&#xFF0C;&#x4F46;&#x6709;&#x4E9B;&#x573A;&#x666F;&#x4E0B;&#xFF0C;&#x6211;&#x4EEC;&#x5E0C;&#x671B;&#x80FD;&#x591F;&#x6839;&#x636E;&#x4E1A;&#x52A1;&#x9700;&#x6C42;&#x81EA;&#x5B9A;&#x4E49;&#x5206;&#x533A;&#x7B56;&#x7565;&#x3002;&#x53EA;&#x9700;&#x8981;&#x7EE7;&#x627F;<code>Partitioner</code>&#xFF0C;&#x7136;&#x540E;&#x5B9E;&#x73B0;&#x5176;&#x65B9;&#x6CD5;&#x5373;&#x53EF;&#x3002;</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * An object that defines how the elements in a key-value pair RDD are partitioned by key.</div><div class="line"> * Maps each key to a partition ID, from 0 to `numPartitions - 1`.</div><div class="line"> */</div><div class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Partitioner</span> <span class="keyword">extends</span> <span class="title">Serializable</span> </span>{</div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">numPartitions</span></span>: <span class="type">Int</span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">getPartition</span></span>(key: <span class="type">Any</span>): <span class="type">Int</span></div><div class="line">}</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>&#x73B0;&#x5728;&#x9047;&#x5230;&#x4E00;&#x4E2A;&#x573A;&#x666F;&#xFF0C;&#x4ECE;&#x6570;&#x636E;&#x5E93;&#x540C;&#x6B65;&#x6570;&#x636E;&#x5230;kafka&#x4E2D;&#xFF0C;&#x7136;&#x540E;&#x4F7F;&#x7528;spark&#x4ECE;kafka&#x83B7;&#x53D6;&#x6570;&#x636E;&#x8FDB;&#x884C;&#x5904;&#x7406;&#x3002;&#x7531;&#x4E8E;&#x6839;&#x636E;&#x6570;&#x636E;&#x5E93;&#x64CD;&#x4F5C;&#x8BB0;&#x5F55;&#x8FDB;&#x884C;&#x540C;&#x6B65;&#xFF0C;&#x6240;&#x4EE5;&#x5728;&#x6570;&#x636E;&#x5E93;&#x4E2D;&#x540C;&#x4E00;&#x6761;&#x6570;&#x636E;&#x53EF;&#x80FD;&#x88AB;&#x66F4;&#x65B0;&#x6216;&#x5220;&#x9664;&#x591A;&#x6B21;&#xFF0C;&#x8FD9;&#x8981;&#x6C42;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x5C06;&#x76F8;&#x540C;&#x4E3B;&#x952E;&#x7684;&#x6570;&#x636E;&#x5206;&#x533A;&#x5230;&#x540C;&#x4E00;&#x4E2A;&#x533A;&#x4E2D;&#x8FDB;&#x884C;&#x5904;&#x7406;&#x3002;</p>
+<p>&#x4E5F;&#x5C31;&#x662F;&#x8BF4;&#xFF0C;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x7684;&#x5206;&#x533A;&#x7B56;&#x7565;&#x662F;&#xFF0C;&#x4ECE;&#x6570;&#x636E;&#x4E2D;&#x627E;&#x51FA;&#x4E3B;&#x952E;&#xFF0C;&#x5C06;&#x5176;&#x5206;&#x914D;&#x5230;&#x67D0;&#x4E00;&#x4E2A;&#x5206;&#x533A;&#x4E2D;&#x3002;</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">PrimaryKeyPartitioner</span>(<span class="params">partitions: <span class="type">Int</span></span>) <span class="keyword">extends</span> <span class="title">Partitioner</span> </span>{</div><div class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">numPartitions</span></span>: <span class="type">Int</span> = partitions</div><div class="line"></div><div class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">getPartition</span></span>(key: <span class="type">Any</span>): <span class="type">Int</span> = key <span class="keyword">match</span> {</div><div class="line">    <span class="keyword">case</span> <span class="literal">null</span> =&gt; <span class="number">0</span></div><div class="line">    <span class="keyword">case</span> _ =&gt;</div><div class="line">      <span class="keyword">try</span> {</div><div class="line">        <span class="keyword">val</span> json = <span class="type">JSON</span>.parseObject(key.toString)</div><div class="line">        <span class="keyword">val</span> primaryKeyString = json.getString(<span class="string">&quot;primary_keys&quot;</span>)</div><div class="line">          .split(<span class="string">&quot;,&quot;</span>)</div><div class="line">          .map(k =&gt; json.getString(k))</div><div class="line">          .mkString(<span class="string">&quot;_&quot;</span>)</div><div class="line"></div><div class="line">        <span class="type">Utils</span>.nonNegativeMod(primaryKeyString.hashCode, numPartitions)</div><div class="line">      } <span class="keyword">catch</span> {</div><div class="line">        <span class="keyword">case</span> e: <span class="type">Exception</span> =&gt;</div><div class="line">          e.printStackTrace()</div><div class="line">          <span class="number">0</span></div><div class="line">      }</div><div class="line">  }</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x4F7F;&#x7528;&#x975E;&#x5E38;&#x7B80;&#x5355;</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">rdd.partitionBy(<span class="keyword">new</span> <span class="type">PrimaryKeyPartitioner</span>(numPartitions)).foreachPartition(</div><div class="line">  par =&gt; {</div><div class="line">    <span class="comment">// &#x5904;&#x7406;&#x903B;&#x8F91;</span></div><div class="line">  }</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>&#x9700;&#x8981;&#x6CE8;&#x610F;&#x7684;&#x662F;&#xFF0C;&#x4F7F;&#x7528;<code>partitionBy</code>&#x65B9;&#x6CD5;&#x7684;rdd&#x7C7B;&#x578B;&#x9700;&#x8981;&#x662F;kv&#x5143;&#x7EC4;&#xFF0C;&#x4ECE;&#x6E90;&#x7801;&#x4E2D;&#x53EF;&#x4EE5;&#x770B;&#x51FA;&#x3002;</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Return a copy of the RDD partitioned using the specified partitioner.</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">partitionBy</span></span>(partitioner: <span class="type">Partitioner</span>): <span class="type">RDD</span>[(<span class="type">K</span>, <span class="type">V</span>)] = self.withScope {</div><div class="line">  <span class="keyword">if</span> (keyClass.isArray &amp;&amp; partitioner.isInstanceOf[<span class="type">HashPartitioner</span>]) {</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">SparkException</span>(<span class="string">&quot;Default partitioner cannot partition array keys.&quot;</span>)</div><div class="line">  }</div><div class="line">  <span class="keyword">if</span> (self.partitioner == <span class="type">Some</span>(partitioner)) {</div><div class="line">    self</div><div class="line">  } <span class="keyword">else</span> {</div><div class="line">    <span class="keyword">new</span> <span class="type">ShuffledRDD</span>[<span class="type">K</span>, <span class="type">V</span>, <span class="type">V</span>](self, partitioner)</div><div class="line">  }</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x6240;&#x4EE5;&#x5982;&#x679C;&#x662F;&#x4ECE;&#x6587;&#x4EF6;&#x4E2D;&#x8BFB;&#x53D6;&#x6570;&#x636E;&#xFF0C;&#x9700;&#x8981;&#x5C06;&#x5176;&#x8F6C;&#x6362;&#x4E3A;&#x5143;&#x7EC4;&#x624D;&#x80FD;&#x4F7F;&#x7528;<code>partitionBy</code>&#x65B9;&#x6CD5;&#x3002;</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> rdd: <span class="type">RDD</span>[(<span class="type">String</span>, <span class="type">String</span>)] = sc.textFile(<span class="string">&quot;sss.log&quot;</span>).map((_, <span class="string">&quot;&quot;</span>))</div></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/03/31/Fix-Corrupt-Blocks-on-HDFS/" data-id="ciwt20vzr001ofo9k1otesyf9" class="article-share-link" data-share="baidu" data-title="查看修复HDFS中丢失的块">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/12/17/spark-custom-partitioner/" data-id="ciwt20w34005rfo9k7574q11r" class="article-share-link" data-share="baidu" data-title="spark自定义分区策略(partitioner)">分享到</a>
       
 
       
-        <a href="http://wzktravel.github.io/2016/03/31/Fix-Corrupt-Blocks-on-HDFS/#ds-thread" class="article-comment-link">评论</a>
+        <a href="http://wzktravel.github.io/2016/12/17/spark-custom-partitioner/#ds-thread" class="article-comment-link">评论</a>
       
 
       
@@ -123,7 +125,7 @@
       
   
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hdfs/">hdfs</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spark/">spark</a></li></ul>
 
     </footer>
   </div>
@@ -131,19 +133,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2016/04/14/quartz-in-practice/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">
-        
-          quartz in practice
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/03/05/Disable-kerberos-in-CDH/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2016/12/12/jdbc-spark-connector/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">CDH禁用kerberos</div>
+      <div class="article-nav-title">spark使用jdbc connector连接数据库</div>
     </a>
   
 </nav>
@@ -153,7 +146,7 @@
 
 
   <section id="comments">
-    <div id="ds-thread" class="ds-thread" data-thread-key="2016/03/31/Fix-Corrupt-Blocks-on-HDFS/" data-title="查看修复HDFS中丢失的块" data-url="http://wzktravel.github.io/2016/03/31/Fix-Corrupt-Blocks-on-HDFS/"></div>
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/12/17/spark-custom-partitioner/" data-title="spark自定义分区策略(partitioner)" data-url="http://wzktravel.github.io/2016/12/17/spark-custom-partitioner/"></div>
   </section>
 
 </section>
