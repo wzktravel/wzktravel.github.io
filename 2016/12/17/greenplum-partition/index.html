@@ -4,21 +4,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Hbase修改表名 | wzktravel</title>
+  <title>greenplum分区 | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="&amp;#x9700;&amp;#x8981;&amp;#x5F00;&amp;#x542F;&amp;#x5FEB;&amp;#x7167;&amp;#x529F;&amp;#x80FD;&amp;#xFF0C;&amp;#x5728;hbase-site.xml&amp;#x6587;&amp;#x4EF6;&amp;#x4E2D;&amp;#x6DFB;&amp;#x52A0;&amp;#x5982;&amp;#x4E0B;&amp;#x914D;&amp;#x7F6E;&amp;#x9879;&amp;#xFF1A;
-1234&amp;lt;property&amp;">
+  <meta name="description" content="&amp;#x521B;&amp;#x5EFA;&amp;#x5206;&amp;#x533A;&amp;#x8868;1234567891011121314CREATE SCHEMA employee;CREATE TABLE &amp;quot;employee&amp;quot;.&amp;quot;employee&amp;quot; (	&amp;quot;name&amp;quot; VARCHAR,	&amp;quot;ei&amp;quot; int4 NOT NULL,	&amp;quot">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hbase修改表名">
-<meta property="og:url" content="http://wzktravel.github.io/2016/09/09/how-to-rename-hbase-table/index.html">
+<meta property="og:title" content="greenplum分区">
+<meta property="og:url" content="http://wzktravel.github.io/2016/12/17/greenplum-partition/index.html">
 <meta property="og:site_name" content="wzktravel">
-<meta property="og:description" content="&amp;#x9700;&amp;#x8981;&amp;#x5F00;&amp;#x542F;&amp;#x5FEB;&amp;#x7167;&amp;#x529F;&amp;#x80FD;&amp;#xFF0C;&amp;#x5728;hbase-site.xml&amp;#x6587;&amp;#x4EF6;&amp;#x4E2D;&amp;#x6DFB;&amp;#x52A0;&amp;#x5982;&amp;#x4E0B;&amp;#x914D;&amp;#x7F6E;&amp;#x9879;&amp;#xFF1A;
-1234&amp;lt;property&amp;">
-<meta property="og:updated_time" content="2016-09-09T10:56:37.000Z">
+<meta property="og:description" content="&amp;#x521B;&amp;#x5EFA;&amp;#x5206;&amp;#x533A;&amp;#x8868;1234567891011121314CREATE SCHEMA employee;CREATE TABLE &amp;quot;employee&amp;quot;.&amp;quot;employee&amp;quot; (	&amp;quot;name&amp;quot; VARCHAR,	&amp;quot;ei&amp;quot; int4 NOT NULL,	&amp;quot">
+<meta property="og:updated_time" content="2016-12-17T11:49:52.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hbase修改表名">
-<meta name="twitter:description" content="&amp;#x9700;&amp;#x8981;&amp;#x5F00;&amp;#x542F;&amp;#x5FEB;&amp;#x7167;&amp;#x529F;&amp;#x80FD;&amp;#xFF0C;&amp;#x5728;hbase-site.xml&amp;#x6587;&amp;#x4EF6;&amp;#x4E2D;&amp;#x6DFB;&amp;#x52A0;&amp;#x5982;&amp;#x4E0B;&amp;#x914D;&amp;#x7F6E;&amp;#x9879;&amp;#xFF1A;
-1234&amp;lt;property&amp;">
+<meta name="twitter:title" content="greenplum分区">
+<meta name="twitter:description" content="&amp;#x521B;&amp;#x5EFA;&amp;#x5206;&amp;#x533A;&amp;#x8868;1234567891011121314CREATE SCHEMA employee;CREATE TABLE &amp;quot;employee&amp;quot;.&amp;quot;employee&amp;quot; (	&amp;quot;name&amp;quot; VARCHAR,	&amp;quot;ei&amp;quot; int4 NOT NULL,	&amp;quot">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -74,10 +71,10 @@
   </div>
 </header>
     <div class="outer">
-      <section id="main"><article id="post-how-to-rename-hbase-table" class="article article-type-post" itemscope itemprop="blogPost">
+      <section id="main"><article id="post-greenplum-partition" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/09/09/how-to-rename-hbase-table/" class="article-date">
-  <time datetime="2016-09-09T10:53:23.000Z" itemprop="datePublished">2016-09-09</time>
+    <a href="/2016/12/17/greenplum-partition/" class="article-date">
+  <time datetime="2016-12-17T11:10:49.000Z" itemprop="datePublished">2016-12-17</time>
 </a>
     
   </div>
@@ -88,7 +85,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Hbase修改表名
+      greenplum分区
     </h1>
   
 
@@ -96,19 +93,74 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>&#x9700;&#x8981;&#x5F00;&#x542F;&#x5FEB;&#x7167;&#x529F;&#x80FD;&#xFF0C;&#x5728;<code>hbase-site.xml</code>&#x6587;&#x4EF6;&#x4E2D;&#x6DFB;&#x52A0;&#x5982;&#x4E0B;&#x914D;&#x7F6E;&#x9879;&#xFF1A;</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.snapshot.enabled<span class="tag">&lt;/<span class="name">name</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure>
-<p>&#x8FDB;&#x5165;hbase shell&#x6267;&#x884C;&#xFF1A;</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">hbase shell&gt; <span class="built_in">disable</span> <span class="string">&apos;tableName&apos;</span></div><div class="line">hbase shell&gt; snapshot <span class="string">&apos;tableName&apos;</span>, <span class="string">&apos;tableSnapshot&apos;</span></div><div class="line">hbase shell&gt; <span class="built_in">clone</span>_snapshot <span class="string">&apos;tableSnapshot&apos;</span>, <span class="string">&apos;newTableName&apos;</span></div><div class="line">hbase shell&gt; delete_snapshot <span class="string">&apos;tableSnapshot&apos;</span></div><div class="line">hbase shell&gt; drop <span class="string">&apos;tableName&apos;</span></div></pre></td></tr></table></figure>
+        <h2 id="&#x521B;&#x5EFA;&#x5206;&#x533A;&#x8868;"><a href="#&#x521B;&#x5EFA;&#x5206;&#x533A;&#x8868;" class="headerlink" title="&#x521B;&#x5EFA;&#x5206;&#x533A;&#x8868;"></a>&#x521B;&#x5EFA;&#x5206;&#x533A;&#x8868;</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">SCHEMA</span> employee;</div><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">&quot;employee&quot;</span>.<span class="string">&quot;employee&quot;</span> (</div><div class="line">	<span class="string">&quot;name&quot;</span> <span class="built_in">VARCHAR</span>,</div><div class="line">	<span class="string">&quot;ei&quot;</span> int4 <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">	<span class="string">&quot;employeeid&quot;</span> int4 <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">	<span class="string">&quot;department&quot;</span> <span class="built_in">TEXT</span>,</div><div class="line">	<span class="string">&quot;updatetime&quot;</span> <span class="keyword">TIMESTAMP</span> (<span class="number">0</span>),</div><div class="line">	<span class="string">&quot;isstop&quot;</span> int2,</div><div class="line">	<span class="keyword">CONSTRAINT</span> <span class="string">&quot;employee_pk&quot;</span> PRIMARY <span class="keyword">KEY</span> (<span class="string">&quot;ei&quot;</span>, <span class="string">&quot;employeeid&quot;</span>)</div><div class="line">) <span class="keyword">WITH</span> (OIDS = <span class="literal">FALSE</span>) <span class="keyword">DISTRIBUTED</span> <span class="keyword">BY</span> (ei) <span class="keyword">PARTITION</span> <span class="keyword">BY</span> <span class="keyword">RANGE</span> (ei)(</div><div class="line">	<span class="keyword">START</span> (<span class="number">0</span>)</div><div class="line">	<span class="keyword">END</span> (<span class="number">500000</span>) EVERY (<span class="number">10000</span>),</div><div class="line">	<span class="keyword">DEFAULT</span> <span class="keyword">PARTITION</span> extra</div><div class="line">);</div></pre></td></tr></table></figure>
+<h2 id="&#x5206;&#x533A;&#x524D;&#x540E;&#x6027;&#x80FD;&#x5BF9;&#x6BD4;"><a href="#&#x5206;&#x533A;&#x524D;&#x540E;&#x6027;&#x80FD;&#x5BF9;&#x6BD4;" class="headerlink" title="&#x5206;&#x533A;&#x524D;&#x540E;&#x6027;&#x80FD;&#x5BF9;&#x6BD4;"></a>&#x5206;&#x533A;&#x524D;&#x540E;&#x6027;&#x80FD;&#x5BF9;&#x6BD4;</h2><p>&#x5206;&#x533A;&#x524D;&#x540E;&#x590D;&#x6742;sql&#x7684;&#x6267;&#x884C;&#x65F6;&#x95F4;&#x5BF9;&#x6BD4;&#xFF0C;&#x5355;&#x4F4D;&#x662F;&#x79D2;</p>
+<table>
+<thead>
+<tr>
+<th>&#x5206;&#x533A;&#x524D;</th>
+<th>&#x5206;&#x533A;&#x540E;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3.666</td>
+<td>2.836</td>
+</tr>
+<tr>
+<td>7.105</td>
+<td>2.873</td>
+</tr>
+<tr>
+<td>4.763</td>
+<td>2.624</td>
+</tr>
+<tr>
+<td>6.018</td>
+<td>3.070</td>
+</tr>
+<tr>
+<td>5.024</td>
+<td>2.310</td>
+</tr>
+<tr>
+<td>3.101</td>
+<td>1.967</td>
+</tr>
+<tr>
+<td>5.357</td>
+<td>3.095</td>
+</tr>
+</tbody>
+</table>
+<h2 id="&#x67E5;&#x770B;&#x8868;&#x7A7A;&#x95F4;&#x5927;&#x5C0F;"><a href="#&#x67E5;&#x770B;&#x8868;&#x7A7A;&#x95F4;&#x5927;&#x5C0F;" class="headerlink" title="&#x67E5;&#x770B;&#x8868;&#x7A7A;&#x95F4;&#x5927;&#x5C0F;"></a>&#x67E5;&#x770B;&#x8868;&#x7A7A;&#x95F4;&#x5927;&#x5C0F;</h2><ol>
+<li><p>&#x67E5;&#x770B;&#x6307;&#x5B9A;&#x8868;&#x5927;&#x5C0F;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> pg_size_pretty(pg_relation_size(<span class="string">&apos;test&apos;</span>));</div></pre></td></tr></table></figure>
+</li>
+<li><p>&#x67E5;&#x770B;&#x6307;&#x5B9A;schema&#x4E0B;&#x6240;&#x6709;&#x8868;&#x5927;&#x5C0F;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> relname, pg_size_pretty(pg_relation_size(relid)) <span class="keyword">from</span> pg_stat_user_tables <span class="keyword">where</span> schemaname=<span class="string">&apos;public&apos;</span> <span class="keyword">order</span> <span class="keyword">by</span> pg_relation_size(relid) <span class="keyword">desc</span>;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="&#x9644;&#x5F55;"><a href="#&#x9644;&#x5F55;" class="headerlink" title="&#x9644;&#x5F55;"></a>&#x9644;&#x5F55;</h2><h3 id="copy"><a href="#copy" class="headerlink" title="copy"></a>copy</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">copy (<span class="keyword">select</span> ei, contactid, isdeleted, <span class="keyword">name</span>, tel, mobile <span class="keyword">from</span> contact) <span class="keyword">to</span> <span class="string">&apos;/data/contact.txt&apos;</span>;</div></pre></td></tr></table></figure>
+<h3 id="&#x68C0;&#x67E5;schema&#x662F;&#x5426;&#x5B58;&#x5728;"><a href="#&#x68C0;&#x67E5;schema&#x662F;&#x5426;&#x5B58;&#x5728;" class="headerlink" title="&#x68C0;&#x67E5;schema&#x662F;&#x5426;&#x5B58;&#x5728;"></a>&#x68C0;&#x67E5;schema&#x662F;&#x5426;&#x5B58;&#x5728;</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> <span class="keyword">exists</span> (<span class="keyword">select</span> * <span class="keyword">from</span> pg_catalog.pg_namespace <span class="keyword">where</span> nspname = <span class="string">&apos;$schema&apos;</span>) <span class="keyword">as</span> schema_exists</div></pre></td></tr></table></figure>
+<h3 id="&#x68C0;&#x67E5;table&#x662F;&#x5426;&#x5B58;&#x5728;"><a href="#&#x68C0;&#x67E5;table&#x662F;&#x5426;&#x5B58;&#x5728;" class="headerlink" title="&#x68C0;&#x67E5;table&#x662F;&#x5426;&#x5B58;&#x5728;"></a>&#x68C0;&#x67E5;table&#x662F;&#x5426;&#x5B58;&#x5728;</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> <span class="keyword">exists</span> (<span class="keyword">select</span> <span class="number">1</span> <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema = <span class="string">&apos;$schema&apos;</span> <span class="keyword">and</span> table_name = <span class="string">&apos;$table&apos;</span>) <span class="keyword">as</span> table_exists</div></pre></td></tr></table></figure>
+<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ol>
+<li><a href="http://gpdb.docs.pivotal.io/4390/ref_guide/sql_commands/CREATE_TABLE.html" target="_blank" rel="external">Pivotal Greenplum Docs: CREATE TABLE</a></li>
+<li><a href="http://gpdb.docs.pivotal.io/4350/ref_guide/sql_commands/DELETE.html" target="_blank" rel="external">Pivotal Greenplum Docs: DELETE</a></li>
+<li><a href="http://gpdb.docs.pivotal.io/4350/admin_guide/ddl/ddl-partition.html" target="_blank" rel="external">Pivotal Greenplum Docs: Partitioning Large Tables</a></li>
+<li><a href="http://www.cnblogs.com/mchina/archive/2013/04/19/3028573.html" target="_blank" rel="external">PostgreSQL &#x67E5;&#x770B;&#x6570;&#x636E;&#x5E93;&#xFF0C;&#x7D22;&#x5F15;&#xFF0C;&#x8868;&#xFF0C;&#x8868;&#x7A7A;&#x95F4;&#x5927;&#x5C0F;</a></li>
+<li><a href="http://stackoverflow.com/questions/21781952/how-to-check-if-postgresql-public-schema-exists" target="_blank" rel="external">How to check if PostgreSQL public schema exists? - Stack Overflow</a></li>
+</ol>
+
       
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/09/09/how-to-rename-hbase-table/" data-id="ciwt5w3xy002w239kt5wmkb5e" class="article-share-link" data-share="baidu" data-title="Hbase修改表名">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/12/17/greenplum-partition/" data-id="ciwt5w3yo003v239kqsh46wed" class="article-share-link" data-share="baidu" data-title="greenplum分区">分享到</a>
       
 
       
-        <a href="http://wzktravel.github.io/2016/09/09/how-to-rename-hbase-table/#ds-thread" class="article-comment-link">评论</a>
+        <a href="http://wzktravel.github.io/2016/12/17/greenplum-partition/#ds-thread" class="article-comment-link">评论</a>
       
 
       
@@ -116,7 +168,7 @@
       
   
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hbase/">hbase</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql/">sql</a></li></ul>
 
     </footer>
   </div>
@@ -124,19 +176,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2016/09/12/hbase-meta-repair/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">
-        
-          HBase数据丢失恢复
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/09/01/elasticsearch-upgrade/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2016/12/17/spark-custom-partitioner/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">elasticsearch升级过程</div>
+      <div class="article-nav-title">spark自定义分区策略(partitioner)</div>
     </a>
   
 </nav>
@@ -146,7 +189,7 @@
 
 
   <section id="comments">
-    <div id="ds-thread" class="ds-thread" data-thread-key="2016/09/09/how-to-rename-hbase-table/" data-title="Hbase修改表名" data-url="http://wzktravel.github.io/2016/09/09/how-to-rename-hbase-table/"></div>
+    <div id="ds-thread" class="ds-thread" data-thread-key="2016/12/17/greenplum-partition/" data-title="greenplum分区" data-url="http://wzktravel.github.io/2016/12/17/greenplum-partition/"></div>
   </section>
 
 </section>
