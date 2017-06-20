@@ -7,24 +7,18 @@
   <title>kafka manager | wzktravel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="yahoo&amp;#x51FA;&amp;#x54C1;&amp;#x7684;kafka&amp;#x7BA1;&amp;#x7406;&amp;#x5DE5;&amp;#x5177;&amp;#xFF0C;git&amp;#x5730;&amp;#x5740;https://github.com/yahoo/kafka-manager&amp;#x3002;
-&amp;#x914D;&amp;#x7F6E;&amp;#xFF1A;
-
-deploy&amp;#xFF0C;&amp;#x9700;&amp;#x8981;&amp;#x6">
+&amp;#x624B;&amp;#x52A8;&amp;#x6253;&amp;#x5305;kafka-manager&amp;#x7528;scala&amp;#">
 <meta property="og:type" content="article">
 <meta property="og:title" content="kafka manager">
 <meta property="og:url" content="http://wzktravel.github.io/2016/12/01/kafka-manager/index.html">
 <meta property="og:site_name" content="wzktravel">
 <meta property="og:description" content="yahoo&amp;#x51FA;&amp;#x54C1;&amp;#x7684;kafka&amp;#x7BA1;&amp;#x7406;&amp;#x5DE5;&amp;#x5177;&amp;#xFF0C;git&amp;#x5730;&amp;#x5740;https://github.com/yahoo/kafka-manager&amp;#x3002;
-&amp;#x914D;&amp;#x7F6E;&amp;#xFF1A;
-
-deploy&amp;#xFF0C;&amp;#x9700;&amp;#x8981;&amp;#x6">
-<meta property="og:updated_time" content="2016-12-13T15:03:11.000Z">
+&amp;#x624B;&amp;#x52A8;&amp;#x6253;&amp;#x5305;kafka-manager&amp;#x7528;scala&amp;#">
+<meta property="og:updated_time" content="2017-06-20T07:40:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kafka manager">
 <meta name="twitter:description" content="yahoo&amp;#x51FA;&amp;#x54C1;&amp;#x7684;kafka&amp;#x7BA1;&amp;#x7406;&amp;#x5DE5;&amp;#x5177;&amp;#xFF0C;git&amp;#x5730;&amp;#x5740;https://github.com/yahoo/kafka-manager&amp;#x3002;
-&amp;#x914D;&amp;#x7F6E;&amp;#xFF1A;
-
-deploy&amp;#xFF0C;&amp;#x9700;&amp;#x8981;&amp;#x6">
+&amp;#x624B;&amp;#x52A8;&amp;#x6253;&amp;#x5305;kafka-manager&amp;#x7528;scala&amp;#">
   
     <link rel="alternative" href="/atom.xml" title="wzktravel" type="application/atom+xml">
   
@@ -103,26 +97,34 @@ deploy&amp;#xFF0C;&amp;#x9700;&amp;#x8981;&amp;#x6">
     <div class="article-entry" itemprop="articleBody">
       
         <p>yahoo&#x51FA;&#x54C1;&#x7684;kafka&#x7BA1;&#x7406;&#x5DE5;&#x5177;&#xFF0C;git&#x5730;&#x5740;<a href="https://github.com/yahoo/kafka-manager" target="_blank" rel="external">https://github.com/yahoo/kafka-manager</a>&#x3002;</p>
-<p>&#x914D;&#x7F6E;&#xFF1A;</p>
+<h3 id="&#x624B;&#x52A8;&#x6253;&#x5305;"><a href="#&#x624B;&#x52A8;&#x6253;&#x5305;" class="headerlink" title="&#x624B;&#x52A8;&#x6253;&#x5305;"></a>&#x624B;&#x52A8;&#x6253;&#x5305;</h3><p>kafka-manager&#x7528;<code>scala</code>&#x7F16;&#x5199;&#xFF0C;&#x9700;&#x8981;&#x4F7F;&#x7528;<code>sbt</code>&#x8FDB;&#x884C;&#x6253;&#x5305;&#x3002;sbt&#x73AF;&#x5883;&#x914D;&#x7F6E;&#x8FD9;&#x91CC;&#x4E0D;&#x8BE6;&#x7EC6;&#x4ECB;&#x7ECD;&#xFF0C;&#x4F46;&#x4E3A;&#x52A0;&#x5FEB;&#x4F9D;&#x8D56;&#x5305;&#x4E0B;&#x8F7D;&#x901F;&#x5EA6;&#xFF0C;&#x53EF;&#x4EE5;&#x4FEE;&#x6539;<code>project/plugins.sbt</code>&#xFF0C;&#x589E;&#x52A0;&#x6216;&#x4FEE;&#x6539;<code>resolvers</code>&#x3002;</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// The Typesafe repository</span></div><div class="line"><span class="comment">// resolvers += &quot;Typesafe repository&quot; at &quot;http://repo.typesafe.com/typesafe/releases/&quot;</span></div><div class="line">resolvers += <span class="string">&quot;sonatype&quot;</span> at <span class="string">&quot;https://oss.sonatype.org/content/repositories/public/&quot;</span></div></pre></td></tr></table></figure>
+<p>&#x7136;&#x540E;&#x4F7F;&#x7528;<code>./sbt clean dist</code>&#x8FDB;&#x884C;&#x6253;&#x5305;&#xFF0C;&#x6253;&#x5305;&#x540E;&#x7684;zip&#x5305;&#x5728;<code>target/universal/</code>&#x4E0B;&#x3002;</p>
+<p>&#x4E5F;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x4E0B;&#x8F7D;&#x6211;&#x6253;&#x5305;&#x597D;&#x7684;zip&#x5305;:</p>
+<ul>
+<li><a href="http://oi4p2s3bg.bkt.clouddn.com/kafka-manager-1.3.0.7.zip" target="_blank" rel="external">kafka-manager-1.3.0.7</a></li>
+<li><a href="http://oi4p2s3bg.bkt.clouddn.com/kafka-manager-1.3.3.7.zip" target="_blank" rel="external">kafka-manager-1.3.3.7</a></li>
+</ul>
+<h3 id="&#x914D;&#x7F6E;&#x4FEE;&#x6539;"><a href="#&#x914D;&#x7F6E;&#x4FEE;&#x6539;" class="headerlink" title="&#x914D;&#x7F6E;&#x4FEE;&#x6539;"></a>&#x914D;&#x7F6E;&#x4FEE;&#x6539;</h3><p>&#x89E3;&#x538B;&#x540E;&#x542F;&#x52A8;&#x524D;&#x9700;&#x8981;&#x8FDB;&#x884C;&#x4E00;&#x4E9B;&#x8BBE;&#x7F6E;&#xFF1A;</p>
 <ol>
-<li>deploy&#xFF0C;&#x9700;&#x8981;&#x624B;&#x52A8;&#x6253;&#x5305;&#x3002;<code>./sbt clean dist</code>&#x3002;&#x7531;&#x4E8E;&#x56FD;&#x5185;&#x7F51;&#x7EDC;&#x73AF;&#x5883;&#x95EE;&#x9898;&#xFF0C;sbt&#x4E0D;&#x592A;&#x65B9;&#x4FBF;&#xFF0C;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x4ECE;<a href="http://oi4p2s3bg.bkt.clouddn.com/kafka-manager-1.3.0.7.zip" target="_blank" rel="external">http://oi4p2s3bg.bkt.clouddn.com/kafka-manager-1.3.0.7.zip</a>&#x4E0B;&#x8F7D;&#x3002;</li>
-<li>&#x89E3;&#x538B;&#x540E;&#xFF0C;&#x4FEE;&#x6539;<code>conf/application.conf</code>&#x4E2D;<code>kafka-manager.zkhosts</code>&#x914D;&#x7F6E;&#x3002;</li>
-<li>&#x542F;&#x52A8;&#xFF0C;&#x6307;&#x5B9A;&#x7AEF;&#x53E3;<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/bin/kafka-manager -java-home /usr/java/jdk1.8.0_66 -Dhttp.port=8909</div></pre></td></tr></table></figure>
+<li><p>&#x4FEE;&#x6539;<code>conf/application.conf</code>&#x4E2D;<code>kafka-manager.zkhosts</code>&#x4E3A;&#x4F60;&#x81EA;&#x5DF1;&#x7684;zookeeper&#x5730;&#x5740;&#xFF0C;&#x6B64;zk&#x5730;&#x5740;&#x662F;kafka-manager&#x4F7F;&#x7528;&#x7684;&#xFF0C;&#x7528;&#x6765;&#x4FDD;&#x5B58;&#x4E00;&#x4E9B;kafka-manager&#x7684;&#x72B6;&#x6001;&#x7B49;&#x3002;</p>
+<p>&#x591A;&#x4E2A;zk&#x65F6;&#x7528;&#x9017;&#x53F7;&#x5206;&#x9694;&#xFF0C;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kafka-manager.zkhosts=<span class="string">&quot;my.zookeeper.host.com:2181,other.zookeeper.host.com:2181&quot;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>&#x66F4;&#x6539;&#x65E5;&#x5FD7;&#x76EE;&#x5F55;&#xFF0C;&#x4FEE;&#x6539;<code>conf/logback.xml</code>&#x4E2D;name&#x4E3A;<code>FILE</code>&#x7684;appender&#x3002;</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">&quot;FILE&quot;</span> <span class="attr">class</span>=<span class="string">&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;</span>&gt;</span></div><div class="line">  <span class="comment">&lt;!-- &lt;file&gt;${application.home}/logs/application.log&lt;/file&gt; --&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>%date - [%level] - from %logger in %thread %n%message%n%xException%n<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></div><div class="line"></div><div class="line">  <span class="tag">&lt;<span class="name">rollingPolicy</span> <span class="attr">class</span>=<span class="string">&quot;ch.qos.logback.core.rolling.TimeBasedRollingPolicy&quot;</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">fileNamePattern</span>&gt;</span>logs/application.%d{yyyy-MM-dd}.log<span class="tag">&lt;/<span class="name">fileNamePattern</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">maxHistory</span>&gt;</span>5<span class="tag">&lt;/<span class="name">maxHistory</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">totalSizeCap</span>&gt;</span>5GB<span class="tag">&lt;/<span class="name">totalSizeCap</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">rollingPolicy</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">appender</span>&gt;</span></div></pre></td></tr></table></figure>
 </li>
 </ol>
-<h2 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h2><ol>
-<li><a href="https://github.com/yahoo/kafka-manager" target="_blank" rel="external">github: kafka manager</a></li>
-</ol>
+<h3 id="&#x542F;&#x52A8;"><a href="#&#x542F;&#x52A8;" class="headerlink" title="&#x542F;&#x52A8;"></a>&#x542F;&#x52A8;</h3><p>  &#x6307;&#x5B9A;java home&#x548C;&#x7AEF;&#x53E3;&#x542F;&#x52A8;&#x3002;</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/bin/kafka-manager -java-home /usr/java/jdk1.8.0_66 -Dhttp.port=8909</div></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://wzktravel.github.io/2016/12/01/kafka-manager/" data-id="ciz9ifyim003vmv9kyn5kss6m" class="article-share-link" data-share="baidu" data-title="kafka manager">分享到</a>
+        <a data-url="http://wzktravel.github.io/2016/12/01/kafka-manager/" data-id="cj3tzc862003utz9kruxwrd6u" class="article-share-link" data-share="baidu" data-title="kafka manager">分享到</a>
       
 
-      
-        <a href="http://wzktravel.github.io/2016/12/01/kafka-manager/#ds-thread" class="article-comment-link">评论</a>
       
 
       
@@ -158,10 +160,6 @@ deploy&amp;#xFF0C;&amp;#x9700;&amp;#x8981;&amp;#x6">
   
 </article>
 
-
-  <section id="comments">
-    <div id="ds-thread" class="ds-thread" data-thread-key="2016/12/01/kafka-manager/" data-title="kafka manager" data-url="http://wzktravel.github.io/2016/12/01/kafka-manager/"></div>
-  </section>
 
 </section>
       
@@ -273,20 +271,6 @@ deploy&amp;#xFF0C;&amp;#x9700;&amp;#x8981;&amp;#x6">
 </div>
 
 <!-- totop end -->
-
-<!-- 多说公共js代码 start -->
-<script type="text/javascript">
-var duoshuoQuery = {short_name:"wzktravel"};
-  (function() {
-    var ds = document.createElement('script');
-    ds.type = 'text/javascript';ds.async = true;
-    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-    ds.charset = 'UTF-8';
-    (document.getElementsByTagName('head')[0]
-     || document.getElementsByTagName('body')[0]).appendChild(ds);
-  })();
-  </script>
-<!-- 多说公共js代码 end -->
 
 
 <!-- 百度分享 start -->
